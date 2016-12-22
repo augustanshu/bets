@@ -26,7 +26,7 @@
       <th>{{$m->status}}</th>
 	  <th>{{$m->team1}}</th>
 	  <th>{{$m->team2}}</th>
-	   <th><a class="btn btn-default" href="http://fenxi.zgzcw.com/{{$m->mid}}/bsls" role="button">See</a></th>
+	   <th><a class="btn btn-default" href="/{{$m->mid}}" role="button">See</a></th>
     </tr>
 	@endforeach
   </tbody>

@@ -90,11 +90,13 @@ class MasterController extends Controller
 	public function showMaster()
 	{   
 	    $crawler = Goutte::request('GET', 'http://live.zgzcw.com/');
+		/*
 		$crawler->filter('.bf-main > .top-chosse > .sx_form_c>select>option')->each(function($node,$j=0,$stage=array()){
 	    $stage[]=$node->text();
 		$j=$j++;
 		dump($stage);
 		}) ;
+		*/
 		
 		$count=Match::where('timeStage',date('Y-m-d'))->count();
 	   if($count==0)
@@ -114,13 +116,82 @@ class MasterController extends Controller
 		  $match->status=$rs=$node->filter('td')->eq(4)->text() . "\n";//状态
 		  $match->team1=$rh=$node->filter('td')->eq(5)->filter('a')->text() . "\n";//主队
           $match->team2=$ra=$node->filter('td')->eq(7)->filter('a')->text() . "\n";//客队
-		  //$match->save();
+		  $match->save();
 		 }
 	   });
 	   }
       return view('index',['matches'=>Match::where('timeStage',date('Y-m-d'))->get()]);           
 	}
 	
+	
+	public function seeMatch($mid)
+	{
+		echo '</br>' . "zhudui" . '</br>' ;
+		$url='http://fenxi.zgzcw.com/'.$mid.'/bsls';
+		 $crawler = Goutte::request('GET', $url);
+		 $match=new Match;
+		 $crawler->filter('.bsls > .bslsr > .b-1 > table > tbody > tr')->each(function ($node,$j=0)
+	     {
+			 $r1=0.00;
+			 if($j>0&&$j<10)
+			 {
+			  $result= $node->attr('f') . '<br/>';
+			  $h=$node->attr('h');
+			  if($domain = strstr($result, '胜') && $h==0)
+			   {
+				   $r=$node->filter('.peilv-span > span')->eq(0)->text();
+				   $r+=0;
+				   $r1+=$r;
+				//echo  $node->filter('.peilv-span > span')->eq(0)->text() . '</br>';
+			    }
+				else if($domain = strstr($result, '负') && $h==1)
+				{
+				   $r=$node->filter('.peilv-span > span')->eq(2)->text();
+				   $r+=0;
+				   $r1+=$r;
+				}
+				else if($domain = strstr($result, '平'))
+				{
+				   $r=$node->filter('.peilv-span > span')->eq(1)->text();
+				   $r+=0;
+				   $r1+=$r;
+				}
+				echo $r1 . '</br>';
+			 }
+		 });
+		 echo '</br>' . "kedui" . '</br>' ;
+		  $crawler->filter('.bsls > .bslsr > .kedui > table > tbody > tr')->each(function ($node,$j=0)
+	     {
+			 $r1=0.00;
+			 if($j>0&&$j<10)
+			 {
+			  $result= $node->attr('f') . '<br/>';
+			  $h=$node->attr('h');
+			  if($domain = strstr($result, '胜') && $h==0)
+			   {
+				   $r=$node->filter('.peilv-span > span')->eq(0)->text();
+				   $r+=0;
+				   $r1+=$r;
+				//echo  $node->filter('.peilv-span > span')->eq(0)->text() . '</br>';
+			    }
+				else if($domain = strstr($result, '负') && $h==1)
+				{
+				   $r=$node->filter('.peilv-span > span')->eq(2)->text();
+				   $r+=0;
+				   $r1+=$r;
+				}
+				else if($domain = strstr($result, '平'))
+				{
+				   $r=$node->filter('.peilv-span > span')->eq(1)->text();
+				   $r+=0;
+				   $r1+=$r;
+				}
+				echo $r1 . '</br>';
+			 }
+		 });
+		
+			 
+	}
 	public function test()
 	{
 		 //http://symfony.com/doc/current/components/dom_crawler.html?any

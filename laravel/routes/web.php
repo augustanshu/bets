@@ -12,4 +12,5 @@
 */
 
 Route::get('/','MasterController@showMaster');
+Route::get('/{mid}','MasterController@seeMatch');
 Route::get('test','MasterController@test');
