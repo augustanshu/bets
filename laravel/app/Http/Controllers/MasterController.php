@@ -90,14 +90,6 @@ class MasterController extends Controller
 	public function showMaster()
 	{   
 	    $crawler = Goutte::request('GET', 'http://live.zgzcw.com/');
-		/*
-		$crawler->filter('.bf-main > .top-chosse > .sx_form_c>select>option')->each(function($node,$j=0,$stage=array()){
-	    $stage[]=$node->text();
-		$j=$j++;
-		dump($stage);
-		}) ;
-		*/
-		
 		$count=Match::where('timeStage',date('Y-m-d'))->count();
 	   if($count==0)
 	   {
@@ -194,6 +186,7 @@ class MasterController extends Controller
 	}
 	public function test()
 	{
+		return view("test");
 		 //http://symfony.com/doc/current/components/dom_crawler.html?any
 		 
 	}

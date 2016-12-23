@@ -178,9 +178,9 @@ return [
         App\Providers\AuthServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-		
+		Barryvdh\Debugbar\ServiceProvider::class,
 		Weidner\Goutte\GoutteServiceProvider::class,
-
+        Encore\Admin\Providers\AdminServiceProvider::class,
     ],
 
     /*

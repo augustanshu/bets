@@ -21,8 +21,11 @@ class CreateMatchesTable extends Migration
 			$table->string('round');
 			$table->dateTime('time');
 			$table->string('status');
+			$table->string('score')->default("0:0");
 			$table->string('team1');
+			$table->unsignedInteger('point1')->default("0");;
 			$table->string('team2');
+			$table->unsignedInteger('point2')->default("0");;
             $table->timestamps();
         });
     }
