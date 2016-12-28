@@ -1,9 +1,11 @@
 <?php namespace App\Console\Commands;
-
 use GuzzleHttp\Client;
 use GuzzleHttp\Pool;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Exception\ClientException;
+use Goutte;
+use App\Match;
+use App\Repositories\CrawlerRepositoryInterface;
 use Illuminate\Console\Command;
 
 class MultithreadingRequest extends Command
@@ -12,53 +14,24 @@ class MultithreadingRequest extends Command
     private $counter        = 1;
     private $concurrency    = 7;  // 同时并发抓取
 
-    private $users = ['CycloneAxe', 'appleboy', 'Aufree', 'lifesign',
-                        'overtrue', 'zhengjinghua', 'NauxLiu'];
+    private $users = ['2102107', '2102109', '2102110', '2102111',
+                        '2102108', '2102113', '2102112'];
 
     protected $signature = 'test:multithreading-request';
     protected $description = 'Command description';
 
-    public function __construct()
+    public function __construct(CrawlerRepositoryInterface $crawler)
     {
         parent::__construct();
+		$this->crawler=$crawler;
     }
 
     public function handle()
     {
-        $this->totalPageCount = count($this->users);
-
-        $client = new Client();
-
-        $requests = function ($total) use ($client) {
-            foreach ($this->users as $key => $user) {
-
-                $uri = 'https://api.github.com/users/' . $user;
-                yield function() use ($client, $uri) {
-                    return $client->getAsync($uri);
-                };
-            }
-        };
-
-        $pool = new Pool($client, $requests($this->totalPageCount), [
-            'concurrency' => $this->concurrency,
-            'fulfilled'   => function ($response, $index){
-
-                $res = json_decode($response->getBody()->getContents());
-
-                $this->info("请求第 $index 个请求，用户 " . $this->users[$index] . " 的 Github ID 为：" .$res->id);
-
-                $this->countedAndCheckEnded();
-            },
-            'rejected' => function ($reason, $index){
-                $this->error("rejected" );
-                $this->error("rejected reason: " . $reason );
-                $this->countedAndCheckEnded();
-            },
-        ]);
-
-        // 开始发送请求
-        $promise = $pool->promise();
-        $promise->wait();
+	   for ($i = 2103107; $i <= 2106107; $i ++) {
+       $this->info($this->crawler->select($i)); 
+       sleep(1);	   
+		}	   
     }
 
     public function countedAndCheckEnded()
@@ -67,6 +40,6 @@ class MultithreadingRequest extends Command
             $this->counter++;
             return;
         }
-        $this->info("请求结束！");
+        $this->info("end");
     }
 }

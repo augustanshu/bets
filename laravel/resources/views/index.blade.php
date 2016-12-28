@@ -3,7 +3,7 @@
 @section('title','MyBets')
 
 @section('main')
-
+<!--
    <table class="table">
   <caption></caption>
   <thead>
@@ -31,5 +31,5 @@
 	@endforeach
   </tbody>
 </table>
-
+-->
 @endsection

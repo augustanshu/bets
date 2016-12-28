@@ -1,12 +1,19 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Repositories\CrawlerRepositoryInterface;
 use Illuminate\Http\Request;
 use App\Match;
 use Goutte;
+use GuzzleHttp\Client as GuzzleClient;
 class MasterController extends Controller
 {
+
+
+    public function __construct(CrawlerRepositoryInterface $crawler)
+    {
+      $this->crawler=$crawler;
+    }
     /**
      * Display a listing of the resource.
      *
@@ -46,7 +53,7 @@ class MasterController extends Controller
      */
     public function show($id)
     {
-      
+     
     }
 
     /**
@@ -89,35 +96,15 @@ class MasterController extends Controller
 	*/
 	public function showMaster()
 	{   
-	    $crawler = Goutte::request('GET', 'http://live.zgzcw.com/');
-		$count=Match::where('timeStage',date('Y-m-d'))->count();
-	   if($count==0)
-	   {
-		  $result=array();
-          //$crawler = Goutte::request('GET', 'http://live.zgzcw.com/');
-	      $crawler->filter('tbody > .matchTr')->each(function ($node)
-	     { 
-		 $match=new Match;
-	     $match->timeStage=date('Y-m-d');//时间点
-	     $match->mid=$ri=$node->attr('matchid');//标识
-		 if(Match::where('mid',$ri)->count()==0)
-		 {
-		  $match->matchType=$rm=$node->filter('td')->eq(1)->text() . "\n";//赛事
-		  $match->round=$rm=$node->filter('td')->eq(2)->text() . "\n";//轮次
-		  $match->time=$rt=$node->filter('td')->eq(3)->attr('date') . "\n";//时间
-		  $match->status=$rs=$node->filter('td')->eq(4)->text() . "\n";//状态
-		  $match->team1=$rh=$node->filter('td')->eq(5)->filter('a')->text() . "\n";//主队
-          $match->team2=$ra=$node->filter('td')->eq(7)->filter('a')->text() . "\n";//客队
-		  $match->save();
-		 }
-	   });
-	   }
-      return view('index',['matches'=>Match::where('timeStage',date('Y-m-d'))->get()]);           
+	echo $this->crawler->select(2102289);
+	 
+     
 	}
 	
 	
 	public function seeMatch($mid)
 	{
+		/*
 		echo '</br>' . "zhudui" . '</br>' ;
 		$url='http://fenxi.zgzcw.com/'.$mid.'/bsls';
 		 $crawler = Goutte::request('GET', $url);
@@ -181,7 +168,7 @@ class MasterController extends Controller
 				echo $r1 . '</br>';
 			 }
 		 });
-		
+		*/
 			 
 	}
 	public function test()

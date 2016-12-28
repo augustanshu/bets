@@ -16,16 +16,18 @@ class CreateMatchesTable extends Migration
         Schema::create('matches', function (Blueprint $table) {
             $table->increments('id');
 			$table->unsignedInteger('mid');
-			$table->string('timeStage');
-			$table->string('matchType');
-			$table->string('round');
+			$table->string('league')->default("none");
+			$table->string('season')->default("0/0");
+			$table->string('round')->default("0");
 			$table->dateTime('time');
-			$table->string('status');
+			$table->string('status')->default("x");
 			$table->string('score')->default("0:0");
-			$table->string('team1');
-			$table->unsignedInteger('point1')->default("0");;
-			$table->string('team2');
-			$table->unsignedInteger('point2')->default("0");;
+			$table->string('team1')->default("--");
+			$table->unsignedInteger('point1')->default("0");
+			$table->unsignedInteger('rank1')->default("0");
+			$table->string('team2')->default("--");;
+			$table->unsignedInteger('point2')->default("0");
+			$table->unsignedInteger('rank2')->default("0");
             $table->timestamps();
         });
     }
