@@ -23,11 +23,11 @@ class CreateMatchesTable extends Migration
 			$table->string('status')->default("x");
 			$table->string('score')->default("0:0");
 			$table->string('team1')->default("--");
-			$table->unsignedInteger('point1')->default("0");
-			$table->unsignedInteger('rank1')->default("0");
+			//$table->unsignedInteger('point1')->default("0");
+			//$table->unsignedInteger('rank1')->default("0");
 			$table->string('team2')->default("--");;
-			$table->unsignedInteger('point2')->default("0");
-			$table->unsignedInteger('rank2')->default("0");
+			//$table->unsignedInteger('point2')->default("0");
+			//$table->unsignedInteger('rank2')->default("0");
             $table->timestamps();
         });
     }

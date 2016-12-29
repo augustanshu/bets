@@ -1,4 +1,5 @@
-<?php namespace App\Console\Commands;
+<?php namespace
+ App\Console\Commands;
 use GuzzleHttp\Client;
 use GuzzleHttp\Pool;
 use GuzzleHttp\Psr7\Request;
@@ -8,7 +9,7 @@ use App\Match;
 use App\Repositories\CrawlerRepositoryInterface;
 use Illuminate\Console\Command;
 
-class MultithreadingRequest extends Command
+class CrawlerRequest extends Command
 {
     private $totalPageCount;
     private $counter        = 1;
@@ -17,7 +18,7 @@ class MultithreadingRequest extends Command
     private $users = ['2102107', '2102109', '2102110', '2102111',
                         '2102108', '2102113', '2102112'];
 
-    protected $signature = 'test:multithreading-request';
+    protected $signature = 'test:crawler-request';
     protected $description = 'Command description';
 
     public function __construct(CrawlerRepositoryInterface $crawler)
@@ -28,9 +29,9 @@ class MultithreadingRequest extends Command
 
     public function handle()
     {
-	   for ($i = 2103107; $i <= 2106107; $i ++) {
+	   for ($i = 1985472; $i <= 1985766; $i ++) {
        $this->info($this->crawler->select($i)); 
-       sleep(1);	   
+       sleep(rand(1,1.2));	   
 		}	   
     }
 
