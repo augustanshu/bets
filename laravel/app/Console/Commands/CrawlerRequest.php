@@ -29,9 +29,10 @@ class CrawlerRequest extends Command
 
     public function handle()
     {
-	   for ($i = 1985472; $i <= 1985766; $i ++) {
+	
+	   for ($i =1700941; $i <=1719600 ; $i ++) { //1689200-1690532-1690740-1693016-1693635-1694545-1695104-1695955-1696592-1697368-1699473-1700940-1703312
        $this->info($this->crawler->select($i)); 
-       sleep(rand(1,1.2));	   
+       sleep(rand(1.4,1.6));	   
 		}	   
     }
 

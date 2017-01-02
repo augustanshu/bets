@@ -15,6 +15,8 @@ class CrawlerRepository implements CrawlerRepositoryInterface{
   
   public function select($mid)
   {  
+	  try{
+  
          $match=new Match;
 		 $odd=new Odd;
 		 $odd->mid=$mid;
@@ -36,9 +38,12 @@ class CrawlerRepository implements CrawlerRepositoryInterface{
 			  $match->league=mb_substr($l[0],0,-1);
 			  $match->season=$l[1].$l[2];
 		  } 
-		  else{
+		  else if(count($l)==2){
 			 	$match->league=mb_substr($l[0],0,-1);
 				 $match->season=$l[1];
+		  }
+		  else	  {
+			  $match->league=mb_substr($l[0],0,-1);
 		  }
 		  $match->round=$crawler->filter('.bfyc-duizhen-r > .round>h2')->attr('lc');//轮次
 		  if($match->round=="d=bjop"){$match->round="--";}
@@ -49,7 +54,7 @@ class CrawlerRepository implements CrawlerRepositoryInterface{
 		  if(trim($match->score)!="VS"){$match->score=trim($crawler->filter('.logoVs > .vs-score >h1')->text());}
 		  else{$match->score='-';}
 	      if($match->time > date("Y-m-d h:m:s")){$match->status="未";}
-		  else if($match->score!="0 - 0"){$match->status="完";}
+		  else{$match->status="完";}
 		  //if($crawler->filter('.bfyc-duizhen-l > .paiming-normal')->filter('dl')->eq(1)->filter('dd')->eq(5)->text()!="分")
 		  //{
 		  //$match->rank1=$crawler->filter('.bfyc-duizhen-l > .paiming-normal')->filter('dt')->eq(1)->text();//排名1
@@ -86,8 +91,17 @@ class CrawlerRepository implements CrawlerRepositoryInterface{
 					dump ($odd->mid.' '.$odd->updatetime.' '.$odd->sheng.' '.$odd->ping.' '.$odd->fu);
 					$url=$node->filter('td')->eq(5)->filter('a')->attr('href');
 			     	$url='http://fenxi.zgzcw.com'.$url;
-					sleep(rand(1,1.2));
-				    $crawler = Goutte::request('GET', $url);
+					sleep(rand(1.2,1.6));
+
+                       $goutteClient = new Client();
+                       $guzzleClient = new GuzzleClient(array(
+                      'timeout' => 60,
+                         ));
+                       $goutteClient->setClient($guzzleClient);
+		               $jar = new \GuzzleHttp\Cookie\CookieJar;
+	                   $crawler = $goutteClient->request('GET', $url,['cookies' => $jar]);
+					  
+				    //$crawler = Goutte::request('GET', $url);
 				    $crawler->filter('table')->filter('tr')->each(function($node,$i){
 					 if($i>1)
 					 {
@@ -117,6 +131,11 @@ class CrawlerRepository implements CrawlerRepositoryInterface{
 		  }
 		  return($mid.': '.'联赛:'.$match->time.' '.$match->league.'['.$match->round.']'.$match->team1.'vs'.$match->team2.$match->score);
 		  
+	  }
+	  catch(Exception $e)
+	  {
+	   return $e;
+	  }
   }
   
 
