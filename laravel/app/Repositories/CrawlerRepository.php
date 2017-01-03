@@ -23,7 +23,7 @@ class CrawlerRepository implements CrawlerRepositoryInterface{
          $count= $match->where('mid',$mid)->count();
          $goutteClient = new Client();
          $guzzleClient = new GuzzleClient(array(
-           'timeout' => 60,
+           'timeout' => 100,
            ));
            $goutteClient->setClient($guzzleClient);
 		   $jar = new \GuzzleHttp\Cookie\CookieJar;
@@ -91,11 +91,11 @@ class CrawlerRepository implements CrawlerRepositoryInterface{
 					dump ($odd->mid.' '.$odd->updatetime.' '.$odd->sheng.' '.$odd->ping.' '.$odd->fu);
 					$url=$node->filter('td')->eq(5)->filter('a')->attr('href');
 			     	$url='http://fenxi.zgzcw.com'.$url;
-					sleep(rand(1.2,1.6));
+					sleep(rand(70,140)/100);
 
                        $goutteClient = new Client();
                        $guzzleClient = new GuzzleClient(array(
-                      'timeout' => 60,
+                      'timeout' => 100,
                          ));
                        $goutteClient->setClient($guzzleClient);
 		               $jar = new \GuzzleHttp\Cookie\CookieJar;
@@ -139,4 +139,15 @@ class CrawlerRepository implements CrawlerRepositoryInterface{
   }
   
 
+  public function getLeague($lid,$season)
+  {
+     $goutteClient=new Client;
+	 $guzzleClient=new guzzleClient(array('timeout'=>60));
+	 $goutteClient->setClient($guzzleClient);
+	 $crawler = $goutteClient->request('GET','http://saishi.zgzcw.com/soccer/league/36/2011-2012/');
+	 //$linksCrawler = $crawler->selectLink('富勒姆');
+	 //$link = $linksCrawler->li
+	$uri=$crawler->filter('.box luncib > em')->eq(2)->text();
+	 dump($uri);
+  }
 }

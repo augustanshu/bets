@@ -173,7 +173,7 @@ class MasterController extends Controller
 	}
 	public function test()
 	{
-		return view("test");
+		echo $this->crawler->getLeague(36,2007);
 		 //http://symfony.com/doc/current/components/dom_crawler.html?any
 		 
 	}
