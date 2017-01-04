@@ -23,7 +23,7 @@ class CrawlerRepository implements CrawlerRepositoryInterface{
          $count= $match->where('mid',$mid)->count();
          $goutteClient = new Client();
          $guzzleClient = new GuzzleClient(array(
-           'timeout' => 100,
+           'timeout' => 200,
            ));
            $goutteClient->setClient($guzzleClient);
 		   $jar = new \GuzzleHttp\Cookie\CookieJar;
@@ -89,13 +89,13 @@ class CrawlerRepository implements CrawlerRepositoryInterface{
 					 if($odd_count==0){$odd->save();}
 					 else{$odd->update();}
 					dump ($odd->mid.' '.$odd->updatetime.' '.$odd->sheng.' '.$odd->ping.' '.$odd->fu);
+					sleep(rand(80,150)/100);
 					$url=$node->filter('td')->eq(5)->filter('a')->attr('href');
 			     	$url='http://fenxi.zgzcw.com'.$url;
-					sleep(rand(70,140)/100);
 
                        $goutteClient = new Client();
                        $guzzleClient = new GuzzleClient(array(
-                      'timeout' => 100,
+                      'timeout' => 200,
                          ));
                        $goutteClient->setClient($guzzleClient);
 		               $jar = new \GuzzleHttp\Cookie\CookieJar;
