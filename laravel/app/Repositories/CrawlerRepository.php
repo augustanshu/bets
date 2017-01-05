@@ -23,7 +23,7 @@ class CrawlerRepository implements CrawlerRepositoryInterface{
          $count= $match->where('mid',$mid)->count();
          $goutteClient = new Client();
          $guzzleClient = new GuzzleClient(array(
-           'timeout' => 200,
+           'timeout' => 100,
            ));
            $goutteClient->setClient($guzzleClient);
 		   $jar = new \GuzzleHttp\Cookie\CookieJar;
@@ -89,13 +89,13 @@ class CrawlerRepository implements CrawlerRepositoryInterface{
 					 if($odd_count==0){$odd->save();}
 					 else{$odd->update();}
 					dump ($odd->mid.' '.$odd->updatetime.' '.$odd->sheng.' '.$odd->ping.' '.$odd->fu);
-					sleep(rand(80,150)/100);
+					sleep(rand(100,150)/100);
 					$url=$node->filter('td')->eq(5)->filter('a')->attr('href');
 			     	$url='http://fenxi.zgzcw.com'.$url;
 
                        $goutteClient = new Client();
                        $guzzleClient = new GuzzleClient(array(
-                      'timeout' => 200,
+                      'timeout' => 100,
                          ));
                        $goutteClient->setClient($guzzleClient);
 		               $jar = new \GuzzleHttp\Cookie\CookieJar;
@@ -113,6 +113,7 @@ class CrawlerRepository implements CrawlerRepositoryInterface{
 					 $odd->sheng=str_replace(array("↓","↑"),"",$node->filter('td')->eq(3)->text());
 				     $odd->ping=str_replace(array("↓","↑"),"",$node->filter('td')->eq(4)->text());
 				     $odd->fu=str_replace(array("↓","↑"),"",$node->filter('td')->eq(5)->text());
+					 $odd->init="0";
 					 $odd_count=$odd->where('mid',$u[3])->where('updatetime',$updatetime)->count();
 					 if($odd_count==0){$odd->save();}
 					 else{$odd->update();}
@@ -134,7 +135,8 @@ class CrawlerRepository implements CrawlerRepositoryInterface{
 	  }
 	  catch(Exception $e)
 	  {
-	   return $e;
+		  select($mid);
+	   //return $e;
 	  }
   }
   

@@ -96,7 +96,7 @@ class MasterController extends Controller
 	*/
 	public function showMaster()
 	{   
-	echo $this->crawler->select(1695955);
+	echo $this->crawler->select(1724410);
 	 
      
 	}
