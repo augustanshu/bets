@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Match;
 use Goutte;
 use GuzzleHttp\Client as GuzzleClient;
+use Illuminate\Support\Facades\Storage;
 class MasterController extends Controller
 {
 
@@ -94,13 +95,24 @@ class MasterController extends Controller
 	*首页显示数据
 	*
 	*/
-	public function showMaster()
+	public function showMaster($mid)
 	{   
-	echo $this->crawler->select(1724410);
+	//$match=Match::where('mid','>','0')->orderBy('id','desc')->first();
+   // $mid=$match->mid+1;
+	echo $this->crawler->select($mid);
 	 
      
 	}
 	
+	public function showStorage()
+	{
+		//$content=Storage::get('yc09-10.php');
+		//$this->crawler->getLeague($content);
+		 $files = Storage::allfiles('/match');
+		 dd($files);
+
+		
+	}
 	
 	public function seeMatch($mid)
 	{

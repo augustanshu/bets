@@ -5,7 +5,7 @@ use App\Odd;
 use Goutte;
 use Goutte\client;
 use GuzzleHttp\Client as GuzzleClient;
-
+use Crawler;
 class CrawlerRepository implements CrawlerRepositoryInterface{
 	
   public function get()
@@ -28,7 +28,10 @@ class CrawlerRepository implements CrawlerRepositoryInterface{
            $goutteClient->setClient($guzzleClient);
 		   $jar = new \GuzzleHttp\Cookie\CookieJar;
 	      $crawler = $goutteClient->request('GET', 'http://fenxi.zgzcw.com/'.$mid.'/bjop/',['cookies' => $jar]);
-		  if($crawler->filter('title')->text()=='error...' ||$crawler->filter('title')->text()=='403 Forbidden'){return false;}
+		  if($crawler->filter('.zcw-header-wap')->filter('div')->count()==4){return false;}
+          if($crawler->filter('title')->text()=='error...' ||$crawler->filter('title')->text()=='403 Forbidden'){return false;}
+		   if($crawler->filter('.zcw-menu')->text()=='error...' ||$crawler->filter('title')->text()=='403 Forbidden'){return false;}
+		  if($crawler->filter('div')->eq(17)->attr('class')=='error'){dump($mid);return false;};
 	      $league=$crawler->filter('.minibars > a')->eq(2)->text();
 		  $match=new Match;
 		  $match->mid=$mid;//标识号
@@ -89,7 +92,7 @@ class CrawlerRepository implements CrawlerRepositoryInterface{
 					 if($odd_count==0){$odd->save();}
 					 else{$odd->update();}
 					dump ($odd->mid.' '.$odd->updatetime.' '.$odd->sheng.' '.$odd->ping.' '.$odd->fu);
-					sleep(rand(100,150)/100);
+					//sleep(rand(100,150)/100);
 					$url=$node->filter('td')->eq(5)->filter('a')->attr('href');
 			     	$url='http://fenxi.zgzcw.com'.$url;
 
@@ -130,26 +133,64 @@ class CrawlerRepository implements CrawlerRepositoryInterface{
 		  {
 			 $match->update();
 		  }
-		  return($mid.': '.'联赛:'.$match->time.' '.$match->league.'['.$match->round.']'.$match->team1.'vs'.$match->team2.$match->score);
+		  dump($mid.': '.'联赛:'.$match->time.' '.$match->league.'['.$match->round.']'.$match->team1.'vs'.$match->team2.$match->score);
 		  
 	  }
 	  catch(Exception $e)
 	  {
-		  select($mid);
+		  return false;
+		  //select($mid);
 	   //return $e;
 	  }
   }
   
-
-  public function getLeague($lid,$season)
+  /*
+  *文档读取，一个完整赛季mid获取，展示mid
+  */
+  public function getLeague($content)
   {
-     $goutteClient=new Client;
-	 $guzzleClient=new guzzleClient(array('timeout'=>60));
-	 $goutteClient->setClient($guzzleClient);
-	 $crawler = $goutteClient->request('GET','http://saishi.zgzcw.com/soccer/league/36/2011-2012/');
-	 //$linksCrawler = $crawler->selectLink('富勒姆');
-	 //$link = $linksCrawler->li
-	$uri=$crawler->filter('.box luncib > em')->eq(2)->text();
-	 dump($uri);
+    $goutteClient=new Client;
+	$crawler=new Crawler($content);
+	$crawler->filter('.zstab')->each(function ($node,$i) {
+	$node->filter('tbody > tr')->each(function($node2,$j){
+		$uri=$node2->filter('td')->eq(6)->filter('a')->attr('href');
+		$mid=explode('/',$uri)[3];
+		  dump($mid);
+		  $j++;
+		  dump('数'.$j);
+		});
+		$i++;
+		dump('轮次'.$i);
+	});
+  }
+  
+  /*
+  *文档读取，一个完整赛季mid获取，并通过mid爬虫获取数据
+  */
+  public function getFromLeague($content)
+  {
+	$goutteClient=new Client;
+	$crawler=new Crawler($content);
+	$crawler->filter('.zstab')->each(function ($node,$i) {
+	$node->filter('tbody > tr')->each(function($node2,$j){
+		$uri=$node2->filter('td')->eq(6)->filter('a')->attr('href');
+		$mid=explode('/',$uri)[3];
+		$count= Match::where('mid',$mid)->count();   
+		 if($count==0)
+		   {	
+		   $this->select($mid);
+		   sleep(rand(100,150)/100);
+		   $j++;
+		   dump($j);
+		   }
+		   else
+		   {
+			   dump($mid.'exist!');
+		   }
+		});
+		$i++;
+		dump('轮次'.$i);
+	});
+
   }
 }

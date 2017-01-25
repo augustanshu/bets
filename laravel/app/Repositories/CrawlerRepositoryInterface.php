@@ -6,6 +6,7 @@ interface CrawlerRepositoryInterface{
 	//public function select($start,$end);
 	public function select($match);
 	public function get();
-	public function getLeague($lid,$season);
+	public function getLeague($content);
+	public function getFromLeague($content);
 	
 }
