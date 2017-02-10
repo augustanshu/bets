@@ -225,7 +225,7 @@ class MasterController extends Controller
 			 if($sm->team2==$team){$points+=3;}		 
 		   }
 		}
-	     dump($points);
+	     dump($win . $draw . $lose .$season .$league .$round .'主队得分:'.$points.'客队得分:'.);
 	 }
 	 		
       	 //$matchs=DB::select('SELECT * FROM matches where matches.league=:league AND matches.season=:season AND matches.round<:round AND (team1=:team OR team2=:team) LIMIT 6 ',['league'=>$league,'season'=>$season,'round'=>$round,'team'=>$team]);
