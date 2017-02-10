@@ -10,8 +10,9 @@
 | to using a Closure or controller method. Build something great!
 |
 */
-
-Route::get('/{mid}','MasterController@showMaster');
+Route::get('/a','MasterController@analysis');
+Route::post('/analysis','MasterController@postanalysis');
+//Route::get('/{mid}','MasterController@showMaster');
 Route::get('/storage/see','MasterController@showStorage');
 Route::get('/match/{mid}','MasterController@seeMatch');
 Route::get('test','MasterController@test');

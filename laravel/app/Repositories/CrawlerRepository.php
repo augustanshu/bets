@@ -54,7 +54,20 @@ class CrawlerRepository implements CrawlerRepositoryInterface{
 		  $match->team1=$crawler->filter('.host-name > a')->text();//主队
 		  $match->team2=$crawler->filter('.visit-name >a')->text();//客队
 		  $match->score=$crawler->filter('.logoVs > .vs-score ')->text();//比分
-		  if(trim($match->score)!="VS"){$match->score=trim($crawler->filter('.logoVs > .vs-score >h1')->text());}
+		  if(trim($match->score)!="VS"){
+			  $match->score=trim($crawler->filter('.logoVs > .vs-score >h1')->text());
+			  $scores=explode(' - ',$match->score);
+			  if(count($scores)==2)
+			  {
+				  $home=$scores[0];
+				  $away=$scores[1];
+				  $match->score_home=$home;
+				  $match->score_away=$away;
+				  if($home==$away){$match->result="平";}
+				  elseif($home>$away){$match->result="胜";}
+				  elseif($home<$away){$match->result="负";}
+			  }
+		  }
 		  else{$match->score='-';}
 	      if($match->time > date("Y-m-d h:m:s")){$match->status="未";}
 		  else{$match->status="完";}

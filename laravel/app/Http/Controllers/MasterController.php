@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 use App\Repositories\CrawlerRepositoryInterface;
 use Illuminate\Http\Request;
 use App\Match;
+use App\Odd;
 use Goutte;
+use Illuminate\Support\Facades\DB;
 use GuzzleHttp\Client as GuzzleClient;
 use Illuminate\Support\Facades\Storage;
 class MasterController extends Controller
@@ -187,6 +189,27 @@ class MasterController extends Controller
 	{
 		echo $this->crawler->getLeague(36,2007);
 		 //http://symfony.com/doc/current/components/dom_crawler.html?any
-		 
 	}
+	public function analysis()
+	{
+		return view('analysis');
+	}
+    public function postanalysis(Request $request){
+
+	 $win=$request->input('win');
+	 $draw=$request->input('draw');
+	 $lose=$request->input('lose');
+	 //$m=Odd::where('sheng',$win)->where('ping',$draw)->where('fu',$lose)->where('init',1)->get()->match;
+	 //$matchs=DB::select('select A.league,A.season,A.round,A.score,A.team1,A.team2,A.result from matches as A left join odds as B on A.mid=B.mid WHERE B.sheng =:sheng and B.ping=:ping and B.fu =:fu and B.init=1 ORDER BY A.result',['sheng'=>$win,'ping'=>$draw,'fu'=>$lose]);	
+	 //foreach($matchs as $match)
+	// {
+		$league='法国甲级联赛';
+		$season='15-16';
+		$round=10;
+		$team='摩纳哥';
+		$matchs=DB::select('SELECT * FROM matches as A where A.league=:league and A.season=:season and A.round<:round AND (team1=:team1 OR team2=:team2) LIMIT 6',['league'=>$league,'season'=>$season,'round'=>$round,'team1'=>$team,'team2'=>$team]);
+	 //}
+	 dd($matchs);
+      	 //$matchs=DB::select('SELECT * FROM matches where matches.league=:league AND matches.season=:season AND matches.round<:round AND (team1=:team OR team2=:team) LIMIT 6 ',['league'=>$league,'season'=>$season,'round'=>$round,'team'=>$team]);
+    }
 }
