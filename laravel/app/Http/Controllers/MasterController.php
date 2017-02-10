@@ -200,16 +200,34 @@ class MasterController extends Controller
 	 $draw=$request->input('draw');
 	 $lose=$request->input('lose');
 	 //$m=Odd::where('sheng',$win)->where('ping',$draw)->where('fu',$lose)->where('init',1)->get()->match;
-	 //$matchs=DB::select('select A.league,A.season,A.round,A.score,A.team1,A.team2,A.result from matches as A left join odds as B on A.mid=B.mid WHERE B.sheng =:sheng and B.ping=:ping and B.fu =:fu and B.init=1 ORDER BY A.result',['sheng'=>$win,'ping'=>$draw,'fu'=>$lose]);	
-	 //foreach($matchs as $match)
-	// {
-		$league='法国甲级联赛';
-		$season='15-16';
-		$round=10;
-		$team='摩纳哥';
-		$matchs=DB::select('SELECT * FROM matches as A where A.league=:league and A.season=:season and A.round<:round AND (team1=:team1 OR team2=:team2) LIMIT 6',['league'=>$league,'season'=>$season,'round'=>$round,'team1'=>$team,'team2'=>$team]);
-	 //}
-	 dd($matchs);
+	 $matchs=DB::select('select A.league,A.season,A.round,A.score,A.team1,A.team2,A.result from matches as A left join odds as B on A.mid=B.mid WHERE B.sheng =:sheng and B.ping=:ping and B.fu =:fu and B.init=1 ORDER BY A.result',['sheng'=>$win,'ping'=>$draw,'fu'=>$lose]);	
+	 foreach($matchs as $match)
+	 {
+		$league=$match->league;
+		$season=$match->season;
+		$round=$match->round;
+		$team=$match->team1;
+		$points=0;
+		$point_home=0;
+		$point_away=0;
+		$goal=0;
+		$goal_home=0;
+		$goal_away=0;
+		$sms=DB::select('SELECT * FROM matches as A where A.league=:league and A.season=:season and A.round<:round AND (team1=:team1 OR team2=:team2) LIMIT 6',['league'=>$league,'season'=>$season,'round'=>$round,'team1'=>$team,'team2'=>$team]);
+		foreach($sms as $sm){
+		 if($sm->result=='胜'){
+			 if($sm->team1==$team){$points+=3;}			 
+		   }
+		 else if($sm->result=='平'){
+			 $points+=1;		 
+		   }
+		 else if($sm->result=='负'){
+			 if($sm->team2==$team){$points+=3;}		 
+		   }
+		}
+	     dump($points);
+	 }
+	 		
       	 //$matchs=DB::select('SELECT * FROM matches where matches.league=:league AND matches.season=:season AND matches.round<:round AND (team1=:team OR team2=:team) LIMIT 6 ',['league'=>$league,'season'=>$season,'round'=>$round,'team'=>$team]);
     }
 }
