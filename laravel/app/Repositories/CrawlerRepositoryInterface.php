@@ -2,6 +2,7 @@
 namespace App\Repositories;
 
 interface CrawlerRepositoryInterface{
+	public function MidList();
 	public function select($match);
 	public function get();
 	public function getall();

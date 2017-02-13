@@ -3,7 +3,7 @@
 @section('title','MyBets')
 
 @section('main')
-<!--
+
    <table class="table">
   <caption></caption>
   <thead>
@@ -20,7 +20,7 @@
   <tbody>
   @foreach( $matches as $m)
     <tr>
-      <th>{{$m->matchType}}</th>
+      <th>{{$m->league}}</th>
 	  <th>{{$m->round}}</th>
       <th>{{$m->time}}</th>
       <th>{{$m->status}}</th>
@@ -31,5 +31,5 @@
 	@endforeach
   </tbody>
 </table>
--->
+
 @endsection

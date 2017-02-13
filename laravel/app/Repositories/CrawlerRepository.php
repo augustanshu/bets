@@ -9,6 +9,17 @@ use GuzzleHttp\Client as GuzzleClient;
 use Crawler;
 class CrawlerRepository implements CrawlerRepositoryInterface{
 
+
+   public function MidList()
+	{
+     $this->getTerm();
+    $match=new Match;
+	$term=Term::where('term',date("Ymd"))->first();
+	//dump($term->mids);
+	$string_mids=$term->mids;
+	$array_mids=explode('/',$string_mids);
+    return $array_mids;
+   }
    /*
    /
   */
@@ -65,6 +76,7 @@ class CrawlerRepository implements CrawlerRepositoryInterface{
 			   $mid=$node->attr('matchid');
 			   $t=date("Ymd");
 				$term=Term::firstOrNew(['term'=>$t]);
+				
 				$array_mids=expLode('/',$term->mids);
 				array_push($array_mids,$mid);
 				$term->mids=implode('/',$array_mids);
