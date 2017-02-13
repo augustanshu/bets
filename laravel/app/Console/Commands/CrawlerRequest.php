@@ -11,12 +11,6 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Storage;
 class CrawlerRequest extends Command
 {
-    private $totalPageCount;
-    private $counter        = 1;
-    private $concurrency    = 7;  // 同时并发抓取
-
-    private $users = ['2102107', '2102109', '2102110', '2102111',
-                        '2102108', '2102113', '2102112'];
 
     protected $signature = 'test:crawler-request';
     protected $description = 'Command description';
@@ -66,7 +60,6 @@ class CrawlerRequest extends Command
 		foreach($files as $content)
 		{
 		  $content=Storage::get($content);
-		  //dump($content);
 		  $this->crawler->getFromLeague($content);
 		}	
 		
@@ -75,10 +68,6 @@ class CrawlerRequest extends Command
 
     public function countedAndCheckEnded()
     {
-        if ($this->counter < $this->totalPageCount){
-            $this->counter++;
-            return;
-        }
-        $this->info("end");
+
     }
 }

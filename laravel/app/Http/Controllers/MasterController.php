@@ -24,7 +24,11 @@ class MasterController extends Controller
      */
     public function index()
     {
-        //
+        $this->crawler->get();
+    }
+	public function indexall()
+    {
+        $this->crawler->getall();
     }
 
     /**
@@ -99,11 +103,7 @@ class MasterController extends Controller
 	*/
 	public function showMaster($mid)
 	{   
-	//$match=Match::where('mid','>','0')->orderBy('id','desc')->first();
-   // $mid=$match->mid+1;
-	echo $this->crawler->select($mid);
-	 
-     
+	echo $this->crawler->select($mid);     
 	}
 	
 	public function showStorage()
@@ -187,11 +187,11 @@ class MasterController extends Controller
 	}
 	public function test()
 	{
-		echo $this->crawler->getLeague(36,2007);
-		 //http://symfony.com/doc/current/components/dom_crawler.html?any
+		
 	}
 	public function analysis()
 	{
+		
 		return view('analysis');
 	}
     public function postanalysis(Request $request){
@@ -207,7 +207,9 @@ class MasterController extends Controller
 		$season=$match->season;
 		$round=$match->round;
 		$team=$match->team1;
+		$team2=$match->team2;
 		$points=0;
+		$points2=0;
 		$point_home=0;
 		$point_away=0;
 		$goal=0;
@@ -225,7 +227,19 @@ class MasterController extends Controller
 			 if($sm->team2==$team){$points+=3;}		 
 		   }
 		}
-	     dump($win . $draw . $lose .$season .$league .$round .'主队得分:'.$points.'客队得分:'.);
+		$sms=DB::select('SELECT * FROM matches as A where A.league=:league and A.season=:season and A.round<:round AND (team1=:team1 OR team2=:team2) LIMIT 6',['league'=>$league,'season'=>$season,'round'=>$round,'team1'=>$team2,'team2'=>$team2]);
+		foreach($sms as $sm){
+		 if($sm->result=='胜'){
+			 if($sm->team1==$team2){$points2+=3;}			 
+		   }
+		 else if($sm->result=='平'){
+			 $points+=1;		 
+		   }
+		 else if($sm->result=='负'){
+			 if($sm->team2==$team2){$points2+=3;}		 
+		   }
+		}
+	     dump($win .' '. $draw.' ' . $lose .' '.$season.' ' .$league.' ' .$round.' ' .'主队得分:'.$points.' '.'客队得分:'.$points2.'比分'.$match->score.' '.$match->result);
 	 }
 	 		
       	 //$matchs=DB::select('SELECT * FROM matches where matches.league=:league AND matches.season=:season AND matches.round<:round AND (team1=:team OR team2=:team) LIMIT 6 ',['league'=>$league,'season'=>$season,'round'=>$round,'team'=>$team]);
