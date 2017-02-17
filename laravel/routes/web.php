@@ -17,3 +17,5 @@ Route::post('/analysis','MasterController@postanalysis');
 Route::get('/storage/see','MasterController@showStorage');
 Route::get('/match/{mid}','MasterController@showMaster');
 Route::get('test','MasterController@test');
+Route::get('/matchList/{term}','MasterController@showMatchList');
+Route::get('/ft/{mid}','MasterController@freshMatchList');

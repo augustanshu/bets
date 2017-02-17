@@ -55,15 +55,13 @@ class CrawlerRequest extends Command
 		$this->crawler->getFromLeague($content);
 		*/
 		
-		
-		$files = Storage::allfiles('/match');
-		foreach($files as $content)
-		{
-		  $content=Storage::get($content);
-		  $this->crawler->getFromLeague($content);
-		}	
-		
-			   
+
+			$files = Storage::allfiles('/match');
+			foreach($files as $content)
+			{
+			  $content=Storage::get($content);
+			  $this->crawler->getFromLeague($content);
+			}	 
     }
 
     public function countedAndCheckEnded()

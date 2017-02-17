@@ -24,5 +24,6 @@ class AppServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->bind('App\Repositories\CrawlerRepositoryInterface','App\Repositories\CrawlerRepository');
+		 $this->app->bind('App\Repositories\MatchRepositoryInterface','App\Repositories\MatchRepository');
     }
 }

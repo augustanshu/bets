@@ -15,10 +15,16 @@ class CrawlerRepository implements CrawlerRepositoryInterface{
      $this->getTerm();
     $match=new Match;
 	$term=Term::where('term',date("Ymd"))->first();
-	//dump($term->mids);
 	$string_mids=$term->mids;
 	$array_mids=explode('/',$string_mids);
     return $array_mids;
+   }
+   public function MidList2($t)
+   {
+	 $term=Term::where('term',$t)->first();
+	 $string_mids=$term->mids;
+	 $array_mids=explode('/',$string_mids);
+     return $array_mids;
    }
    /*
    /
@@ -62,11 +68,11 @@ class CrawlerRepository implements CrawlerRepositoryInterface{
     public function getTerm(){
 		  $match=new Match;
 		  $term=new Term;
-	 	$t=date("Ymd");
-		 if($term->where('term',$t)->count()==0)
+	      $t=date("Ymd");
+		  if($term->where('term',$t)->count()==0)
 			{
 			  $goutteClient = new Client();
-			 $guzzleClient = new GuzzleClient(array(
+			  $guzzleClient = new GuzzleClient(array(
 			   'timeout' => 100,
 			   ));
 			   $goutteClient->setClient($guzzleClient);
@@ -74,12 +80,18 @@ class CrawlerRepository implements CrawlerRepositoryInterface{
 			   $crawler = $goutteClient->request('GET', 'http://live.zgzcw.com/',['cookies' => $jar]);
 			   $crawler->filter('.live-tab')->filter('tbody')->filter('.matchTr')->each(function($node){
 			   $mid=$node->attr('matchid');
-			   $t=date("Ymd");
+			    $t=date("Ymd");
 				$term=Term::firstOrNew(['term'=>$t]);
-				
+				if($term->mids=="")
+				{
+					$term->mids=$mid;
+				}
+				else{
 				$array_mids=expLode('/',$term->mids);
 				array_push($array_mids,$mid);
-				$term->mids=implode('/',$array_mids);
+				$term->mids=implode('/',$array_mids);	
+				}
+				
 			   $term->save();
 		    });
 			}
@@ -97,6 +109,8 @@ class CrawlerRepository implements CrawlerRepositoryInterface{
 		 $odd=new Odd;
 		 $odd->mid=$mid;
          $count= $match->where('mid',$mid)->count();
+		 if($count==0){$match=new Match;}
+		 else{$match=Match::firstOrCreate(['mid'=>$mid]);}
          $goutteClient = new Client();
          $guzzleClient = new GuzzleClient(array(
            'timeout' => 100,
@@ -114,7 +128,6 @@ class CrawlerRepository implements CrawlerRepositoryInterface{
 		   if($crawler->filter('.zcw-menu')->text()=='error...' ||$crawler->filter('title')->text()=='403 Forbidden'){return false;}
 		  if($crawler->filter('div')->eq(17)->attr('class')=='error'){dump($mid);return false;};
 	      $league=$crawler->filter('.minibars > a')->eq(2)->text();
-		  $match=new Match;
 		  $match->mid=$mid;//标识号
 		  $l=explode('20',$league);
 		  //联赛 赛季
@@ -150,7 +163,7 @@ class CrawlerRepository implements CrawlerRepositoryInterface{
 			  }
 		  }
 		  else{$match->score='-';}
-	      if($match->time > date("Y-m-d h:m:s")){$match->status="未";}
+	      if($match->time > date("Y-m-d H:m:s")){$match->status="未";}
 		  else{$match->status="完";}
 		  //if($crawler->filter('.bfyc-duizhen-l > .paiming-normal')->filter('dl')->eq(1)->filter('dd')->eq(5)->text()!="分")
 		  //{
@@ -250,6 +263,8 @@ class CrawlerRepository implements CrawlerRepositoryInterface{
 		 $odd=new Odd;
 		 $odd->mid=$mid;
          $count= $match->where('mid',$mid)->count();
+		  if($count==0){$match=new Match;}
+		 else{$match=Match::firstOrCreate(['mid'=>$mid]);}
          $goutteClient = new Client();
          $guzzleClient = new GuzzleClient(array(
            'timeout' => 100,
@@ -267,7 +282,6 @@ class CrawlerRepository implements CrawlerRepositoryInterface{
 		   if($crawler->filter('.zcw-menu')->text()=='error...' ||$crawler->filter('title')->text()=='403 Forbidden'){return false;}
 		  if($crawler->filter('div')->eq(17)->attr('class')=='error'){return false;};
 	      $league=$crawler->filter('.minibars > a')->eq(2)->text();
-		  $match=new Match;
 		  $match->mid=$mid;//标识号
 		  $l=explode('20',$league);
 		  //联赛 赛季
@@ -303,7 +317,8 @@ class CrawlerRepository implements CrawlerRepositoryInterface{
 			  }
 		  }
 		  else{$match->score='-';}
-	      if($match->time > date("Y-m-d h:m:s")){$match->status="未";}
+		 // dump(date("Y-m-d H:m:s"));
+	      if($match->time > date("Y-m-d H:m:s")){$match->status="未";}
 		  else{$match->status="完";}
 		  $crawler->filter('.data-main > table')->filter('tr')->each(function($node,$i){
 			     $company=$node->filter('td')->eq(1)->text();
@@ -357,7 +372,7 @@ class CrawlerRepository implements CrawlerRepositoryInterface{
 		  }
 		  else
 		  {
-			 $match->update();
+			  $match->update();
 		  }  
 	  }
 	  catch(Exception $e)

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Repositories\CrawlerRepositoryInterface;
+use App\Repositories\MatchRepositoryInterface;
 use Illuminate\Http\Request;
 use App\Match;
 use App\Odd;
@@ -13,33 +14,41 @@ class MasterController extends Controller
 {
 
 
-    public function __construct(CrawlerRepositoryInterface $crawler)
+    public function __construct(CrawlerRepositoryInterface $crawler,MatchRepositoryInterface $mr)
     {
       $this->crawler=$crawler;
+	  $this->mr=$mr;
     }
     /**
      * Display a listing of the resource.
-     *
+     *首页 
      * @return \Illuminate\Http\Response
      */
     public function index()
     {
-      //$this->crawler->get();
 	  $mids=$this->crawler->Midlist();
+	  $array_term=[];
 	  $array_match=[];
 	  $match=new Match();
-	 // dump($mids);
+	  $odd=new Odd();
 	  foreach($mids as $mid){
-		  
-	  $m=$match->where('mid',$mid)->first();
-      array_push($array_match,$m);
+	  if(!$m=$match->where('mid',$mid)->firstOrFail())
+	  {
+		  $this->crawler->selectNoDump($mid);
+	  }
+	  $o=$odd->where('mid',$mid)->where('init',1)->first();
+	  if($o!=null)
+	  {
+		  $m->sheng=$o->sheng;
+		  $m->ping=$o->ping;
+		  $m->fu=$o->fu;
+	  }
+		  array_push($array_match,$m);	   
 	  }
 	  $matches=$array_match;
-	  //dump($matches);
-	  return view('index',['matches'=>$matches]);
-
-	  
-
+	  $term=date("Ymd");
+	  array_push($array_term,date("Ymd")-4,date("Ymd")-3,date("Ymd")-2,date("Ymd")-1,date("Ymd")+0);
+	  return view('index',['matches'=>$matches,'terms'=>$array_term,'tterm'=>$term]);
     }
 	public function indexall()
     {
@@ -113,12 +122,14 @@ class MasterController extends Controller
     }
 	
 	/*
-	*首页显示数据
-	*
+	*分析数据
 	*/
 	public function showMaster($mid)
 	{   
-	echo $this->crawler->select($mid);     
+	  $match=$this->mr->matchMid($mid);
+	  $matches=$this->mr->matchAnalysis($match);
+	  return view('analysis',['mid'=>$mid,'matches'=>$matches,'match'=>$match]);
+	  
 	}
 	
 	public function showStorage()
@@ -202,7 +213,7 @@ class MasterController extends Controller
 	}
 	public function test()
 	{
-		
+		return view('test');
 	}
 	public function analysis()
 	{
@@ -214,9 +225,7 @@ class MasterController extends Controller
 	 $win=$request->input('win');
 	 $draw=$request->input('draw');
 	 $lose=$request->input('lose');
-	 //$m=Odd::where('sheng',$win)->where('ping',$draw)->where('fu',$lose)->where('init',1)->get()->match;
 	 $matchs=DB::select('select A.league,A.season,A.round,A.score,A.team1,A.team2,A.result from matches as A left join odds as B on A.mid=B.mid WHERE B.sheng =:sheng and B.ping=:ping and B.fu =:fu and B.init=1 ORDER BY A.result ',['sheng'=>$win,'ping'=>$draw,'fu'=>$lose]);	
-	 //dump($matchs);
 	 $COUNT_V=0;
 	 $COUNT_D=0;
 	 $COUNT_F=0;
@@ -240,13 +249,13 @@ class MasterController extends Controller
 	 		$sms=DB::select('SELECT * FROM matches as A where A.league=:league and A.season=:season and A.round<:round AND (team1=:team1 OR team2=:team2) LIMIT 6',['league'=>$league,'season'=>$season,'round'=>$round,'team1'=>$team,'team2'=>$team]);
 	 		foreach($sms as $sm){
 	 		 if($sm->result=='胜'){
-	 			 if($sm->team1==$team){$points+=3;}			 
+	 			 if($sm->team1==$team){$points+=3;$goal+=$sm->score_home;}			 
 	 		   }
 	 		 else if($sm->result=='平'){
-	 			 $points+=1;		 
+	 			 $points+=1;$goal+=$sm->score_home;		 
 	 		   }
 	 		 else if($sm->result=='负'){
-	 			 if($sm->team2==$team){$points+=3;}		 
+	 			 if($sm->team2==$team){$points+=3;$goal+=$sm->score_away;}		 
 	 		   }
 	 		}
 	 		$sms=DB::select('SELECT * FROM matches as A where A.league=:league and A.season=:season and A.round<:round AND (team1=:team1 OR team2=:team2) LIMIT 6',['league'=>$league,'season'=>$season,'round'=>$round,'team1'=>$team2,'team2'=>$team2]);
@@ -263,9 +272,62 @@ class MasterController extends Controller
 	 		}
 	     dump($win .' '. $draw.' ' . $lose .' '.$season.' ' .$league.' ' .$round.'--' .'主队得分:'.$points.' '.'客队得分:'.$points2.'--'.'比分'.$match->score.' '.$match->result);
 	 }
-	 		
-	       	 //$matchs=DB::select('SELECT * FROM matches where matches.league=:league AND matches.season=:season AND matches.round<:round AND (team1=:team OR team2=:team) LIMIT 6 ',['league'=>$league,'season'=>$season,'round'=>$round,'team'=>$team]);
 	    dump("胜".$COUNT_V.' '."平".$COUNT_D.' '."负".$COUNT_F);
 
 		  }
+	/*
+	*显示指定期数赛事
+	*/
+	public function showMatchList($term){
+	  //$term=$request->input('select');
+	  $mids=$this->crawler->Midlist2($term);
+	  $array_term=[];
+	  $array_match=[];
+	  $match=new Match();
+	  $odd=new Odd();
+	  foreach($mids as $mid){
+	  if($match->where('mid',$mid)->count()==0)
+	  {
+		  $this->crawler->selectNoDump($mid);
+	  }
+	  $m=$match->where('mid',$mid)->first();
+	  $o=$odd->where('mid',$mid)->where('init',1)->first();
+	   if($o!=null)
+	  {
+		  $m->sheng=$o->sheng;
+		  $m->ping=$o->ping;
+		  $m->fu=$o->fu;
+	  }
+      array_push($array_match,$m);	  
+	  }
+	  $matches=$array_match;
+	  array_push($array_term,date("Ymd")-4,date("Ymd")-3,date("Ymd")-2,date("Ymd")-1,date("Ymd")+0);
+	  return view('matchList',['matches'=>$matches,'terms'=>$array_term]);
+
+	}
+	/*
+	*更新指定期数赛事
+	*/
+	public function freshMatchList($mid){
+	   $mids=$this->crawler->Midlist2($mid);
+	  $array_term=[];
+	  $array_match=[];
+	  $match=new Match();
+	  $odd=new Odd();
+	  foreach($mids as $mid){
+      $this->crawler->selectNoDump($mid);
+	  $m=$match->where('mid',$mid)->first();
+	  $o=$odd->where('mid',$mid)->where('init',1)->first();
+	  if($o!=null)
+	  {
+		  $m->sheng=$o->sheng;
+		  $m->ping=$o->ping;
+		  $m->fu=$o->fu;
+	  }
+		  array_push($array_match,$m);	   
+	  }
+	  $matches=$array_match;
+	  array_push($array_term,date("Ymd")-4,date("Ymd")-3,date("Ymd")-2,date("Ymd")-1,date("Ymd")+0);
+	  return view('matchList',['matches'=>$matches,'terms'=>$array_term]);
+	}
 }
