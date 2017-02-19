@@ -5,6 +5,7 @@
 <link rel="stylesheet" type="text/css" href="/admin/css/dep.css">
 <script src="/admin/js/dep.js"></script>
 <link rel="stylesheet" type="text/css" href="http://cdn.datatables.net/1.10.13/css/jquery.dataTables.css">
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
  
 <!-- jQuery -->
 <script type="text/javascript" charset="utf8" src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
@@ -22,4 +23,7 @@
 	</body>
 @yield('script')
 @yield('css')
+<style>
+
+</style>
 </html>

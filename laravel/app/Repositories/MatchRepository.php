@@ -13,7 +13,8 @@ class MatchRepository implements MatchRepositoryInterface{
 		$m=$match->where('mid',$mid)->first();
 		return $m;
 	}
-	 public function matchAnalysis(Match $m)
+	
+	public function matchAnalysis(Match $m)
 	 {
 	 $odd=Match::find($m->id)->odd;
 	 $mid=$m->mid;
@@ -85,4 +86,9 @@ class MatchRepository implements MatchRepositoryInterface{
 	    //dump("胜".$COUNT_V.' '."平".$COUNT_D.' '."负".$COUNT_F);
           return $mas;
 		  }
+
+    public function getodds($mid)
+	{
+	 return  Odd::where('mid',$mid)->get();
+	}
 }

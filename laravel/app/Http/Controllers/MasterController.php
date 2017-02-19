@@ -32,10 +32,11 @@ class MasterController extends Controller
 	  $match=new Match();
 	  $odd=new Odd();
 	  foreach($mids as $mid){
-	  if(!$m=$match->where('mid',$mid)->firstOrFail())
+	  if($match->where('mid',$mid)->count()==0)
 	  {
 		  $this->crawler->selectNoDump($mid);
 	  }
+	  $m=$match->where('mid',$mid)->first();
 	  $o=$odd->where('mid',$mid)->where('init',1)->first();
 	  if($o!=null)
 	  {
@@ -128,7 +129,8 @@ class MasterController extends Controller
 	{   
 	  $match=$this->mr->matchMid($mid);
 	  $matches=$this->mr->matchAnalysis($match);
-	  return view('analysis',['mid'=>$mid,'matches'=>$matches,'match'=>$match]);
+	  $odds=$this->mr->getodds($mid);
+	  return view('analysis',['mid'=>$mid,'matches'=>$matches,'match'=>$match,'odds'=>$odds]);
 	  
 	}
 	
@@ -315,8 +317,12 @@ class MasterController extends Controller
 	  $match=new Match();
 	  $odd=new Odd();
 	  foreach($mids as $mid){
-      $this->crawler->selectNoDump($mid);
-	  $m=$match->where('mid',$mid)->first();
+		 $m=$match->where('mid',$mid)->first();
+		  if($m->result=='--')
+		  {
+           $this->crawler->selectNoDump($mid);
+		   $m=$match->where('mid',$mid)->first();
+		  }
 	  $o=$odd->where('mid',$mid)->where('init',1)->first();
 	  if($o!=null)
 	  {

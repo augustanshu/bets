@@ -42,7 +42,7 @@
 					<th>{{$m->team1}}</th>
 					<th>{{$m->team2}}</th>
 					<th>{{$m->sheng}}/{{$m->ping}}/{{$m->fu}}</th>
-					<th><a class="btn btn-default" href="/match/{{$m->mid}}" role="button">See</a></th>
+					<th><a class="btn btn-default" target="_blank" href="/match/{{$m->mid}}" role="button">See</a></th>
 				</tr>
 			@endforeach
 			</tbody>

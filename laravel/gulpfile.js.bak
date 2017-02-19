@@ -14,7 +14,6 @@ require('laravel-elixir-vue');
  */
 var jsPlugins = [
     '../dep/jquery/dist/jquery.min.js'
-	'../dep/bootstrap/dist/bootstrap.min.js'
 ];
 
 var cssPlugins = [
