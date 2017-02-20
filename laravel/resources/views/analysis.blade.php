@@ -22,6 +22,10 @@
 			<h5>客6轮进球:{{$match->goal2}}</h5>
 			<h5>主6轮积分:{{$match->points}}</h5>
 			<h5>客6轮积分:{{$match->points2}}</h5>
+		   <h5>主:{{$match->fenshu}}</h5>
+			<h5>客:{{$match->fenshu2}}</h5>
+		   <h5>主:{{$match->fenshuu}}</h5>
+			<h5>客:{{$match->fenshuu2}}</h5>
 			@endif
 			@endforeach
 			</a>
@@ -38,7 +42,7 @@
     <thead>
         <tr>
             <th>赛事</th>
-            <th >轮次</th>
+            <th>轮次</th>
 			<th>时间</th>
 			<th>主队</th>
 			<th>客队</th>
@@ -48,6 +52,11 @@
 			<th>客6轮进球</th>
 			<th>主6轮积分</th>
 			<th>客6轮积分</th>
+			<th>主</th>
+			<th>客</th>
+			<th>主2</th>
+			<th>客2</th>
+			<th>MID</th>
 			
         </tr>
     </thead>
@@ -64,6 +73,10 @@
 			<th>客6轮进球</th>
 			<th>主6轮积分</th>
 			<th>客6轮积分</th>
+			<th>主</th>
+			<th>客</th>
+			<th>主2</th>
+			<th>客2</th>
             </tr>
 		
         </tfoot>
@@ -82,6 +95,11 @@
 		    <th>{{$match->goal2}}</th>
            <th>{{$match->points}}</th>
 		    <th>{{$match->points2}}</th>
+			 <th>{{$match->fenshu}}</th>
+		    <th>{{$match->fenshu2}}</th>
+			 <th>{{$match->fenshuu}}</th>
+		    <th>{{$match->fenshuu2}}</th>
+			 <th>{{$match->mid}}</th>
         </tr>
 	   
 		@endif

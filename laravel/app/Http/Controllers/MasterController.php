@@ -127,10 +127,11 @@ class MasterController extends Controller
 	*/
 	public function showMaster($mid)
 	{   
+	dump('0-'.date('H:m:s'));
 	  $match=$this->mr->matchMid($mid);
 	  $matches=$this->mr->matchAnalysis($match);
 	  $odds=$this->mr->getodds($mid);
-	  return view('analysis',['mid'=>$mid,'matches'=>$matches,'match'=>$match,'odds'=>$odds]);
+	  //return view('analysis',['mid'=>$mid,'matches'=>$matches,'match'=>$match,'odds'=>$odds]);
 	  
 	}
 	
@@ -215,7 +216,8 @@ class MasterController extends Controller
 	}
 	public function test()
 	{
-		return view('test');
+		//return view('test');
+		dump($this->mr->getfenshu0(2.8,3,3));
 	}
 	public function analysis()
 	{
