@@ -1,7 +1,7 @@
 <html>
 <head>
 <title>@yield('title')</title>
-<link rel="shortcut icon" href="favicon.ico">
+<link rel="shortcut icon" href="/favicon.ico">
 <link rel="stylesheet" type="text/css" href="/admin/css/dep.css">
 <script src="/admin/js/dep.js"></script>
 <link rel="stylesheet" type="text/css" href="http://cdn.datatables.net/1.10.13/css/jquery.dataTables.css">

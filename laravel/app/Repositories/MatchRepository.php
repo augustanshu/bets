@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 
 class MatchRepository implements MatchRepositoryInterface{
 
+
 	public function matchMid($mid)
 	{
 		$match=new Match();
@@ -16,7 +17,7 @@ class MatchRepository implements MatchRepositoryInterface{
 	
 	public function matchAnalysis(Match $m)
 	 {
-	  //dump('1-'.date('H:m:s'));
+	 $ep=3;
 	 $odd=Match::find($m->id)->odd;
 	 $mid=$m->mid;
 	 $ma=new Match();
@@ -29,9 +30,7 @@ class MatchRepository implements MatchRepositoryInterface{
 	 $COUNT_D=0;
 	 $COUNT_F=0;
 	 foreach($matchs as $match)
-	 {
-		 //dump($match->team1.$match->team2.$match->round);
-		   // dump('2-'.date('H:m:s'));
+	 {      //dump($match->team1.$match->team2);
 		    if($match->result=="胜"){$COUNT_V++;}
 			if($match->result=="平"){$COUNT_D++;}
 			if($match->result=="负"){$COUNT_F++;}
@@ -47,7 +46,9 @@ class MatchRepository implements MatchRepositoryInterface{
 			$fenshu=0;
 			$fenshu2=0;
 			$fenshuu=0;
-			$fenshuu2=0;			
+			$fenshuu2=0;
+			$qiwang=0;
+			$qiwang2=0;			
 	 		$points2=0;
 	 		$point_home=0;
 	 		$point_away=0;
@@ -56,16 +57,15 @@ class MatchRepository implements MatchRepositoryInterface{
 	 		$goal_home=0;
 	 		$goal_away=0;
 	 		$sms=DB::select('SELECT * FROM matches as A left join odds as B on A.mid=B.mid where A.league=:league and A.season=:season and A.time<:time AND (team1=:team1 OR team2=:team2) AND B.init=1 ORDER BY A.time desc  LIMIT 6',['league'=>$league,'season'=>$season,'time'=>$mtime,'team1'=>$team,'team2'=>$team]);
-			//dump($sms);
 	 		foreach($sms as $sm){
-				// dump('4-'.date('H:m:s'));
 			$f=$this->getfenshu0($sm->sheng,$sm->ping,$sm->fu);
 			$f2=$this->getfenshu1($sm->sheng,$sm->ping,$sm->fu);
-			//dump($this->getpeifu($sm->sheng,$sm->ping,$sm->fu));
-			//dump($this->getgailv($sm->sheng,$sm->ping,$sm->fu));
-			//dump($f);
+			$q=$this->getqiwang($sm->sheng,$sm->ping,$sm->fu);
+			//dump($q);
+			if($sm->team1==$team){$qiwang+=$q[0];}
+			else{$qiwang+=$q[1];}
 	 		 if($sm->result=='胜'){
-	 			 if($sm->team1==$team){$points+=3;$goal+=$sm->score_home;$fenshu+=$f[0][0];$fenshuu+=$f2[0][0];}	
+	 			 if($sm->team1==$team){$points+=$ep;$goal+=$sm->score_home;$fenshu+=$f[0][0];$fenshuu+=$f2[0][0];}	
                  else{$goal+=$sm->score_away;}				 
 	 		   }
 	 		 else if($sm->result=='平'){
@@ -74,17 +74,18 @@ class MatchRepository implements MatchRepositoryInterface{
 				 else{$fenshu+=$f[1][1];$fenshuu+=$f2[1][1];}	 
 	 		   }
 	 		 else if($sm->result=='负'){
-	 			 if($sm->team2==$team){$points+=3;$goal+=$sm->score_away;$fenshu+=$f[1][0];$fenshuu+=$f2[1][0];}
+	 			 if($sm->team2==$team){$points+=$ep;$goal+=$sm->score_away;$fenshu+=$f[1][0];$fenshuu+=$f2[1][0];}
                  else{$goal+=$sm->score_home;}				 
 	 		   }
 	 		}
 	 		$sms=DB::select('SELECT * FROM matches as A left join odds as B on A.mid=B.mid where A.league=:league and A.season=:season and A.time<:time AND (team1=:team1 OR team2=:team2) AND B.init=1 ORDER BY A.time desc  LIMIT 6',['league'=>$league,'season'=>$season,'time'=>$mtime,'team1'=>$team2,'team2'=>$team2]);
-			//dump($sms);
 	 		foreach($sms as $sm){
-				// dump('5-'.date('H:m:s'));
 			$f=$this->getfenshu0($sm->sheng,$sm->ping,$sm->fu);
+			$q=$this->getqiwang($sm->sheng,$sm->ping,$sm->fu);
+			if($sm->team1==$team2){$qiwang2+=$q[0];}
+			else{$qiwang2+=$q[1];}
 	 		 if($sm->result=='胜'){
-	 			 if($sm->team1==$team2){$points2+=3;$goal2+=$sm->score_home;$fenshu2+=$f[0][0];$fenshuu2+=$f2[0][0];}	
+	 			 if($sm->team1==$team2){$points2+=$ep;$goal2+=$sm->score_home;$fenshu2+=$f[0][0];$fenshuu2+=$f2[0][0];}	
                  else{$goal2+=$sm->score_away;}					 
 	 		   }
 	 		 else if($sm->result=='平'){
@@ -93,11 +94,10 @@ class MatchRepository implements MatchRepositoryInterface{
 				 else{$fenshu2+=$f[1][1];$fenshuu2+=$f2[1][1];}				 
 	 		   }
 	 		 else if($sm->result=='负'){
-	 			 if($sm->team2==$team2){$points2+=3;$goal2+=$sm->score_away;$fenshu2+=$f[1][0];$fenshuu2+=$f2[1][0];}		
+	 			 if($sm->team2==$team2){$points2+=$ep;$goal2+=$sm->score_away;$fenshu2+=$f[1][0];$fenshuu2+=$f2[1][0];}		
                 else{$goal2+=$sm->score_away;}					 
 	 		   }
 	 		}
-			//dump($points);
 			$match->points=$points;
 			$match->points2=$points2;
 			$match->goal=$goal;
@@ -106,10 +106,12 @@ class MatchRepository implements MatchRepositoryInterface{
 			$match->fenshu2=$fenshu2;
 			$match->fenshuu=$fenshuu;
 			$match->fenshuu2=$fenshuu2;
-			//dump($match);
+			$match->qiwang=$qiwang;
+			$match->qiwang2=$qiwang2;
+			$match->percent=$qiwang==0?'none':number_format($points/$qiwang,2);
+			$match->percent2=$qiwang2==0?'none':number_format($points2/$qiwang2,2);
 			array_push($mas,$match);
 	  }
-	  	 dump('3-'.date('H:m:s'));
           return $mas;
 		  }
 	 
@@ -134,6 +136,7 @@ class MatchRepository implements MatchRepositoryInterface{
 	}
 	public function getfenshu0($w,$d,$l)
 	{
+		$ep=3;
 	 $gailv=$this->getgailv($w,$d,$l);
 	 /*
 	 $w_home=3+3*(1-$gailv[0]);
@@ -141,19 +144,28 @@ class MatchRepository implements MatchRepositoryInterface{
 	 $d_home=$gailv[0]>=$gailv[2]?1-$gailv[1]:1+$gailv[1];
 	 $d_away=$gailv[0]>=$gailv[2]?1+$gailv[1]:1-$gailv[1];
 	 */
-	 $w_home=(number_format(2+2*(1-$gailv[0]),2));
-	 $w_away=(number_format(2+2*(1-$gailv[2]),2));
+	 $w_home=(number_format($ep+$ep*(1-$gailv[0]),2));
+	 $w_away=(number_format($ep+$ep*(1-$gailv[2]),2));
 	 $d_home=(number_format($gailv[0]>=$gailv[2]?$gailv[1]:1+$gailv[1],2));
 	 $d_away=(number_format($gailv[0]>=$gailv[2]?1+$gailv[1]:$gailv[1],2));
 	 return [[$w_home,$d_home,0],[$w_away,$d_away,0]];
 	}
+	
 	public function getfenshu1($w,$d,$l)
 	{
 	 $gailv=$this->getgailv($w,$d,$l);
+	 
 	 $w_home=(number_format(3+2*(1-$gailv[0]),2));
 	 $w_away=(number_format(3+2*(1-$gailv[2]),2));
 	 $d_home=(number_format($gailv[0]>=$gailv[2]?1+$gailv[1]:1+$gailv[1],2));
 	 $d_away=(number_format($gailv[0]>=$gailv[2]?1+$gailv[1]:1+$gailv[1],2));
+	 
 	 return [[$w_home,$d_home,0],[$w_away,$d_away,0]];
+	}
+	public function getqiwang($w,$d,$l)
+	{
+		$ep=3;
+	 $gailv=$this->getgailv($w,$d,$l);
+	 return $qiwang=[number_format($gailv[0]*$ep,2)+number_format($gailv[1],2),number_format($gailv[2]*$ep,2)+number_format($gailv[1],2)];
 	}
 }
