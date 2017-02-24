@@ -188,20 +188,9 @@
 	});
 	function format ( d ) {
     // `d` is the original data object for the row
-    return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
-        '<tr>'+
-            '<td>Full name:</td>'+
-            '<td>'+d[18]+'</td>'+
-        '</tr>'+
-        '<tr>'+
-            '<td>Extension number:</td>'+
-            '<td>'+d.extn+'</td>'+
-        '</tr>'+
-        '<tr>'+
-            '<td>Extra info:</td>'+
-            '<td>And any further details here (images etc)...</td>'+
-        '</tr>'+
-    '</table>';
+    return '<table class=ar'+d[18]+'>'+
+
+    '</div>';
    }
 
 	 $('#table_match tbody').on('click', 'th.details-control', function () {
@@ -212,11 +201,14 @@
             // This row is already open - close it
             row.child.hide();
             tr.removeClass('shown');
+			
         }
         else {
             // Open this row
             row.child( format(data) ).show();
             tr.addClass('shown');
+			var l=$('.ar'+data[18]+'').length;
+			 $('.ar'+data[18]+'').load('{{URL::to('/match/chart')}}'+'/'+data[18]);
         }
     } );
 }(jQuery));
