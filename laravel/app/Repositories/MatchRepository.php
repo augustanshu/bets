@@ -5,7 +5,7 @@ use App\Odd;
 use App\Term;
 use Illuminate\Support\Facades\DB;
 
-class MatchRepository implements MatchRepositoryInterface{
+class MatchRepository  implements MatchRepositoryInterface{
 
 
 	public function matchMid($mid)
@@ -78,7 +78,7 @@ class MatchRepository implements MatchRepositoryInterface{
                  else{$goal+=$sm->score_home;}				 
 	 		   }
 	 		}
-	 		$sms=DB::select('SELECT * FROM matches as A left join odds as B on A.mid=B.mid where A.league=:league and A.season=:season and A.time<:time AND (team1=:team1 OR team2=:team2) AND B.init=1 ORDER BY A.time desc  LIMIT 6',['league'=>$league,'season'=>$season,'time'=>$mtime,'team1'=>$team2,'team2'=>$team2]);
+	 		$sms=DB::select('SELECT * FROM matches as A left join odds as B on A.mid=B.mid where A.league=:league and A.season=:season and A.time<:time AND (team1=:team1 OR team2=:team2) AND B.init=1 ORDER BY A.time desc  LIMIT 6',['league'=>$league,'season'=>$season,'time'=>$mtime,'team1'=>$team2,'team2'=>$team2]); 
 	 		foreach($sms as $sm){
 			$f=$this->getfenshu0($sm->sheng,$sm->ping,$sm->fu);
 			$q=$this->getqiwang($sm->sheng,$sm->ping,$sm->fu);
@@ -167,5 +167,23 @@ class MatchRepository implements MatchRepositoryInterface{
 		$ep=3;
 	 $gailv=$this->getgailv($w,$d,$l);
 	 return $qiwang=[number_format($gailv[0]*$ep,2)+number_format($gailv[1],2),number_format($gailv[2]*$ep,2)+number_format($gailv[1],2)];
+	}
+	public function getSeasonMatch($team1,$season,$league)
+	{
+		$matches=DB::select('select A.mid,A.league,A.season,A.round,A.score,A.time,A.team1,A.team2,A.result ,B.sheng,B.ping,B.fu from matches as A left join odds as B on A.mid=B.mid WHERE A.league=:league and A.season=:season and (A.team1=:team1 or A.team2=:team2) and B.init=1  ORDER BY A.round',['league'=>$league,'season'=>$season,'team1'=>$team1,'team2'=>$team1]);
+		$qw=0;
+		$point=0;
+		$count=count($matches);
+		foreach($matches as $match)
+		{
+			$q=$this->getqiwang($match->sheng,$match->ping,$match->fu);
+			if($match->team1==$team1){$qw+=$q[0];}
+			else{$qw+=$q[1];}
+			if($match->result=="胜"&$match->team1==$team1){$point+=3;}
+			elseif($match->result=="负"&$match->team2==$team1){$point+=3;}
+			elseif($match->result=="平"){$point+=1;}
+		}
+		$percent=$qw==0?0:number_format($point/$qw,2);
+		return ['赛事'=>$league,'赛季'=>$season,'球队'=>$team1,'期望'=>$qw,'实际分数'=>$point,'qwz'=>$percent,'round'=>$count];
 	}
 }

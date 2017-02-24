@@ -23,7 +23,4 @@
 	</body>
 @yield('script')
 @yield('css')
-<style>
-
-</style>
 </html>

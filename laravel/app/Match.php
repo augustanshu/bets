@@ -12,4 +12,8 @@ class Match extends Model
 	 {
 		 return $this->hasOne('App\Odd','mid','mid');
 	 }
+	 public function getRouteKeyName()
+	 {
+		 return 'mid';
+	 }
 }

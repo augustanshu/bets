@@ -13,12 +13,14 @@ require('laravel-elixir-vue');
  |
  */
 var jsPlugins = [
-    '../dep/jquery/dist/jquery.min.js'
-	'../dep/bootstrap/dist/bootstrap.min.js'
+    '../dep/jquery/dist/jquery.min.js',
+	'../dep/bootstrap/dist/js/bootstrap.min.js',
+	'../dep/chart.js/dist/Chart.min.js'
+	
 ];
 
 var cssPlugins = [
-    '../dep/bootstrap/dist/css/bootstrap.min.css'
+    '../dep/bootstrap/dist/css/bootstrap.min.css',
 ];
 
 elixir(function(mix){

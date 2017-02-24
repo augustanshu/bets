@@ -11,8 +11,9 @@
 			href="#collapseOne" style="display:flex;flex-direction:row;justify-content:space-between;text-decoration:none" >
 			@foreach($matches as $match)
 			@if($match->mid==$mid)
+			<h5 id="mid" name={{$mid}}></h5>
 			<h5>{{$match->league}}</h5>
-			<h5>轮次{{$match->round}}</h5>
+			<h5>{{$match->round}}</h5>
 			<h5>{{$match->time}}</h5>
 			<h5>主:{{$match->team1}}</h5>
 			<h5>客:{{$match->team2}}</h5>
@@ -23,7 +24,7 @@
 			<h5 class="match-header-point">主积分:{{$match->points}}</h5>
 			<h5 class="match-header-point">客积分:{{$match->points2}}</h5>
 			<h5 class="match-header-percent">主期望:{{$match->qiwang}}|{{$match->percent}}</h5>
-			<h5 class="match-header-percent">主期望:{{$match->qiwang2}}|{{$match->percent2}}</h5>
+			<h5 class="match-header-percent">客期望:{{$match->qiwang2}}|{{$match->percent2}}</h5>
 		    <h5 class="match-header-fenshu">主分:{{$match->fenshu}}</h5>
 			<h5 class="match-header-fenshu">客分:{{$match->fenshu2}}</h5>
 		    <!--<h5>主:{{$match->fenshuu}}</h5>
@@ -33,7 +34,9 @@
 			</a>
 		</h4>
 	</div>
-		<div id="collapseOne" class="panel-collapse collapse in">			
+		<div id="collapseOne" class="panel-collapse collapse in">
+          <li class="list-group-item" style="display:flex;flex-direction:row"> <a id="chartbtn" style="float:right" type="button" data-toggle="collapse" href="#collapseTwo">析</a>
+            <div class="ar" style="width:40%" ></div></li>		  
 				@foreach($odds as $odd)
 				<li class="list-group-item" style="display:flex;flex-direction:row">{{$odd->sheng}}/{{$odd->ping}}/{{$odd->fu}}----{{$odd->updatetime}}</li>
 				@endforeach
@@ -43,6 +46,7 @@
 	<table id="table_match" class="display" style="table-layout:fixed; width:120%" >
     <thead>
         <tr>
+		    <th></th>
             <th>赛事</th>
             <th>轮次</th>
 			<th>时间</th>
@@ -68,6 +72,7 @@
     </thead>
 	       <tfoot>
             <tr>
+		    <th></th>
             <th>赛事</th>
             <th>轮次</th>
 			<th>时间</th>
@@ -95,6 +100,7 @@
 	@foreach($matches as $match)
 	   @if($match->mid!=$mid)
         <tr>
+	<th class="details-control"><button>+</button></th>
             <th>{{$match->league}}</th>
            <th>{{$match->round}}</th>
 		    <th>{{$match->time}}</th>
@@ -114,7 +120,7 @@
 		    <th>{{$match->percent2}}</th>
 			 <th>{{$match->fenshu}}</th>
 		    <th>{{$match->fenshu2}}</th>
-			 <th>{{$match->mid}}</th>
+			 <th data-name="{{$match->mid}}">{{$match->mid}}</th>
         </tr>
 	   
 		@endif
@@ -134,12 +140,12 @@
 
     // DataTable
     var table = $('#table_match').DataTable({
-		"autoWidth": false,
-	     "scrollY": 400,
-         "scrollX": true,
+        "autoWidth": false,
+        "scrollY": 400,
+        "scrollX": true,
 	   "columnDefs": [
       {
-        "targets": [ 2 ],
+        "targets": [ 3 ],
 		"width":'10%'
         //"visible": false,
         //"searchable": false
@@ -149,7 +155,11 @@
 	  "width":'5%'
 	  },
 	  {
-	  "targets":[5],
+	  "targets":[0],
+	  "width":'2%'
+	  },
+	  {
+	  "targets":[6],
 	  "width":'5%'
 	  }
 	  ]
@@ -169,6 +179,46 @@
 	  $('#table_match tbody').on( 'click', 'tr', function () {
         $(this).toggleClass('selected');
     } );
+	$('#chartbtn').on('click',function(){
+		if($('#myChart').length==0)
+		{
+			var mid=$("#mid").attr('name');
+		 $('.ar').load('{{URL::to('/match/chart')}}'+'/'+mid);
+		}
+	});
+	function format ( d ) {
+    // `d` is the original data object for the row
+    return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">'+
+        '<tr>'+
+            '<td>Full name:</td>'+
+            '<td>'+d[18]+'</td>'+
+        '</tr>'+
+        '<tr>'+
+            '<td>Extension number:</td>'+
+            '<td>'+d.extn+'</td>'+
+        '</tr>'+
+        '<tr>'+
+            '<td>Extra info:</td>'+
+            '<td>And any further details here (images etc)...</td>'+
+        '</tr>'+
+    '</table>';
+   }
+
+	 $('#table_match tbody').on('click', 'th.details-control', function () {
+        var tr = $(this).closest('tr');
+        var row = table.row( tr );
+		var data = table.row( $(this)).data();
+        if ( row.child.isShown() ) {
+            // This row is already open - close it
+            row.child.hide();
+            tr.removeClass('shown');
+        }
+        else {
+            // Open this row
+            row.child( format(data) ).show();
+            tr.addClass('shown');
+        }
+    } );
 }(jQuery));
 </script>
 @endsection
@@ -182,7 +232,7 @@
 	justify-content:space-between;
 }
 .match-header h5{
-	margin-right:4px
+	margin-right:2px
 }
 .match-header-goal{
 	color:red;

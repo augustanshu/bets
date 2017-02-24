@@ -1,7 +1,7 @@
 <?php
 namespace App\Repositories;
 use App\Match;
-interface MatchRepositoryInterface{
+interface MatchRepositoryInterface {
 
 	public function matchMid($mid);
 	public function matchAnalysis(Match $m);
@@ -11,4 +11,5 @@ interface MatchRepositoryInterface{
 	public function getfenshu0($w,$d,$l);
 	public function getfenshu1($w,$d,$l);
 	public function getqiwang($w,$d,$l);
+	public function getSeasonMatch($team,$season,$league);
 }

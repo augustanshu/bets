@@ -16,6 +16,12 @@ Route::get('/a','MasterController@analysis');
 Route::post('/analysis','MasterController@postanalysis');
 Route::get('/storage/see','MasterController@showStorage');
 Route::get('/match/{mid}','MasterController@showMaster');
-Route::get('test','MasterController@test');
+Route::post('/match/{mid}','MasterController@postMid');
+Route::group(['prefix'=>'test'],function(){
+	Route::get('/','MasterController@test');
+	Route::get('/{id}','MasterController@showChart');
+});
+
 Route::get('/matchList/{term}','MasterController@showMatchList');
+Route::get('/match/chart/{mid}','MasterController@showChart');
 Route::get('/ft/{mid}','MasterController@freshMatchList');

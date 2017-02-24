@@ -4,6 +4,9 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use App\Match;
+use App\NoOdd;
+use App\Odd;
+use DB;
 class AddResults extends Command
 {
     /**
@@ -38,6 +41,7 @@ class AddResults extends Command
     public function handle()
     {
 		//php artisan command:add-results
+		/*
       $matches=Match::where('id','=','2')->get();
 	  Match::chunk(2, function ($matches) {
       foreach ($matches as $match) {
@@ -58,5 +62,20 @@ class AddResults extends Command
 	     $this->info($match->results);
          }
          });
+		 php artisan command:add-results
+		 */
+		  DB::table('matches')->chunk(200, function ($matches) {
+			   foreach ($matches as $match) {
+			    if(Odd::where('mid',$match->mid)->count()==0)
+				{
+					$no=new NoOdd();
+					$no->mid=$match->mid;
+					$no->league=$match->league;
+					$no->season=$match->season;
+					$no->save();
+					$this->info($match->mid);
+				}
+			   }
+		  });
     }
 }

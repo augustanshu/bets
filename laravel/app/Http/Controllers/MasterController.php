@@ -7,13 +7,15 @@ use Illuminate\Http\Request;
 use App\Match;
 use App\Odd;
 use Goutte;
+use Cache;
 use Illuminate\Support\Facades\DB;
 use GuzzleHttp\Client as GuzzleClient;
 use Illuminate\Support\Facades\Storage;
 class MasterController extends Controller
 {
 
-
+   protected $term=0;
+   protected $match=0;
     public function __construct(CrawlerRepositoryInterface $crawler,MatchRepositoryInterface $mr)
     {
       $this->crawler=$crawler;
@@ -26,28 +28,31 @@ class MasterController extends Controller
      */
     public function index()
     {
-	  $mids=$this->crawler->Midlist();
+	  $term=date("Ymd");
 	  $array_term=[];
-	  $array_match=[];
-	  $match=new Match();
-	  $odd=new Odd();
-	  foreach($mids as $mid){
-	  if($match->where('mid',$mid)->count()==0)
-	  {
+	  $matches=Cache::remember($term,2880,function(){
+		$array_match=[];
+		$match=new Match();
+		$odd=new Odd();
+		$mids=$this->crawler->Midlist();
+		foreach($mids as $mid){
+		if($match->where('mid',$mid)->count()==0)
+		{
 		  $this->crawler->selectNoDump($mid);
-	  }
-	  $m=$match->where('mid',$mid)->first();
-	  $o=$odd->where('mid',$mid)->where('init',1)->first();
-	  if($o!=null)
-	  {
+		}
+		$m=$match->where('mid',$mid)->first();
+		$o=$odd->where('mid',$mid)->where('init',1)->first();
+		if($o!=null)
+		{
 		  $m->sheng=$o->sheng;
 		  $m->ping=$o->ping;
 		  $m->fu=$o->fu;
-	  }
-		  array_push($array_match,$m);	   
-	  }
-	  $matches=$array_match;
-	  $term=date("Ymd");
+		}
+		  array_push($array_match,$m);	 	  
+		}
+		$matches=$array_match;	
+		return $matches;
+	  });
 	  array_push($array_term,date("Ymd")-4,date("Ymd")-3,date("Ymd")-2,date("Ymd")-1,date("Ymd")+0);
 	  return view('index',['matches'=>$matches,'terms'=>$array_term,'tterm'=>$term]);
     }
@@ -127,8 +132,12 @@ class MasterController extends Controller
 	*/
 	public function showMaster($mid)
 	{   
-	  $match=$this->mr->matchMid($mid);
-	  $matches=$this->mr->matchAnalysis($match);
+	  $this->match=$match=$this->mr->matchMid($mid);
+	  $matches=Cache::remember('a'+$mid,1440,function(){
+		  $m=$this->mr->matchAnalysis($this->match);
+		  return $m;
+	  });
+	  
 	  $odds=$this->mr->getodds($mid);
 	  return view('analysis',['mid'=>$mid,'matches'=>$matches,'match'=>$match,'odds'=>$odds]);
 	  
@@ -215,8 +224,12 @@ class MasterController extends Controller
 	}
 	public function test()
 	{
-		//return view('test');
-		dump($this->mr->getfenshu0(2.8,3,3));
+		//return view('ajax');
+		return view('test');
+		//dump($this->mr->getfenshu0(2.8,3,3));
+		//$seasons=array();
+		
+		
 	}
 	public function analysis()
 	{
@@ -282,28 +295,31 @@ class MasterController extends Controller
 	*显示指定期数赛事
 	*/
 	public function showMatchList($term){
-	  //$term=$request->input('select');
-	  $mids=$this->crawler->Midlist2($term);
-	  $array_term=[];
-	  $array_match=[];
-	  $match=new Match();
-	  $odd=new Odd();
-	  foreach($mids as $mid){
-	  if($match->where('mid',$mid)->count()==0)
-	  {
-		  $this->crawler->selectNoDump($mid);
-	  }
-	  $m=$match->where('mid',$mid)->first();
-	  $o=$odd->where('mid',$mid)->where('init',1)->first();
-	   if($o!=null)
-	  {
-		  $m->sheng=$o->sheng;
-		  $m->ping=$o->ping;
-		  $m->fu=$o->fu;
-	  }
-      array_push($array_match,$m);	  
-	  }
-	  $matches=$array_match;
+	$_t=$term;
+	$array_term=[];
+	$this->term=$term;
+     $matches=Cache::remember($term,2880,function(){
+			$array_match=[];
+			$match=new Match();
+			$odd=new Odd();
+				 $mids=$this->crawler->Midlist2($this->term);
+			foreach($mids as $mid){
+			if($match->where('mid',$mid)->count()==0)
+			{
+			  $this->crawler->selectNoDump($mid);
+			}
+			$m=$match->where('mid',$mid)->first();
+			$o=$odd->where('mid',$mid)->where('init',1)->first();
+			if($o!=null)
+			{
+			  $m->sheng=$o->sheng;
+			  $m->ping=$o->ping;
+			  $m->fu=$o->fu;
+			}
+			 array_push($array_match,$m);	  
+			}
+			return $array_match;
+	  });
 	  array_push($array_term,date("Ymd")-4,date("Ymd")-3,date("Ymd")-2,date("Ymd")-1,date("Ymd")+0);
 	  return view('matchList',['matches'=>$matches,'terms'=>$array_term]);
 
@@ -312,7 +328,8 @@ class MasterController extends Controller
 	*更新指定期数赛事
 	*/
 	public function freshMatchList($mid){
-	   $mids=$this->crawler->Midlist2($mid);
+		
+	  $mids=$this->crawler->Midlist2($mid);
 	  $array_term=[];
 	  $array_match=[];
 	  $match=new Match();
@@ -334,7 +351,30 @@ class MasterController extends Controller
 		  array_push($array_match,$m);	   
 	  }
 	  $matches=$array_match;
+	  Cache::forget($mid);
+	  Cache::put($mid,$matches,2880);
 	  array_push($array_term,date("Ymd")-4,date("Ymd")-3,date("Ymd")-2,date("Ymd")-1,date("Ymd")+0);
 	  return view('matchList',['matches'=>$matches,'terms'=>$array_term]);
+	}
+	public function postMid(Request $request,$mid)
+	{
+		$matches=Match::where('mid',$mid)->get();
+		return [$matches];
+	}
+	public function showChart($mid)
+	{   
+	    $datas=[];
+	    $datas2=[];
+		$match=Match::where('mid',$mid)->first();
+		$seasons=['10-11','11-12','12-13','13-14','14-15','15-16','16-17'];
+		foreach($seasons as $season){
+			$data=$this->mr->getSeasonMatch($match->team1,$season,$match->league);
+			$data2=$this->mr->getSeasonMatch($match->team2,$season,$match->league);
+			array_push($datas,$data);
+			array_push($datas2,$data2);
+		}
+		$d=[$datas[0]['qwz'],$datas[1]['qwz'],$datas[2]['qwz'],$datas[3]['qwz'],$datas[4]['qwz'],$datas[5]['qwz'],$datas[6]['qwz']];
+		$d2=[$datas2[0]['qwz'],$datas2[1]['qwz'],$datas2[2]['qwz'],$datas2[3]['qwz'],$datas2[4]['qwz'],$datas2[5]['qwz'],$datas2[6]['qwz']];
+		return view('chart',['datas'=>$d,'datas2'=>$d2]);
 	}
 }
