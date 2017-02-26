@@ -36,9 +36,9 @@
 	</div>
 		<div id="collapseOne" class="panel-collapse collapse in">
           <li class="list-group-item" style="display:flex;flex-direction:row"> <a id="chartbtn" style="float:right" type="button" data-toggle="collapse" href="#collapseTwo">析</a>
-            <div class="ar" style="width:40%" ></div></li>		  
+            <div class="ar" style="width:100%" ></div></li>		  
 				@foreach($odds as $odd)
-				<li class="list-group-item" style="display:flex;flex-direction:row">{{$odd->sheng}}/{{$odd->ping}}/{{$odd->fu}}----{{$odd->updatetime}}</li>
+				<li class="list-group-item" >{{$odd->sheng}}/{{$odd->ping}}/{{$odd->fu}}----{{$odd->updatetime}}</li>
 				@endforeach
 		</div>
 	</div>
@@ -179,10 +179,14 @@
 	  $('#table_match tbody').on( 'click', 'tr', function () {
         $(this).toggleClass('selected');
     } );
+	var i=0
 	$('#chartbtn').on('click',function(){
-		if($('#myChart').length==0)
-		{
-			var mid=$("#mid").attr('name');
+		var mid=$("#mid").attr('name');
+		//var name='.'+mid+'myChart';
+		var l=$('.'+mid+'Chart').length;
+		if(i==0)
+		{	
+			i++;
 		 $('.ar').load('{{URL::to('/match/chart')}}'+'/'+mid);
 		}
 	});

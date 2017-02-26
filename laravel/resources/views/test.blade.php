@@ -36,7 +36,7 @@
             pointHoverBorderWidth: 2,
             pointRadius: 1,
             pointHitRadius: 10,
-            data: [2,2,4,5],
+            data: [{{$datas[0]}},{{$datas[1]}},{{$datas[2]}},{{$datas[3]}},{{$datas[4]}},{{$datas[5]}},{{$datas[6]}}],
             spanGaps: false,
         },
 		
@@ -59,7 +59,7 @@
             pointHoverBorderWidth: 2,
             pointRadius: 1,
             pointHitRadius: 10,
-            data: [6,6,8,9],
+            data: [{{$datas2[0]}},{{$datas2[1]}},{{$datas2[2]}},{{$datas2[3]}},{{$datas2[4]}},{{$datas2[5]}},{{$datas2[6]}}],
             spanGaps: false,
         }
 		

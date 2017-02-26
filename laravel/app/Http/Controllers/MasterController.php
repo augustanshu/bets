@@ -16,6 +16,7 @@ class MasterController extends Controller
 
    protected $term=0;
    protected $match=0;
+   protected $mid=0;
     public function __construct(CrawlerRepositoryInterface $crawler,MatchRepositoryInterface $mr)
     {
       $this->crawler=$crawler;
@@ -133,7 +134,7 @@ class MasterController extends Controller
 	public function showMaster($mid)
 	{   
 	  $this->match=$match=$this->mr->matchMid($mid);
-	  $matches=Cache::remember('a'+$mid,1440,function(){
+	  $matches=Cache::remember('a'.$mid,1440,function(){
 		  $m=$this->mr->matchAnalysis($this->match);
 		  return $m;
 	  });
@@ -225,9 +226,14 @@ class MasterController extends Controller
 	public function test()
 	{
 		//return view('ajax');
-		return view('test');
+		//return view('test');
 		//dump($this->mr->getfenshu0(2.8,3,3));
 		//$seasons=array();
+		$match=Match::where('mid',2113132)->first();
+		//dump($match);
+		dump($this->mr->getCurrentMatch($match->team1,$match->season,$match->league,$match->round));
+		dump($this->mr->getCurrentMatch($match->team2,$match->season,$match->league,$match->round));
+		
 		
 		
 	}
@@ -363,18 +369,26 @@ class MasterController extends Controller
 	}
 	public function showChart($mid)
 	{   
-	    $datas=[];
-	    $datas2=[];
-		$match=Match::where('mid',$mid)->first();
-		$seasons=['10-11','11-12','12-13','13-14','14-15','15-16','16-17'];
-		foreach($seasons as $season){
-			$data=$this->mr->getSeasonMatch($match->team1,$season,$match->league);
-			$data2=$this->mr->getSeasonMatch($match->team2,$season,$match->league);
-			array_push($datas,$data);
-			array_push($datas2,$data2);
-		}
+		$da=[];
+		$cd=[];
+		$this->mid=$mid;
+		$name='chart'.$mid;
+		$da=Cache::remember($name,1440,function(){		
+		  return $this->mr->getqiwangzu($this->mid);
+		});
+		$datas=$da[0];
+		$datas2=$da[1];
+		$s=[$datas[0]['season'],$datas[1]['season'],$datas[2]['season'],$datas[3]['season'],$datas[4]['season'],$datas[5]['season'],$datas[6]['season']];
 		$d=[$datas[0]['qwz'],$datas[1]['qwz'],$datas[2]['qwz'],$datas[3]['qwz'],$datas[4]['qwz'],$datas[5]['qwz'],$datas[6]['qwz']];
 		$d2=[$datas2[0]['qwz'],$datas2[1]['qwz'],$datas2[2]['qwz'],$datas2[3]['qwz'],$datas2[4]['qwz'],$datas2[5]['qwz'],$datas2[6]['qwz']];
-		return view('chart',['datas'=>$d,'datas2'=>$d2]);
+		$name2=$mid.'chart';
+		$cd=Cache::remember($name2,1440,function(){		
+		return $this->mr->getcurrentqiwangzu($this->mid);
+		});
+		//$cd=$this->mr->getcurrentqiwangzu($this->mid);
+		//dump($cd[0]);
+		return view('chart',['mid'=>$mid,'season'=>$s,'datas'=>$d,'datas2'=>$d2,'cd'=>$cd[0],'cd2'=>$cd[1]]);
+		
+
 	}
 }

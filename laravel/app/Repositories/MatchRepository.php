@@ -184,6 +184,95 @@ class MatchRepository  implements MatchRepositoryInterface{
 			elseif($match->result=="平"){$point+=1;}
 		}
 		$percent=$qw==0?0:number_format($point/$qw,2);
-		return ['赛事'=>$league,'赛季'=>$season,'球队'=>$team1,'期望'=>$qw,'实际分数'=>$point,'qwz'=>$percent,'round'=>$count];
+		return ['赛事'=>$league,'season'=>$season,'球队'=>$team1,'期望'=>$qw,'实际分数'=>$point,'qwz'=>$percent,'round'=>$count];
+	}
+
+	public function getCurrentMatch($team1,$season,$league,$round)
+	 {
+        $matchess=[];
+		$percents=[];
+		$round=$round-1;
+		for($i=1;$i<=$round;$i+=5)
+		{
+		   //dump($i);
+		   $round1=$i;
+		   $round2=$round<$i+4?$round:$i+4;
+		   $match=DB::select('select A.mid,A.league,A.season,A.round,A.score,A.time,A.team1,A.team2,A.result ,B.sheng,B.ping,B.fu from matches as A left join odds as B on A.mid=B.mid WHERE A.league=:league and A.season=:season and (A.team1=:team1 or A.team2=:team2)  and A.round between :round1 and :round2 and B.init=1  ORDER BY A.round',['league'=>$league,'season'=>$season,'team1'=>$team1,'team2'=>$team1,'round1'=>$round1,'round2'=>$round2]);
+           //$match->team=$round1.'-'.$round2;
+		   array_push($matchess,$match);
+		}
+		
+
+		foreach($matchess as $matches)
+		 {
+			$qw=0;
+			$point=0;
+			$s=[];
+		foreach($matches as $match)
+		{
+			$count=count($matches);
+			$q=$this->getqiwang($match->sheng,$match->ping,$match->fu);
+			 if($match->team1==$team1){$qw+=$q[0];}
+			 else{$qw+=$q[1];}
+			 if($match->result=="胜"&$match->team1==$team1){$point+=3;}
+			 elseif($match->result=="负"&$match->team2==$team1){$point+=3;}
+			 elseif($match->result=="平"){$point+=1;}
+			 //dump($match->team1.'vs'.$match->team2.':'.$match->score.':'.$point.':'.$qw);
+		}
+		$percent=$qw==0?0:number_format($point/$qw,2);
+		//$s=[$percent];
+		array_push($percents,$percent);
+		 }
+		return($percents);
+		//return ['赛事'=>$league,'season'=>$season,'球队'=>$team1,'期望'=>$qw,'实际分数'=>$point,'qwz'=>$percent,'round'=>$count];
+		
+	}
+
+	public function getqiwangzu($mid)
+    {
+		
+        $datas=[];
+	    $datas2=[];
+		$match=Match::where('mid',$mid)->first();
+		$s=$match->season;
+		$l=$match->league;
+		$seasons=DB::select('SELECT season FROM matches where season<=:season and league=:league GROUP BY season ORDER BY season DESC LIMIT 7 ',['season'=>$s,'league'=>$l]);
+		foreach($seasons as $season){
+			$data=$this->getSeasonMatch($match->team1,$season->season,$match->league);
+			$data2=$this->getSeasonMatch($match->team2,$season->season,$match->league);
+			array_push($datas,$data);
+			array_push($datas2,$data2);
+		}
+		return [$datas,$datas2];
+		
+		
+	}
+		public function getcurrentqiwangzu($mid)
+    {
+		
+        $datas=[];
+	    $datas2=[];
+		$match=Match::where('mid',$mid)->first();
+		$s=$match->season;
+		$l=$match->league;
+		//$seasons=DB::select('SELECT season FROM matches where season<=:season and league=:league GROUP BY season ORDER BY season DESC LIMIT 7 ',['season'=>$s,'league'=>$l]);
+		//foreach($seasons as $season){
+			$data=$this->getCurrentMatch($match->team1,$match->season,$match->league,$match->round);
+			$data2=$this->getCurrentMatch($match->team2,$match->season,$match->league,$match->round);
+			//array_push($datas,$data);
+			//array_push($datas2,$data2);
+		//}
+		$length=count($data);
+		$step=9-$length;
+		for($i=0;$i<$step;$i++)
+		{
+		  array_push($data,null);
+		   array_push($data2,null);
+		}
+		//dump($data);
+		//dump($data2);
+		return [$data,$data2];
+		
+		
 	}
 }
