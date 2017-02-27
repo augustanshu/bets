@@ -1,9 +1,11 @@
- <div id="collapseTwo" class="panel-collapse collapse in" style="display:flex;flex-direction:row;justify-content:space-between">
-<div class="panel-body" >
-<canvas id="{{$mid}}myChart1" width="400"  height="300"></canvas>
+ <div id="collapseTwo"  class="panel-collapse collapse in">
+ <div  style="display:flex;flex-direction:row;justify-content:space-between">
+<div class="panel-body">
+<canvas id="{{$mid}}myChart1" width="400"  height="400"></canvas>
 </div>
-<div class="panel-body" >
-<canvas id="{{$mid}}myChart2" width="400"  height="300"></canvas>
+<div class="panel-body">
+<canvas id="{{$mid}}myChart2" width="400"  height="400"></canvas>
+</div>
 </div>
 </div>
 <script>

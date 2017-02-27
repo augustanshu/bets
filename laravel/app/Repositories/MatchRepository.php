@@ -187,7 +187,7 @@ class MatchRepository  implements MatchRepositoryInterface{
 		return ['赛事'=>$league,'season'=>$season,'球队'=>$team1,'期望'=>$qw,'实际分数'=>$point,'qwz'=>$percent,'round'=>$count];
 	}
 
-	public function getCurrentMatch($team1,$season,$league,$round)
+	public function getCurrentMatch($team1,$season,$league,$round,$time)
 	 {
         $matchess=[];
 		$percents=[];
@@ -197,7 +197,7 @@ class MatchRepository  implements MatchRepositoryInterface{
 		   //dump($i);
 		   $round1=$i;
 		   $round2=$round<$i+4?$round:$i+4;
-		   $match=DB::select('select A.mid,A.league,A.season,A.round,A.score,A.time,A.team1,A.team2,A.result ,B.sheng,B.ping,B.fu from matches as A left join odds as B on A.mid=B.mid WHERE A.league=:league and A.season=:season and (A.team1=:team1 or A.team2=:team2)  and A.round between :round1 and :round2 and B.init=1  ORDER BY A.round',['league'=>$league,'season'=>$season,'team1'=>$team1,'team2'=>$team1,'round1'=>$round1,'round2'=>$round2]);
+		   $match=DB::select('select A.mid,A.league,A.season,A.round,A.score,A.time,A.team1,A.team2,A.result ,B.sheng,B.ping,B.fu from matches as A left join odds as B on A.mid=B.mid WHERE A.league=:league and A.season=:season and (A.team1=:team1 or A.team2=:team2)  and A.round between :round1 and :round2 and A.time<:time and B.init=1  ORDER BY A.round',['league'=>$league,'season'=>$season,'team1'=>$team1,'team2'=>$team1,'round1'=>$round1,'round2'=>$round2,'time'=>$time]);
            //$match->team=$round1.'-'.$round2;
 		   array_push($matchess,$match);
 		}
@@ -257,8 +257,8 @@ class MatchRepository  implements MatchRepositoryInterface{
 		$l=$match->league;
 		//$seasons=DB::select('SELECT season FROM matches where season<=:season and league=:league GROUP BY season ORDER BY season DESC LIMIT 7 ',['season'=>$s,'league'=>$l]);
 		//foreach($seasons as $season){
-			$data=$this->getCurrentMatch($match->team1,$match->season,$match->league,$match->round);
-			$data2=$this->getCurrentMatch($match->team2,$match->season,$match->league,$match->round);
+			$data=$this->getCurrentMatch($match->team1,$match->season,$match->league,$match->round,$match->time);
+			$data2=$this->getCurrentMatch($match->team2,$match->season,$match->league,$match->round,$match->time);
 			//array_push($datas,$data);
 			//array_push($datas2,$data2);
 		//}

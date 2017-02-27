@@ -13,6 +13,6 @@ interface MatchRepositoryInterface {
 	public function getqiwang($w,$d,$l);
 	public function getSeasonMatch($team,$season,$league);
 	public function getqiwangzu($mid);
-	public function getCurrentMatch($team1,$season,$league,$round);
+	public function getCurrentMatch($team1,$season,$league,$round,$time);
 	public function getcurrentqiwangzu($mid);
 }

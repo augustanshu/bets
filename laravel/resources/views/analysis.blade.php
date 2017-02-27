@@ -36,7 +36,9 @@
 	</div>
 		<div id="collapseOne" class="panel-collapse collapse in">
           <li class="list-group-item"> 
-		  <a id="chartbtn"  type="button" data-toggle="collapse" href="#collapseTwo">析</a>	<div  class="ar"></div></li>		
+		  <a id="chartbtn"  type="button" data-toggle="collapse" href="#collapseTwo">析</a>	
+		  <div  class="ar" ></div>
+		  </li>		
 				@foreach($odds as $odd)
 				<li class="list-group-item" >{{$odd->sheng}}/{{$odd->ping}}/{{$odd->fu}}----{{$odd->updatetime}}</li>
 				@endforeach
@@ -58,6 +60,7 @@
 			<th>客进球</th>
 			<th>主积分</th>
 			<th>客积分</th>
+			<th>差值</th>
 			<th>主期</th>
 			<th>客期</th>
 			<th>主期率</th>
@@ -84,6 +87,7 @@
 			<th>客进球</th>
 			<th>主积分</th>
 			<th>客积分</th>
+			    <th>差值</th>
 			<th>主期</th>
 			<th>客期</th>
 			<th>主期率</th>
@@ -112,6 +116,7 @@
 		    <th>{{$match->goal2}}</th>
            <th>{{$match->points}}</th>
 		    <th>{{$match->points2}}</th>
+			    <th>**</th>
 			<!-- <th>{{$match->fenshuu}}</th>
 		    <th>{{$match->fenshuu2}}</th>-->
 			 <th>{{$match->qiwang}}</th>
@@ -156,12 +161,18 @@
 	  },
 	  {
 	  "targets":[0],
-	  "width":'2%'
+	  "width":'5%'
 	  },
 	  {
 	  "targets":[6],
 	  "width":'5%'
-	  }
+	  },
+	  	  {
+	  "targets":[12],
+	    "render": function(column){
+	    return  '<a>'+column[1]+'</a>';
+           }
+		  }
 	  ]
 	});
 
