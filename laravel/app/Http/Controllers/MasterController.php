@@ -140,6 +140,7 @@ class MasterController extends Controller
 	  });
 	  
 	  $odds=$this->mr->getodds($mid);
+	  //dump($matches);
 	  return view('analysis',['mid'=>$mid,'matches'=>$matches,'match'=>$match,'odds'=>$odds]);
 	  
 	}

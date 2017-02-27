@@ -63,6 +63,7 @@
 			<th>差值</th>
 			<th>主期</th>
 			<th>客期</th>
+			<th>期望差</th>
 			<th>主期率</th>
 			<th>客期率</th>
 			<th>主分</th>
@@ -87,9 +88,10 @@
 			<th>客进球</th>
 			<th>主积分</th>
 			<th>客积分</th>
-			    <th>差值</th>
+			 <th>差值</th>
 			<th>主期</th>
 			<th>客期</th>
+			<th>期望差</th>
 			<th>主期率</th>
 			<th>客期率</th>
 			<th>主分</th>
@@ -104,28 +106,29 @@
 	@foreach($matches as $match)
 	   @if($match->mid!=$mid)
         <tr>
-	<th class="details-control"><button>+</button></th>
-            <th>{{$match->league}}</th>
-           <th>{{$match->round}}</th>
-		    <th>{{$match->time}}</th>
-           <th>{{$match->team1}}</th>
-		    <th>{{$match->team2}}</th>
-           <th>{{$match->result}}</th>
-		    <th>{{$match->score}}</th>
-		    <th>{{$match->goal}}</th>
-		    <th>{{$match->goal2}}</th>
-           <th>{{$match->points}}</th>
-		    <th>{{$match->points2}}</th>
-			    <th>**</th>
-			<!-- <th>{{$match->fenshuu}}</th>
-		    <th>{{$match->fenshuu2}}</th>-->
-			 <th>{{$match->qiwang}}</th>
-		    <th>{{$match->qiwang2}}</th>
-			 <th>{{$match->percent}}</th>
-		    <th>{{$match->percent2}}</th>
-			 <th>{{$match->fenshu}}</th>
-		    <th>{{$match->fenshu2}}</th>
-			 <th data-name="{{$match->mid}}">{{$match->mid}}</th>
+		<td class="details-control"><button>+</button></td>
+		<td>{{$match->league}}</td>
+		<td>{{$match->round}}</td>
+		<td>{{$match->time}}</td>
+		<td>{{$match->team1}}</td>
+		<td>{{$match->team2}}</td>
+		<td>{{$match->result}}</td>
+		<td>{{$match->score}}</td>
+		<td>{{$match->goal}}</td>
+		<td>{{$match->goal2}}</td>
+		<td>{{$match->points}}</td>
+		<td>{{$match->points2}}</td>
+		<td>{{$match->pointcz}}</td>
+		<!-- <td>{{$match->fenshuu}}</td>
+		<td>{{$match->fenshuu2}}</td>-->
+		<td>{{$match->qiwang}}</td>
+		<td>{{$match->qiwang2}}</td>
+		<td>{{$match->qiwangcz}}</td>
+		<td>{{$match->percent}}</td>
+		<td>{{$match->percent2}}</td>
+		<td>{{$match->fenshu}}</td>
+		<td>{{$match->fenshu2}}</td>
+		<td data-name="{{$match->mid}}">{{$match->mid}}</td>
         </tr>
 	   
 		@endif
@@ -152,8 +155,6 @@
       {
         "targets": [ 3 ],
 		"width":'10%'
-        //"visible": false,
-        //"searchable": false
       },
 	  {
 	  "targets":[1],
@@ -166,13 +167,7 @@
 	  {
 	  "targets":[6],
 	  "width":'5%'
-	  },
-	  	  {
-	  "targets":[12],
-	    "render": function(column){
-	    return  '<a>'+column[1]+'</a>';
-           }
-		  }
+	  }
 	  ]
 	});
 
@@ -203,12 +198,12 @@
 	});
 	function format ( d ) {
     // `d` is the original data object for the row
-    return '<table class=ar'+d[18]+'>'+
+    return '<table class=ar'+d[20]+'>'+
 
     '</div>';
    }
 
-	 $('#table_match tbody').on('click', 'th.details-control', function () {
+	 $('#table_match tbody').on('click', 'td.details-control', function () {
         var tr = $(this).closest('tr');
         var row = table.row( tr );
 		var data = table.row( $(this)).data();
@@ -222,8 +217,8 @@
             // Open this row
             row.child( format(data) ).show();
             tr.addClass('shown');
-			var l=$('.ar'+data[18]+'').length;
-			 $('.ar'+data[18]+'').load('{{URL::to('/match/chart')}}'+'/'+data[18]);
+			var l=$('.ar'+data[20]+'').length;
+			 $('.ar'+data[20]+'').load('{{URL::to('/match/chart')}}'+'/'+data[20]);
         }
     } );
 }(jQuery));
