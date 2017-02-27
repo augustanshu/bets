@@ -372,7 +372,7 @@ class MasterController extends Controller
 		$da=[];
 		$cd=[];
 		$this->mid=$mid;
-		$name='chart'.$mid;
+		$name='charts'.$mid;
 		$da=Cache::remember($name,1440,function(){		
 		  return $this->mr->getqiwangzu($this->mid);
 		});
@@ -381,9 +381,9 @@ class MasterController extends Controller
 		$s=[$datas[0]['season'],$datas[1]['season'],$datas[2]['season'],$datas[3]['season'],$datas[4]['season'],$datas[5]['season'],$datas[6]['season']];
 		$d=[$datas[0]['qwz'],$datas[1]['qwz'],$datas[2]['qwz'],$datas[3]['qwz'],$datas[4]['qwz'],$datas[5]['qwz'],$datas[6]['qwz']];
 		$d2=[$datas2[0]['qwz'],$datas2[1]['qwz'],$datas2[2]['qwz'],$datas2[3]['qwz'],$datas2[4]['qwz'],$datas2[5]['qwz'],$datas2[6]['qwz']];
-		$name2=$mid.'chart';
+		$name2='chartc'.$mid;
 		$cd=Cache::remember($name2,1440,function(){		
-		return $this->mr->getcurrentqiwangzu($this->mid);
+		   return $this->mr->getcurrentqiwangzu($this->mid);
 		});
 		//$cd=$this->mr->getcurrentqiwangzu($this->mid);
 		//dump($cd[0]);

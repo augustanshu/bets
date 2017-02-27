@@ -15,12 +15,14 @@ require('laravel-elixir-vue');
 var jsPlugins = [
     '../dep/jquery/dist/jquery.min.js',
 	'../dep/bootstrap/dist/js/bootstrap.min.js',
-	'../dep/chart.js/dist/Chart.min.js'
+	'../dep/chart.js/dist/Chart.min.js',
+	'../dep/sweetalert/dist/sweetalert-dev.js'
 	
 ];
 
 var cssPlugins = [
     '../dep/bootstrap/dist/css/bootstrap.min.css',
+	'../dep/sweetalert/dist/sweetalert.css'
 ];
 
 elixir(function(mix){
