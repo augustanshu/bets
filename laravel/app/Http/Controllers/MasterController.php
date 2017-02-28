@@ -29,13 +29,25 @@ class MasterController extends Controller
      */
     public function index()
     {
-	  $term=date("Ymd");
+	 $term=date("Ymd");
+	  $time=date("Ymd");
 	  $array_term=[];
-	  $matches=Cache::remember($term,2880,function(){
+		$checkDayStr = date('Y-m-d ',time());
+		$startTime = strtotime($checkDayStr."12:00".":00");
+		if(time()>$startTime )
+		{
+			//dump('yes');
+		}
+		else
+		{
+		$term=$this->term=date("Ymd",strtotime("- 1 day"));
+		}
+	    $matches=Cache::remember($term,2880,function(){
 		$array_match=[];
 		$match=new Match();
 		$odd=new Odd();
 		$mids=$this->crawler->Midlist();
+		//dump($mids);
 		foreach($mids as $mid){
 		if($match->where('mid',$mid)->count()==0)
 		{
@@ -54,7 +66,7 @@ class MasterController extends Controller
 		$matches=$array_match;	
 		return $matches;
 	  });
-	  array_push($array_term,date("Ymd")-4,date("Ymd")-3,date("Ymd")-2,date("Ymd")-1,date("Ymd")+0);
+	  array_push($array_term,$term-4,$term-3,$term-2,$term-1,$term+0);
 	  return view('index',['matches'=>$matches,'terms'=>$array_term,'tterm'=>$term]);
     }
 	public function indexall()

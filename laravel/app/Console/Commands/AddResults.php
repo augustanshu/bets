@@ -64,7 +64,7 @@ class AddResults extends Command
          });
 		 php artisan command:add-results
 		 */
-		  DB::table('matches')->chunk(200, function ($matches) {
+		  DB::table('matches')->orderBy('id')->chunk(200, function ($matches) {
 			   foreach ($matches as $match) {
 			    if(Odd::where('mid',$match->mid)->count()==0)
 				{

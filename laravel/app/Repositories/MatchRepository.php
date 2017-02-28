@@ -110,8 +110,8 @@ class MatchRepository  implements MatchRepositoryInterface{
 			$match->qiwang2=$qiwang2;
 			$match->percent=$qiwang==0?'none':number_format($points/$qiwang,2);
 			$match->percent2=$qiwang2==0?'none':number_format($points2/$qiwang2,2);
-			$match->pointcz=$points-$points2;
-			$match->qiwangcz=$qiwang-$qiwang2;
+			$match->pointcz=number_format($points-$points2,2);
+			$match->qiwangcz=number_format($qiwang-$qiwang2,2);
 			array_push($mas,$match);
 	  }
           return $mas;

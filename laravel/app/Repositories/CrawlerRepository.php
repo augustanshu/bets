@@ -437,7 +437,36 @@ class CrawlerRepository implements CrawlerRepositoryInterface{
 		$i++;
 		dump('轮次'.$i);
 	});
-
+  }
+    /*
+  *文档读取，一个完整赛季mid获取，并通过mid爬虫获取数据
+  */
+  public function getDoumentList($content)
+  {
+	$goutteClient=new Client;
+	$crawler=new Crawler($content);//matchSel
+	$crawler->filter('.live-sta .live-tab')->each(function ($node,$i) {
+	$node->filter('tbody > tr')->each(function($node2,$j){
+		$uri=$node2->attr('matchid');
+		$mid=$uri;
+		dump('matchid:'.$mid);
+		$count= Match::where('mid',$mid)->count();   
+		 if($count==0)
+		   {	
+		   $this->select($mid);
+		   sleep(rand(100,150)/100);
+		   $j++;
+		   dump('finished:'.$mid);
+		   }
+		  else
+		   {
+			 dump($mid.'exist!');
+		   }
+		});
+		$i++;
+		//dump('轮次'.$i);
+	});
+	
   }
 
   }

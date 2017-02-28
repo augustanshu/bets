@@ -27,5 +27,5 @@ Route::get('/match/chart/{mid}','MasterController@showChart');
 Route::get('/ft/{mid}','MasterController@freshMatchList');
 Route::group(['prefix'=>'admin','namespace'=>'admin'],function(){;
 	Route::resource('/cache','AdminCacheController');
-	//Route::get('/part','AdminCacheController@partShow');
+	Route::get('/document','AdminController@getFile');
 });
