@@ -29,7 +29,11 @@ class MasterController extends Controller
      */
     public function index()
     {
-	 $term=date("Ymd");
+	    $term1=date("Ymd");
+		$term2=$this->term=date("Ymd",strtotime("- 1 day"));
+		$term3=$this->term=date("Ymd",strtotime("- 2 day"));
+		$term4=$this->term=date("Ymd",strtotime("- 3 day"));
+		$term5=$this->term=date("Ymd",strtotime("- 4 day"));
 	  $time=date("Ymd");
 	  $array_term=[];
 		$checkDayStr = date('Y-m-d ',time());
@@ -40,9 +44,13 @@ class MasterController extends Controller
 		}
 		else
 		{
-		$term=$this->term=date("Ymd",strtotime("- 1 day"));
+		$term1=$this->term=date("Ymd",strtotime("- 1 day"));
+		$term2=$this->term=date("Ymd",strtotime("- 2 day"));
+		$term3=$this->term=date("Ymd",strtotime("- 3 day"));
+		$term4=$this->term=date("Ymd",strtotime("- 4 day"));
+		$term4=$this->term=date("Ymd",strtotime("- 5 day"));
 		}
-	    $matches=Cache::remember($term,2880,function(){
+	    $matches=Cache::remember($term1,2880,function(){
 		$array_match=[];
 		$match=new Match();
 		$odd=new Odd();
@@ -66,8 +74,9 @@ class MasterController extends Controller
 		$matches=$array_match;	
 		return $matches;
 	  });
-	  array_push($array_term,$term-4,$term-3,$term-2,$term-1,$term+0);
-	  return view('index',['matches'=>$matches,'terms'=>$array_term,'tterm'=>$term]);
+	  
+	  array_push($array_term,$term5,$term4,$term3,$term2,$term1);
+	  return view('index',['matches'=>$matches,'terms'=>$array_term,'tterm'=>$term1]);
     }
 	public function indexall()
     {
@@ -242,10 +251,17 @@ class MasterController extends Controller
 		//return view('test');
 		//dump($this->mr->getfenshu0(2.8,3,3));
 		//$seasons=array();
-		$match=Match::where('mid',2113132)->first();
+		//$match=Match::where('mid',2113132)->first();
 		//dump($match);
-		dump($this->mr->getCurrentMatch($match->team1,$match->season,$match->league,$match->round));
-		dump($this->mr->getCurrentMatch($match->team2,$match->season,$match->league,$match->round));
+		//dump($this->mr->getCurrentMatch($match->team1,$match->season,$match->league,$match->round));
+		//dump($this->mr->getCurrentMatch($match->team2,$match->season,$match->league,$match->round));
+		$matches=Match::where('status','未')->get();
+		foreach( $matches as $match)
+		{
+		$this->crawler->select($match->mid);
+		sleep(rand(100,120)/100);
+		}
+		//dump($this->mr->getSeasonMatch('曼联','09-10','英格兰超级联赛'));
 		
 		
 		
@@ -370,7 +386,7 @@ class MasterController extends Controller
 		  array_push($array_match,$m);	   
 	  }
 	  $matches=$array_match;
-	  Cache::forget($mid);
+	  Cache::forget('laravel'.$mid);
 	  Cache::put($mid,$matches,2880);
 	  array_push($array_term,date("Ymd")-4,date("Ymd")-3,date("Ymd")-2,date("Ymd")-1,date("Ymd")+0);
 	  return view('matchList',['matches'=>$matches,'terms'=>$array_term]);

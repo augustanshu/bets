@@ -25,7 +25,7 @@ class MatchRepository  implements MatchRepositoryInterface{
 	 $win=$odd->sheng;
 	 $draw=$odd->ping;
 	 $lose=$odd->fu;		 
-	 $matchs=DB::select('select A.mid,A.league,A.season,A.round,A.score,A.time,A.team1,A.team2,A.result from matches as A left join odds as B on A.mid=B.mid WHERE B.sheng =:sheng and B.ping=:ping and B.fu =:fu and B.init=1  ORDER BY A.result ',['sheng'=>$win,'ping'=>$draw,'fu'=>$lose]);	
+	 $matchs=DB::select('select A.mid,A.league,A.season,A.round,A.score,A.time,A.team1,A.team2,A.result from matches as A left join odds as B on A.mid=B.mid WHERE B.sheng =:sheng and B.ping=:ping and B.fu =:fu and B.init=1  ORDER BY A.result',['sheng'=>$win,'ping'=>$draw,'fu'=>$lose]);	
 	 $COUNT_V=0;
 	 $COUNT_D=0;
 	 $COUNT_F=0;
@@ -56,7 +56,7 @@ class MatchRepository  implements MatchRepositoryInterface{
 			$goal2=0;
 	 		$goal_home=0;
 	 		$goal_away=0;
-	 		$sms=DB::select('SELECT * FROM matches as A left join odds as B on A.mid=B.mid where A.league=:league and A.season=:season and A.time<:time AND (team1=:team1 OR team2=:team2) AND B.init=1 ORDER BY A.time desc  LIMIT 6',['league'=>$league,'season'=>$season,'time'=>$mtime,'team1'=>$team,'team2'=>$team]);
+	 		$sms=DB::select('SELECT * FROM matches as A left join odds as B on A.mid=B.mid where A.league=:league and A.season=:season and A.time<:time AND (team1=:team1 OR team2=:team2) AND B.init=1 ORDER BY A.time desc  LIMIT 5',['league'=>$league,'season'=>$season,'time'=>$mtime,'team1'=>$team,'team2'=>$team]);
 	 		foreach($sms as $sm){
 			$f=$this->getfenshu0($sm->sheng,$sm->ping,$sm->fu);
 			$f2=$this->getfenshu1($sm->sheng,$sm->ping,$sm->fu);
@@ -78,8 +78,9 @@ class MatchRepository  implements MatchRepositoryInterface{
                  else{$goal+=$sm->score_home;}				 
 	 		   }
 	 		}
-	 		$sms=DB::select('SELECT * FROM matches as A left join odds as B on A.mid=B.mid where A.league=:league and A.season=:season and A.time<:time AND (team1=:team1 OR team2=:team2) AND B.init=1 ORDER BY A.time desc  LIMIT 6',['league'=>$league,'season'=>$season,'time'=>$mtime,'team1'=>$team2,'team2'=>$team2]); 
+	 		$sms=DB::select('SELECT * FROM matches as A left join odds as B on A.mid=B.mid where A.league=:league and A.season=:season and A.time<:time AND (team1=:team1 OR team2=:team2) AND B.init=1 ORDER BY A.time desc  LIMIT 5',['league'=>$league,'season'=>$season,'time'=>$mtime,'team1'=>$team2,'team2'=>$team2]); 
 	 		foreach($sms as $sm){
+			//dump($sm);
 			$f=$this->getfenshu0($sm->sheng,$sm->ping,$sm->fu);
 			$q=$this->getqiwang($sm->sheng,$sm->ping,$sm->fu);
 			if($sm->team1==$team2){$qiwang2+=$q[0];}
@@ -166,7 +167,7 @@ class MatchRepository  implements MatchRepositoryInterface{
 	}
 	public function getqiwang($w,$d,$l)
 	{
-		$ep=3;
+	 $ep=3;
 	 $gailv=$this->getgailv($w,$d,$l);
 	 return $qiwang=[number_format($gailv[0]*$ep,2)+number_format($gailv[1],2),number_format($gailv[2]*$ep,2)+number_format($gailv[1],2)];
 	}
@@ -199,9 +200,11 @@ class MatchRepository  implements MatchRepositoryInterface{
 		   //dump($i);
 		   $round1=$i;
 		   $round2=$round<$i+4?$round:$i+4;
-		   $match=DB::select('select A.mid,A.league,A.season,A.round,A.score,A.time,A.team1,A.team2,A.result ,B.sheng,B.ping,B.fu from matches as A left join odds as B on A.mid=B.mid WHERE A.league=:league and A.season=:season and (A.team1=:team1 or A.team2=:team2)  and A.round between :round1 and :round2 and A.time<:time and B.init=1  ORDER BY A.round',['league'=>$league,'season'=>$season,'team1'=>$team1,'team2'=>$team1,'round1'=>$round1,'round2'=>$round2,'time'=>$time]);
+		   $match=DB::select('select A.mid,A.league,A.season,A.round,A.score,A.time,A.team1,A.team2,A.result ,B.sheng,B.ping,B.fu from matches as A left join odds as B on A.mid=B.mid WHERE A.league=:league and A.season=:season and (A.team1=:team1 or A.team2=:team2)  and A.time<:time and B.init=1  ORDER BY A.time desc limit 5',['league'=>$league,'season'=>$season,'team1'=>$team1,'team2'=>$team1,'time'=>$time]);
            //$match->team=$round1.'-'.$round2;
 		   array_push($matchess,$match);
+		   $length=count($match);
+		   $time=$match[$length-1]->time;
 		}
 		
 
@@ -210,6 +213,7 @@ class MatchRepository  implements MatchRepositoryInterface{
 			$qw=0;
 			$point=0;
 			$s=[];
+			//dump($matches);
 		foreach($matches as $match)
 		{
 			$count=count($matches);
@@ -221,6 +225,8 @@ class MatchRepository  implements MatchRepositoryInterface{
 			 elseif($match->result=="平"){$point+=1;}
 			 //dump($match->team1.'vs'.$match->team2.':'.$match->score.':'.$point.':'.$qw);
 		}
+		//dump($point);
+		//dump($qw);
 		$percent=$qw==0?0:number_format($point/$qw,2);
 		//$s=[$percent];
 		array_push($percents,$percent);
@@ -259,8 +265,8 @@ class MatchRepository  implements MatchRepositoryInterface{
 		$l=$match->league;
 		//$seasons=DB::select('SELECT season FROM matches where season<=:season and league=:league GROUP BY season ORDER BY season DESC LIMIT 7 ',['season'=>$s,'league'=>$l]);
 		//foreach($seasons as $season){
-			$data=$this->getCurrentMatch($match->team1,$match->season,$match->league,$match->round,$match->time);
-			$data2=$this->getCurrentMatch($match->team2,$match->season,$match->league,$match->round,$match->time);
+			$data=array_reverse($this->getCurrentMatch($match->team1,$match->season,$match->league,$match->round,$match->time));
+			$data2=array_reverse($this->getCurrentMatch($match->team2,$match->season,$match->league,$match->round,$match->time));
 			//array_push($datas,$data);
 			//array_push($datas2,$data2);
 		//}
