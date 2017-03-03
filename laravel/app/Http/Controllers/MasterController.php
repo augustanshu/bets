@@ -255,6 +255,7 @@ class MasterController extends Controller
 		//dump($match);
 		//dump($this->mr->getCurrentMatch($match->team1,$match->season,$match->league,$match->round));
 		//dump($this->mr->getCurrentMatch($match->team2,$match->season,$match->league,$match->round));
+		
 		$matches=Match::where('status','未')->get();
 		foreach( $matches as $match)
 		{
@@ -263,6 +264,7 @@ class MasterController extends Controller
 		}
 		//dump($this->mr->getSeasonMatch('曼联','09-10','英格兰超级联赛'));
 		
+		//dump($this->mr->getMatchPoint('英格兰超级联赛'));
 		
 		
 	}

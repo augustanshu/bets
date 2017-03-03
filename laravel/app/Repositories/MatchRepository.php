@@ -3,6 +3,7 @@ namespace App\Repositories;
 use App\Match;
 use App\Odd;
 use App\Term;
+use App\MatchPoint;
 use Illuminate\Support\Facades\DB;
 
 class MatchRepository  implements MatchRepositoryInterface{
@@ -255,7 +256,7 @@ class MatchRepository  implements MatchRepositoryInterface{
 		
 		
 	}
-		public function getcurrentqiwangzu($mid)
+	public function getcurrentqiwangzu($mid)
     {
 		
         $datas=[];
@@ -282,5 +283,116 @@ class MatchRepository  implements MatchRepositoryInterface{
 		return [$data,$data2];
 		
 		
+	}
+	public function getMatchDif($mid)
+	{
+		//$match=Match:where('mid',$mid)->first();
+		//$league=$match->league;
+		//$season=$match->season;
+		//$round=$match->round;
+		//$time=$match->time;
+		//$match_home=$match->team1;
+		//$match_away=$match->team2;
+		
+	}
+	public function getMatchPoint($league)
+	{
+		/*
+		$seasons=DB::select('select season from matches where league=:league group by season',['league'=>$league]);
+		foreach($seasons as $season)
+		{
+			$season=$season->season;
+			$teams=DB::select('select team1 from matches where league=:league and season=:season group by team1',['league'=>$league,'season'=>$season]);
+			foreach($teams as $team)
+			{
+				
+			}
+		}
+		*/
+		$matchs=Match::where('league',$league)->where('round','38')->get();
+		foreach($matchs as $match)
+		{
+			//$match=$matchs;
+			$mp=new MatchPoint();
+			$mp->mid=$match->mid;
+			$round=$match->round;
+			$team1=$match->team1;
+			$team2=$match->team2;
+			$time=$match->time;
+			$season=$match->season;
+			$ws0=DB::select('select count(*) as c from matches where league=:league and season=:season and team1=:team and time<:time and result="胜" group by team1',['league'=>$league,'season'=>$season,'team'=>$team1,'time'=>$time]);
+			$ws1=DB::select('select count(*) as c from matches where league=:league and season=:season and team2=:team and time<:time and result="负" group by team2',['league'=>$league,'season'=>$season,'team'=>$team1,'time'=>$time]);
+			$ds=DB::select('select count(*) as c from matches where league=:league and season=:season and (team1=:team1 or team2=:team2) and time<:time and result="平"',['league'=>$league,'season'=>$season,'team1'=>$team1,'team2'=>$team1,'time'=>$time]);
+			$w=(count($ws0)==0?0:($ws0[0]->c)*3)+(count($ws1)==0?0:($ws1[0]->c)*3)+(count($ds)==0?0:$ds[0]->c);
+			$mp->team1=$team1;
+			$mp->point=$w;
+			$mp->save();
+			//dump($ds);
+			//$r=($ws0[0]+$ws1[1])*3+$ds[0];
+			//dump($w);
+			dump( $league.' '.$season.' '.$round.' '.$team1.' '.$w);
+			$ws0=DB::select('select count(*) as c from matches where league=:league and season=:season and team1=:team and time<:time and result="胜" group by team1',['league'=>$league,'season'=>$season,'team'=>$team2,'time'=>$time]);
+			$ws1=DB::select('select count(*) as c from matches where league=:league and season=:season and team2=:team and time<:time and result="负" group by team2',['league'=>$league,'season'=>$season,'team'=>$team2,'time'=>$time]);
+			$ds=DB::select('select count(*) as c from matches where league=:league and season=:season and (team1=:team1 or team2=:team2) and time<:time and result="平"',['league'=>$league,'season'=>$season,'team1'=>$team2,'team2'=>$team2,'time'=>$time]);
+			$w=(count($ws0)==0?0:($ws0[0]->c)*3)+(count($ws1)==0?0:($ws1[0]->c)*3)+(count($ds)==0?0:$ds[0]->c);
+			//return $seasons;
+			$mp->team1=$team2;
+			$mp->point=$w;
+			$mp->save();
+			dump( $league.' '.$season.' '.$round.' '.$team2.' '.$w);
+		}
+	}
+	public function getMatchPointCurrent($mid,$league,$season,$team1,$team2,$time)
+	{
+		/*
+		$seasons=DB::select('select season from matches where league=:league group by season',['league'=>$league]);
+		foreach($seasons as $season)
+		{
+			$season=$season->season;
+			$teams=DB::select('select team1 from matches where league=:league and season=:season group by team1',['league'=>$league,'season'=>$season]);
+			foreach($teams as $team)
+			{
+				
+			}
+		}
+		*/
+		//$matchs=Match::where('league',$league)->where('round','38')->get();
+		//foreach($matchs as $match)
+		//{
+			//$match=$matchs;
+			$mp=new MatchPoint();
+			$mp->mid=$mid;
+			//$round=$match->round;
+			//$team1=$match->team1;
+			//$team2=$match->team2;
+			//$time=$match->time;
+			//$season=$match->season;
+			$ws0=DB::select('select count(*) as c from matches where league=:league and season=:season and team1=:team and time<:time and result="胜" group by team1',['league'=>$league,'season'=>$season,'team'=>$team1,'time'=>$time]);
+			$ws1=DB::select('select count(*) as c from matches where league=:league and season=:season and team2=:team and time<:time and result="负" group by team2',['league'=>$league,'season'=>$season,'team'=>$team1,'time'=>$time]);
+			$ds=DB::select('select count(*) as c from matches where league=:league and season=:season and (team1=:team1 or team2=:team2) and time<:time and result="平"',['league'=>$league,'season'=>$season,'team1'=>$team1,'team2'=>$team1,'time'=>$time]);
+			$w=(count($ws0)==0?0:($ws0[0]->c)*3)+(count($ws1)==0?0:($ws1[0]->c)*3)+(count($ds)==0?0:$ds[0]->c);
+			$mp->team1=$team1;
+			$mp->point=$w;
+			if(Match::where('mid',$mid)->where('team1',$team1)->count()==0)
+			{
+			$mp->save();
+			}
+			//dump($ds);
+			//$r=($ws0[0]+$ws1[1])*3+$ds[0];
+			//dump($w);
+			//dump( $league.' '.$season.' '.$round.' '.$team1.' '.$w);
+			$ws0=DB::select('select count(*) as c from matches where league=:league and season=:season and team1=:team and time<:time and result="胜" group by team1',['league'=>$league,'season'=>$season,'team'=>$team2,'time'=>$time]);
+			$ws1=DB::select('select count(*) as c from matches where league=:league and season=:season and team2=:team and time<:time and result="负" group by team2',['league'=>$league,'season'=>$season,'team'=>$team2,'time'=>$time]);
+			$ds=DB::select('select count(*) as c from matches where league=:league and season=:season and (team1=:team1 or team2=:team2) and time<:time and result="平"',['league'=>$league,'season'=>$season,'team1'=>$team2,'team2'=>$team2,'time'=>$time]);
+			$w=(count($ws0)==0?0:($ws0[0]->c)*3)+(count($ws1)==0?0:($ws1[0]->c)*3)+(count($ds)==0?0:$ds[0]->c);
+			//return $seasons;
+			$mp->team1=$team2;
+			$mp->point=$w;
+			if(Match::where('mid',$mid)->where('team1',$team2)->count()==0)
+			{
+			$mp->save();
+			}
+			//dump( $league.' '.$season.' '.$round.' '.$team2.' '.$w);
+		//}
 	}
 }

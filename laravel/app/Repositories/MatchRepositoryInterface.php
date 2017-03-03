@@ -15,4 +15,7 @@ interface MatchRepositoryInterface {
 	public function getqiwangzu($mid);
 	public function getCurrentMatch($team1,$season,$league,$round,$time);
 	public function getcurrentqiwangzu($mid);
+	public function getMatchPoint($season);
+	public function getMatchDif($mid);
+	public function getMatchPointCurrent($mid,$league,$season,$team1,$team2,$time);
 }

@@ -8,7 +8,7 @@ use Goutte;
 use Goutte\client;
 use GuzzleHttp\Client as GuzzleClient;
 use Crawler;
-class CrawlerRepository implements CrawlerRepositoryInterface{
+class CrawlerRepository extends MatchRepository implements CrawlerRepositoryInterface {
 
 
    public function MidList()
@@ -236,6 +236,7 @@ class CrawlerRepository implements CrawlerRepositoryInterface{
 		  if($count==0)
 		  {
 		     $match->save();
+			 $this->getMatchPointCurrent($match->mid,$match->league,$match->season,$match->team1,$match->team2,$match->time);
 		  }
 		  else
 		  {
@@ -375,6 +376,7 @@ class CrawlerRepository implements CrawlerRepositoryInterface{
 		  if($count==0)
 		  {
 		     $match->save();
+			  $this->getMatchPointCurrent($match->mid,$match->league,$match->season,$match->team1,$match->team2,$match->time);
 		  }
 		  else
 		  {
