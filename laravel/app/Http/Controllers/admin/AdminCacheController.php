@@ -7,8 +7,10 @@ use App\Http\Controllers\Controller;
 use Cache;
 use App\LocalCache;
 
+
 class AdminCacheController extends Controller
 {
+
     public function index()
 	{
 		$cache=new LocalCache();
@@ -29,5 +31,6 @@ class AdminCacheController extends Controller
 		$cs=$cache->get();
 		return view('admin.part.cache',['cs'=>$cs]);
 	}
+
 	
 }

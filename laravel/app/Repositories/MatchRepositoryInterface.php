@@ -5,6 +5,7 @@ interface MatchRepositoryInterface {
 
 	public function matchMid($mid);
 	public function matchAnalysis(Match $m);
+	public function matchHistory($league,$team1,$team2);
 	public function getodds($mid);
 	public function getpeifu($w,$d,$l);
 	public function getgailv($w,$d,$l);

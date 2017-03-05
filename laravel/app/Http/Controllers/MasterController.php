@@ -34,6 +34,7 @@ class MasterController extends Controller
 		$term3=$this->term=date("Ymd",strtotime("- 2 day"));
 		$term4=$this->term=date("Ymd",strtotime("- 3 day"));
 		$term5=$this->term=date("Ymd",strtotime("- 4 day"));
+		$term6=$this->term=date("Ymd",strtotime("- 5 day"));
 	  $time=date("Ymd");
 	  $array_term=[];
 		$checkDayStr = date('Y-m-d ',time());
@@ -48,7 +49,8 @@ class MasterController extends Controller
 		$term2=$this->term=date("Ymd",strtotime("- 2 day"));
 		$term3=$this->term=date("Ymd",strtotime("- 3 day"));
 		$term4=$this->term=date("Ymd",strtotime("- 4 day"));
-		$term4=$this->term=date("Ymd",strtotime("- 5 day"));
+		$term5=$this->term=date("Ymd",strtotime("- 5 day"));
+		$term6=$this->term=date("Ymd",strtotime("- 6 day"));
 		}
 	    $matches=Cache::remember($term1,2880,function(){
 		$array_match=[];
@@ -75,7 +77,7 @@ class MasterController extends Controller
 		return $matches;
 	  });
 	  
-	  array_push($array_term,$term5,$term4,$term3,$term2,$term1);
+	  array_push($array_term,$term6,$term5,$term4,$term3,$term2,$term1);
 	  return view('index',['matches'=>$matches,'terms'=>$array_term,'tterm'=>$term1]);
     }
 	public function indexall()
@@ -159,10 +161,19 @@ class MasterController extends Controller
 		  $m=$this->mr->matchAnalysis($this->match);
 		  return $m;
 	  });
-	  
+	  $history1=Cache::remember('h1'.$mid,1440,function(){
+		  $h=$this->mr->matchHistory($this->match->league,$this->match->team1,$this->match->team2);
+		  return $h;
+	  });
+	  $history2=Cache::remember('h2'.$mid,1440,function(){
+		  $h2=$this->mr->matchHistory($this->match->league,$this->match->team2,$this->match->team1);
+		  return $h2;
+	  });
+	 // dump($history1);
+	  //dump($history2);
 	  $odds=$this->mr->getodds($mid);
 	  //dump($matches);
-	  return view('analysis',['mid'=>$mid,'matches'=>$matches,'match'=>$match,'odds'=>$odds]);
+	  return view('analysis',['mid'=>$mid,'matches'=>$matches,'match'=>$match,'history1'=>$history1,'history2'=>$history2,'odds'=>$odds]);
 	  
 	}
 	
@@ -376,6 +387,7 @@ class MasterController extends Controller
 		  if($m->result=='--')
 		  {
            $this->crawler->selectNoDump($mid);
+		   sleep(rand(100,150)/100);
 		   $m=$match->where('mid',$mid)->first();
 		  }
 	  $o=$odd->where('mid',$mid)->where('init',1)->first();

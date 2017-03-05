@@ -15,6 +15,112 @@ class MatchRepository  implements MatchRepositoryInterface{
 		$m=$match->where('mid',$mid)->first();
 		return $m;
 	}
+	public function matchHistory($league,$team1,$team2)
+	{
+		$mas=array();
+	   $historys=Match::where('league',$league)->where('team1',$team1)->where('team2',$team2)->orderBy('season')->get();
+	   //$historys=Match::where('league',$league)->where('team1',$team2)->where('team2',$team1)->orderBy('season')->get();
+	   //array_push($history,$historys);
+	   foreach($historys as $history)
+	   {    //dump($match->team1.$match->team2);
+		    //if($history->result=="胜"){$COUNT_V++;}
+			//if($history->result=="平"){$COUNT_D++;}
+			//if($history->result=="负"){$COUNT_F++;}
+	 		$league=$history->league;
+			$mtime=$history->time;
+			$score=$history->score;
+	 		$season=$history->season;
+			$result=$history->result;
+	 		$round=$history->round;
+	 		$team=$history->team1;
+	 		$team2=$history->team2;
+	 		$points=0;
+			//$fenshu=0;
+			//$fenshu2=0;
+			//$fenshuu=0;
+			//$fenshuu2=0;
+			$qiwang=0;
+			$qiwang2=0;			
+	 		$points2=0;
+	 		$point_home=0;
+	 		$point_away=0;
+	 		$goal=0;
+			$goal2=0;
+	 		$goal_home=0;
+	 		$goal_away=0;
+	 		$sms=DB::select('SELECT * FROM matches as A left join odds as B on A.mid=B.mid where A.league=:league and A.season=:season and A.time<:time AND (team1=:team1 OR team2=:team2) AND B.init=1 ORDER BY A.time desc  LIMIT 5',['league'=>$league,'season'=>$season,'time'=>$mtime,'team1'=>$team,'team2'=>$team]);
+	 		foreach($sms as $sm){
+			$f=$this->getfenshu0($sm->sheng,$sm->ping,$sm->fu);
+			$f2=$this->getfenshu1($sm->sheng,$sm->ping,$sm->fu);
+			$q=$this->getqiwang($sm->sheng,$sm->ping,$sm->fu);
+			//dump($q);
+			if($sm->team1==$team){$qiwang+=$q[0];}
+			else{$qiwang+=$q[1];}
+	 		 if($sm->result=='胜'){
+	 			 if($sm->team1==$team){$points+=3;$goal+=$sm->score_home;}	
+                 else{$goal+=$sm->score_away;}				 
+	 		   }
+	 		 else if($sm->result=='平'){
+	 			 $points+=1;$goal+=$sm->score_home;
+				 if($sm->team1==$team){}
+				 else{}	 
+	 		   }
+	 		 else if($sm->result=='负'){
+	 			 if($sm->team2==$team){$points+=3;$goal+=$sm->score_away;}
+                 else{$goal+=$sm->score_home;}				 
+	 		   }
+	 		}
+	 		$sms=DB::select('SELECT * FROM matches as A left join odds as B on A.mid=B.mid where A.league=:league and A.season=:season and A.time<:time AND (team1=:team1 OR team2=:team2) AND B.init=1 ORDER BY A.time desc  LIMIT 5',['league'=>$league,'season'=>$season,'time'=>$mtime,'team1'=>$team2,'team2'=>$team2]); 
+	 		foreach($sms as $sm){
+			//dump($sm);
+			//$f=$this->getfenshu0($sm->sheng,$sm->ping,$sm->fu);
+			$q=$this->getqiwang($sm->sheng,$sm->ping,$sm->fu);
+			if($sm->team1==$team2){$qiwang2+=$q[0];}
+			else{$qiwang2+=$q[1];}
+	 		 if($sm->result=='胜'){
+	 			 if($sm->team1==$team2){$points2+=3;$goal2+=$sm->score_home;}	
+                 else{$goal2+=$sm->score_away;}					 
+	 		   }
+	 		 else if($sm->result=='平'){
+	 			 $points2+=1;$goal2+=$sm->score_home;
+                if($sm->team1==$team2){}
+				 else{}				 
+	 		   }
+	 		 else if($sm->result=='负'){
+	 			 if($sm->team2==$team2){$points2+=3;$goal2+=$sm->score_away;}		
+                else{$goal2+=$sm->score_away;}					 
+	 		   }
+	 		}
+			$history->points=$points;
+			$history->points2=$points2;
+			$history->goal=$goal;
+			$history->goal2=$goal2;
+			//$history->fenshu=$fenshu;
+			//$history->fenshu2=$fenshu2;
+			//$history->fenshuu=$fenshuu;
+			//$history->fenshuu2=$fenshuu2;
+			$history->qiwang=$qiwang;
+			$history->qiwang2=$qiwang2;
+			$history->percent=$qiwang==0?'none':number_format($points/$qiwang,2);
+			$history->percent2=$qiwang2==0?'none':number_format($points2/$qiwang2,2);
+			$history->pointcz=number_format($points-$points2,2);
+			$history->qiwangcz=number_format($qiwang-$qiwang2,2);
+			$odd=Match::find($history->id)->odd;
+			if($odd!=null)
+		   {
+			$history->w=$odd->sheng;
+            $history->d=$odd->ping;
+			$history->f=$odd->fu;
+		   }
+		   else{
+			$history->w='-';
+            $history->d='-';
+			$history->f='-';
+		   }
+			array_push($mas,$history);
+	  }
+	   return $mas;
+	}
 	
 	public function matchAnalysis(Match $m)
 	 {
@@ -195,19 +301,29 @@ class MatchRepository  implements MatchRepositoryInterface{
 	 {
         $matchess=[];
 		$percents=[];
-		$round=$round-1;
-		for($i=1;$i<=$round;$i+=5)
+		$round2=DB::select('select count(*) as c from matches where league=:league and season=:season and (team1=:team1 or team2=:team2) and time<:time',['league'=>$league,'season'=>$season,'team1'=>$team1,'team2'=>$team1,'time'=>$time]);
+		$round=$round2[0]->c;
+          $j=$round%5==0?5:$round%5;
+		for($i=1;$i<=$round;$i+=$j)
 		{
-		   //dump($i);
+			if($i!=1){$j=5;}
+		  // dump($j);
 		   $round1=$i;
 		   $round2=$round<$i+4?$round:$i+4;
-		   $match=DB::select('select A.mid,A.league,A.season,A.round,A.score,A.time,A.team1,A.team2,A.result ,B.sheng,B.ping,B.fu from matches as A left join odds as B on A.mid=B.mid WHERE A.league=:league and A.season=:season and (A.team1=:team1 or A.team2=:team2)  and A.time<:time and B.init=1  ORDER BY A.time desc limit 5',['league'=>$league,'season'=>$season,'team1'=>$team1,'team2'=>$team1,'time'=>$time]);
+		   $count=5;
+		   $count=$j;
+		   
+		   $match=DB::select('select A.mid,A.league,A.season,A.round,A.score,A.time,A.team1,A.team2,A.result ,B.sheng,B.ping,B.fu from matches as A left join odds as B on A.mid=B.mid WHERE A.league=:league and A.season=:season and (A.team1=:team1 or A.team2=:team2)  and A.time<:time and B.init=1  ORDER BY A.time desc limit :count',['league'=>$league,'season'=>$season,'team1'=>$team1,'team2'=>$team1,'time'=>$time,'count'=>$count]);
            //$match->team=$round1.'-'.$round2;
 		   array_push($matchess,$match);
+		   //dump($match);
 		   $length=count($match);
-		   $time=$match[$length-1]->time;
+		   if($length!=0)
+			{
+		    $time=$match[$length-1]->time;
+			}
 		}
-		
+		//dump($matchess);
 
 		foreach($matchess as $matches)
 		 {

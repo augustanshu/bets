@@ -25,8 +25,8 @@
 			<h5 class="match-header-point">客积分:{{$match->points2}}</h5>
 			<h5 class="match-header-percent">主期望:{{$match->qiwang}}|{{$match->percent}}</h5>
 			<h5 class="match-header-percent">客期望:{{$match->qiwang2}}|{{$match->percent2}}</h5>
-		    <h5 class="match-header-fenshu">主分:{{$match->fenshu}}</h5>
-			<h5 class="match-header-fenshu">客分:{{$match->fenshu2}}</h5>
+		    <!--<h5 class="match-header-fenshu">主分:{{$match->fenshu}}</h5>
+			<h5 class="match-header-fenshu">客分:{{$match->fenshu2}}</h5>-->
 		    <!--<h5>主:{{$match->fenshuu}}</h5>
 			<h5>客:{{$match->fenshuu2}}</h5>-->
 			@endif
@@ -38,7 +38,59 @@
           <li class="list-group-item"> 
 		  <a id="chartbtn"  type="button" data-toggle="collapse" href="#collapseTwo">析</a>	
 		  <div  class="ar" ></div>
-		  </li>		
+		  <a data-toggle="collapse" data-parent="#accordion1"  href="#collapseH1">H1</a>
+		  <div id="collapseH1" class="panel-collapse collapse in">
+		  @foreach($history1 as $match)
+		    <a style="display:flex;flex-direction:row;justify-content:space-between;text-decoration:none">
+			<h5 id="mid" name={{$mid}}></h5>
+			<!--<h5>{{$match->league}}</h5>-->
+			<h5>{{$match->round}}</h5>
+			<h5>{{$match->time}}</h5>
+			<h5>主:{{$match->team1}}</h5>
+			<h5>客:{{$match->team2}}</h5>
+			<h5>{{$match->result}}</h5>
+			<h5>{{$match->score}}</h5>
+			<h5 class="match-header-goal">主进球:{{$match->goal}}</h5>
+			<h5 class="match-header-goal">客进球:{{$match->goal2}}</h5>
+			<h5 class="match-header-point">主积分:{{$match->points}}</h5>
+			<h5 class="match-header-point">客积分:{{$match->points2}}</h5>
+			<h5 class="match-header-percent">主期望:{{$match->qiwang}}|{{$match->percent}}</h5>
+			<h5 class="match-header-percent">客期望:{{$match->qiwang2}}|{{$match->percent2}}</h5>
+			<h5>{{$match->w}}/{{$match->d}}/{{$match->f}}</h5>
+		    <!--<h5 class="match-header-fenshu">主分:{{$match->fenshu}}</h5>
+			<h5 class="match-header-fenshu">客分:{{$match->fenshu2}}</h5>-->
+		    <!--<h5>主:{{$match->fenshuu}}</h5>
+			<h5>客:{{$match->fenshuu2}}</h5>-->
+			</a>
+			@endforeach
+			
+		  </div>
+		   <a data-toggle="collapse" data-parent="#accordion2"  class="panel-collapse collapse in"  href="#collapseH2">H2</a>
+		   <div id="collapseH2" class="panel-collapse collapse in">
+		  	 @foreach($history2 as $match)
+		    <a style="display:flex;flex-direction:row;justify-content:space-between;text-decoration:none">
+			<h5 id="mid" name={{$mid}}></h5>
+			<!--<h5>{{$match->league}}</h5>-->
+			<h5>{{$match->round}}</h5>
+			<h5>{{$match->time}}</h5>
+			<h5>主:{{$match->team1}}</h5>
+			<h5>客:{{$match->team2}}</h5>
+			<h5>{{$match->result}}</h5>
+			<h5>{{$match->score}}</h5>
+			<h5 class="match-header-goal">主进球:{{$match->goal}}</h5>
+			<h5 class="match-header-goal">客进球:{{$match->goal2}}</h5>
+			<h5 class="match-header-point">主积分:{{$match->points}}</h5>
+			<h5 class="match-header-point">客积分:{{$match->points2}}</h5>
+			<h5 class="match-header-percent">主期望:{{$match->qiwang}}|{{$match->percent}}</h5>
+			<h5 class="match-header-percent">客期望:{{$match->qiwang2}}|{{$match->percent2}}</h5>
+			<h5>{{$match->w}}/{{$match->d}}/{{$match->f}}</h5>
+		    <!--<h5 class="match-header-fenshu">主分:{{$match->fenshu}}</h5>
+			<h5 class="match-header-fenshu">客分:{{$match->fenshu2}}</h5>-->
+		    <!--<h5>主:{{$match->fenshuu}}</h5>
+			<h5>客:{{$match->fenshuu2}}</h5>-->
+			</a>
+			@endforeach
+			</div>
 				@foreach($odds as $odd)
 				<li class="list-group-item" >{{$odd->sheng}}/{{$odd->ping}}/{{$odd->fu}}----{{$odd->updatetime}}</li>
 				@endforeach

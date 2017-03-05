@@ -50,18 +50,23 @@ class CrawlerRequest extends Command
 	   }
       */
 	  
-	   /*
-	    $content=Storage::get('yc11-12.php');
-		$this->crawler->getFromLeague($content);
-		*/
+	   
+	    $content=Storage::get('1.php');
+		//dump($content);
+		$this->crawler->getDoumentList($content);
 		
+		/*
 
 			$files = Storage::allfiles('/match');
+			dump($files);
 			foreach($files as $content)
 			{
+			
 			  $content=Storage::get($content);
+			  	//dump($content);
 			  $this->crawler->getFromLeague($content);
-			}	 
+			}	
+			*/
     }
 
     public function countedAndCheckEnded()
