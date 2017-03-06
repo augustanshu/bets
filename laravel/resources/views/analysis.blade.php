@@ -19,12 +19,12 @@
 			<h5>客:{{$match->team2}}</h5>
 			<h5>{{$match->result}}</h5>
 			<h5>{{$match->score}}</h5>
-			<h5 class="match-header-goal">主进球:{{$match->goal}}</h5>
-			<h5 class="match-header-goal">客进球:{{$match->goal2}}</h5>
-			<h5 class="match-header-point">主积分:{{$match->points}}</h5>
-			<h5 class="match-header-point">客积分:{{$match->points2}}</h5>
-			<h5 class="match-header-percent">主期望:{{$match->qiwang}}|{{$match->percent}}</h5>
-			<h5 class="match-header-percent">客期望:{{$match->qiwang2}}|{{$match->percent2}}</h5>
+			<h5 class="match-header-goal">主进:{{$match->goal}}</h5>
+			<h5 class="match-header-goal">客进:{{$match->goal2}}</h5>
+			<h5 class="match-header-point">主积:{{$match->points}}</h5>
+			<h5 class="match-header-point">客积:{{$match->points2}}</h5>
+			<h5 class="match-header-percent">主期:{{$match->qiwang}}|{{$match->percent}}</h5>
+			<h5 class="match-header-percent">客期:{{$match->qiwang2}}|{{$match->percent2}}</h5>
 		    <!--<h5 class="match-header-fenshu">主分:{{$match->fenshu}}</h5>
 			<h5 class="match-header-fenshu">客分:{{$match->fenshu2}}</h5>-->
 		    <!--<h5>主:{{$match->fenshuu}}</h5>
@@ -48,14 +48,14 @@
 			<h5>{{$match->time}}</h5>
 			<h5>主:{{$match->team1}}</h5>
 			<h5>客:{{$match->team2}}</h5>
-			<h5>{{$match->result}}</h5>
+			<h5  {{$match->result=='胜'?'class=match-header-goal':($match->result=='负'?'class=match-result-lose':'')}}>{{$match->result}}</h5>
 			<h5>{{$match->score}}</h5>
-			<h5 class="match-header-goal">主进球:{{$match->goal}}</h5>
-			<h5 class="match-header-goal">客进球:{{$match->goal2}}</h5>
-			<h5 class="match-header-point">主积分:{{$match->points}}</h5>
-			<h5 class="match-header-point">客积分:{{$match->points2}}</h5>
-			<h5 class="match-header-percent">主期望:{{$match->qiwang}}|{{$match->percent}}</h5>
-			<h5 class="match-header-percent">客期望:{{$match->qiwang2}}|{{$match->percent2}}</h5>
+			<h5 class="match-header-goal">主进:{{$match->goal}}</h5>
+			<h5 class="match-header-goal">客进:{{$match->goal2}}</h5>
+			<h5 class="match-header-point">主积:{{$match->points}}</h5>
+			<h5 class="match-header-point">客积:{{$match->points2}}</h5>
+			<h5 class="match-header-percent">主期:{{$match->qiwang}}|{{$match->percent}}</h5>
+			<h5 class="match-header-percent">客期:{{$match->qiwang2}}|{{$match->percent2}}</h5>
 			<h5>{{$match->w}}/{{$match->d}}/{{$match->f}}</h5>
 		    <!--<h5 class="match-header-fenshu">主分:{{$match->fenshu}}</h5>
 			<h5 class="match-header-fenshu">客分:{{$match->fenshu2}}</h5>-->
@@ -75,14 +75,14 @@
 			<h5>{{$match->time}}</h5>
 			<h5>主:{{$match->team1}}</h5>
 			<h5>客:{{$match->team2}}</h5>
-			<h5>{{$match->result}}</h5>
+			<h5  {{$match->result=='胜'?'class=match-header-goal':($match->result=='负'?'class=match-result-lose':'')}}>{{$match->result}}</h5>
 			<h5>{{$match->score}}</h5>
-			<h5 class="match-header-goal">主进球:{{$match->goal}}</h5>
-			<h5 class="match-header-goal">客进球:{{$match->goal2}}</h5>
-			<h5 class="match-header-point">主积分:{{$match->points}}</h5>
-			<h5 class="match-header-point">客积分:{{$match->points2}}</h5>
-			<h5 class="match-header-percent">主期望:{{$match->qiwang}}|{{$match->percent}}</h5>
-			<h5 class="match-header-percent">客期望:{{$match->qiwang2}}|{{$match->percent2}}</h5>
+			<h5 class="match-header-goal">主进:{{$match->goal}}</h5>
+			<h5 class="match-header-goal">客进:{{$match->goal2}}</h5>
+			<h5 class="match-header-point">主积:{{$match->points}}</h5>
+			<h5 class="match-header-point">客积:{{$match->points2}}</h5>
+			<h5 class="match-header-percent">主期:{{$match->qiwang}}|{{$match->percent}}</h5>
+			<h5 class="match-header-percent">客期:{{$match->qiwang2}}|{{$match->percent2}}</h5>
 			<h5>{{$match->w}}/{{$match->d}}/{{$match->f}}</h5>
 		    <!--<h5 class="match-header-fenshu">主分:{{$match->fenshu}}</h5>
 			<h5 class="match-header-fenshu">客分:{{$match->fenshu2}}</h5>-->
@@ -118,9 +118,10 @@
 			<th>期望差</th>
 			<th>主期率</th>
 			<th>客期率</th>
-			<th>主分</th>
-			<th>客分</th>
-			<!--<th>主2</th>
+			<th>差值</th>
+		   <!--<th>主分</th>
+		   <th>客分</th>
+			<th>主2</th>
 			<th>客2</th>-->
 			<th>MID</th>
 			
@@ -146,9 +147,10 @@
 			<th>期望差</th>
 			<th>主期率</th>
 			<th>客期率</th>
-			<th>主分</th>
+			<th>差值</th>
+			<!--<th>主分</th>
 			<th>客分</th>
-			<!--<th>主2</th>
+			<th>主2</th>
 			<th>客2</th>-->
 			<th>MID</th>
             </tr>
@@ -178,8 +180,9 @@
 		<td>{{$match->qiwangcz}}</td>
 		<td>{{$match->percent}}</td>
 		<td>{{$match->percent2}}</td>
-		<td>{{$match->fenshu}}</td>
-		<td>{{$match->fenshu2}}</td>
+		<td>{{$match->percentcz}}</td>
+		<!--<td>{{$match->fenshu}}</td>
+		<td>{{$match->fenshu2}}</td>-->
 		<td data-name="{{$match->mid}}">{{$match->mid}}</td>
         </tr>
 	   
@@ -250,7 +253,7 @@
 	});
 	function format ( d ) {
     // `d` is the original data object for the row
-    return '<table class=ar'+d[20]+'>'+
+    return '<table class=ar'+d[19]+'>'+
 
     '</div>';
    }
@@ -269,8 +272,8 @@
             // Open this row
             row.child( format(data) ).show();
             tr.addClass('shown');
-			var l=$('.ar'+data[20]+'').length;
-			 $('.ar'+data[20]+'').load('{{URL::to('/match/chart')}}'+'/'+data[20]);
+			var l=$('.ar'+data[19]+'').length;
+			 $('.ar'+data[19]+'').load('{{URL::to('/match/chart')}}'+'/'+data[19]);
         }
     } );
 }(jQuery));
@@ -296,6 +299,9 @@
 }
 .match-header-percent{
 	color:darkslateblue;
+}
+.match-result-lose{
+	color:green;
 }
 </style>
 @endsection

@@ -376,7 +376,7 @@ class MasterController extends Controller
 	*更新指定期数赛事
 	*/
 	public function freshMatchList($mid){
-		
+	  $key=$mid;
 	  $mids=$this->crawler->Midlist2($mid);
 	  $array_term=[];
 	  $array_match=[];
@@ -400,9 +400,9 @@ class MasterController extends Controller
 		  array_push($array_match,$m);	   
 	  }
 	  $matches=$array_match;
-	  Cache::forget('laravel'.$mid);
-	  Cache::put($mid,$matches,2880);
+	  Cache::forget($key);
 	  array_push($array_term,date("Ymd")-4,date("Ymd")-3,date("Ymd")-2,date("Ymd")-1,date("Ymd")+0);
+	  Cache::put($key,$matches,2880);
 	  return view('matchList',['matches'=>$matches,'terms'=>$array_term]);
 	}
 	public function postMid(Request $request,$mid)

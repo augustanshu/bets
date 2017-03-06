@@ -216,10 +216,11 @@ class MatchRepository  implements MatchRepositoryInterface{
 			$match->fenshuu2=$fenshuu2;
 			$match->qiwang=$qiwang;
 			$match->qiwang2=$qiwang2;
-			$match->percent=$qiwang==0?'none':number_format($points/$qiwang,2);
-			$match->percent2=$qiwang2==0?'none':number_format($points2/$qiwang2,2);
+			$match->percent=$percent=$qiwang==0?'none':number_format($points/$qiwang,2);
+			$match->percent2=$percent2=$qiwang2==0?'none':number_format($points2/$qiwang2,2);
 			$match->pointcz=number_format($points-$points2,2);
 			$match->qiwangcz=number_format($qiwang-$qiwang2,2);
+			$match->percentcz=number_format($percent-$percent2,2);
 			array_push($mas,$match);
 	  }
           return $mas;
@@ -374,7 +375,6 @@ class MatchRepository  implements MatchRepositoryInterface{
 	}
 	public function getcurrentqiwangzu($mid)
     {
-		
         $datas=[];
 	    $datas2=[];
 		$match=Match::where('mid',$mid)->first();
@@ -392,7 +392,12 @@ class MatchRepository  implements MatchRepositoryInterface{
 		for($i=0;$i<$step;$i++)
 		{
 		  array_push($data,null);
-		   array_push($data2,null);
+		}
+		 $length=count($data2);
+		$step=9-$length;
+		for($i=0;$i<$step;$i++)
+		{
+		  array_push($data2,null);
 		}
 		//dump($data);
 		//dump($data2);

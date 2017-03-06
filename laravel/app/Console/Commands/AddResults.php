@@ -80,7 +80,16 @@ class AddResults extends Command
 			   }
 		  });
 		  */
-		  $this->getMatchPoint('英格兰超级联赛');
+		  $this->getMatchPoint('西班牙甲组联赛');
+		  /*
+		  $matches=DB::select('select count(*) as count,mid from matchpoint group by mid having count>1');
+		  dump($matches);
+		  foreach ($matches as $match)
+		  {
+			  //dump($match->team1);
+			 DB::delete('delete  from matchpoint where');
+		  }
+		  */
     }
 	public function getMatchPoint($league)
 	{
@@ -96,12 +105,12 @@ class AddResults extends Command
 			}
 		}
 		*/
-		$matchs=Match::where('league',$league)->chunk(200,function($matchs){
+		$matchs=Match::where('league',$league)->chunk(2000,function($matchs){
 		foreach($matchs as $match)
 		{
 			//$match=$matchs;
 			$mp=new MatchPoint();
-			$mp->mid=$match->mid;
+			$mid=$mp->mid=$match->mid;
 			$league=$match->league;
 			$round=$match->round;
 			$team1=$match->team1;
@@ -112,9 +121,21 @@ class AddResults extends Command
 			$ws1=DB::select('select count(*) as c from matches where league=:league and season=:season and team2=:team and time<:time and result="负" group by team2',['league'=>$league,'season'=>$season,'team'=>$team1,'time'=>$time]);
 			$ds=DB::select('select count(*) as c from matches where league=:league and season=:season and (team1=:team1 or team2=:team2) and time<:time and result="平"',['league'=>$league,'season'=>$season,'team1'=>$team1,'team2'=>$team1,'time'=>$time]);
 			$w=(count($ws0)==0?0:($ws0[0]->c)*3)+(count($ws1)==0?0:($ws1[0]->c)*3)+(count($ds)==0?0:$ds[0]->c);
-			$mp->team1=$team1;
-			$mp->point=$w;
-			$mp->save();
+			if(MatchPoint::where('mid',$mid)->where('team1',$team1)->count()==0)
+			{
+		      $mp=new MatchPoint();
+			  $mp->mid=$mid;
+			  $mp->team1=$team1;
+			  $mp->point=$w;
+			  $mp->save();
+			}
+			else
+			{
+				$mp=MatchPoint::where('mid',$mid)->where('team1',$team1)->first();
+			    $mp->point=$w;
+				$mp->update();
+				dump($mid.$team1.'exist!');
+			}
 			//dump($ds);
 			//$r=($ws0[0]+$ws1[1])*3+$ds[0];
 			//dump($w);
@@ -123,10 +144,21 @@ class AddResults extends Command
 			$ws1=DB::select('select count(*) as c from matches where league=:league and season=:season and team2=:team and time<:time and result="负" group by team2',['league'=>$league,'season'=>$season,'team'=>$team2,'time'=>$time]);
 			$ds=DB::select('select count(*) as c from matches where league=:league and season=:season and (team1=:team1 or team2=:team2) and time<:time and result="平"',['league'=>$league,'season'=>$season,'team1'=>$team2,'team2'=>$team2,'time'=>$time]);
 			$w=(count($ws0)==0?0:($ws0[0]->c)*3)+(count($ws1)==0?0:($ws1[0]->c)*3)+(count($ds)==0?0:$ds[0]->c);
-			//return $seasons;
-			$mp->team1=$team2;
-			$mp->point=$w;
-			$mp->save();
+			if(MatchPoint::where('mid',$mid)->where('team1',$team2)->count()==0)
+			{
+			  $mp=new MatchPoint();
+			  $mp->mid=$mid;
+			  $mp->team1=$team2;
+			  $mp->point=$w;
+			  $mp->save();
+			}
+			else
+			{
+				$mp=MatchPoint::where('mid',$mid)->where('team1',$team2)->first();
+			    $mp->point=$w;
+				$mp->update();
+				dump($mid.$team2.'exist!');
+			}
 			dump( $league.' '.$season.' '.$round.' '.$team2.' '.$w);
 		}
 		});

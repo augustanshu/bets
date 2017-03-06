@@ -51,14 +51,14 @@ class CrawlerRequest extends Command
       */
 	  
 	   
-	    $content=Storage::get('1.php');
+	   // $content=Storage::get('1.php');
 		//dump($content);
-		$this->crawler->getDoumentList($content);
+		//$this->crawler->getDoumentList($content);
 		
-		/*
+		
 
 			$files = Storage::allfiles('/match');
-			dump($files);
+			//dump($files);
 			foreach($files as $content)
 			{
 			
@@ -66,7 +66,7 @@ class CrawlerRequest extends Command
 			  	//dump($content);
 			  $this->crawler->getFromLeague($content);
 			}	
-			*/
+			
     }
 
     public function countedAndCheckEnded()

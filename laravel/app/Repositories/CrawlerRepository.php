@@ -421,7 +421,7 @@ class CrawlerRepository extends MatchRepository implements CrawlerRepositoryInte
 	$crawler=new Crawler($content);
 	//dump($crawler);
 	$crawler->filter('.zstab')->each(function ($node,$i) {
-		dump($node);
+		//dump($node);
 	$node->filter('tbody > tr')->each(function($node2,$j){
 		$uri=$node2->filter('td')->eq(6)->filter('a')->attr('href');
 		$mid=explode('/',$uri)[3];
