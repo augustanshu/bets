@@ -12,7 +12,7 @@ interface MatchRepositoryInterface {
 	public function getfenshu0($w,$d,$l);
 	public function getfenshu1($w,$d,$l);
 	public function getqiwang($w,$d,$l);
-	public function getSeasonMatch($team,$season,$league);
+	public function getSeasonMatch($team,$season,$league,$time,$n);
 	public function getqiwangzu($mid);
 	public function getCurrentMatch($team1,$season,$league,$round,$time);
 	public function getcurrentqiwangzu($mid);
@@ -21,5 +21,7 @@ interface MatchRepositoryInterface {
 	public function getMatchPointCurrent($mid,$league,$season,$team1,$team2,$time);
 	public function teamHistory($league,$season,$mtime,$team,$limit,$bool);
 	public function getMathPoint($sms,$team);
-	  public function getresult($league,$season,$team,$time,$bool,$limit);
+	public function getresult($league,$season,$team,$time,$bool,$limit);
+	public function getresult2($league,$season,$team,$time,$bool,$limit);
+
 }

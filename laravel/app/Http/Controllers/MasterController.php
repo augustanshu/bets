@@ -273,8 +273,9 @@ class MasterController extends Controller
 		//dump($this->mr->getfenshu0(2.8,3,3));
 		//$seasons=array();
 		 $match=Match::where('mid',2113322)->first();
-		dump($match);
-		dump( $this->mr->getresult($match->league,$match->season,$match->team2,$match->time,false,6));
+		//dump($match);
+		dump( $this->mr->getresult($match->league,$match->season,$match->team1,$match->time,true,5));
+		dump( $this->mr->getresult2($match->league,$match->season,$match->team1,$match->time,true,5));
 		//dump($match);
 		//dump($this->mr->getCurrentMatch($match->team1,$match->season,$match->league,$match->round));
 		//dump($this->mr->getCurrentMatch($match->team2,$match->season,$match->league,$match->round));

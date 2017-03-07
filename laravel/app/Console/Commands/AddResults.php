@@ -82,7 +82,8 @@ class AddResults extends Command
 			   }
 		  });
 		  */
-		  $this->getMatchPoint2('1178860');
+		  $this->getMatchPoint2();
+		  //DB::table('matchpoint')->chun
 		  /*
 		  $matches=DB::select('select count(*) as count,mid from matchpoint group by mid having count>1');
 		  dump($matches);
@@ -155,24 +156,22 @@ class AddResults extends Command
 		});
 	}
 
-    public function getMatchPoint2($mid)
+    public function getMatchPoint2()
 	{
 		$limit=5;
-		DB::table('matchpoint')->where('mid',$mid)->chunk(2000,function($matchs){
+		DB::table('matchpoint')->chunk(2000,function($matchs){
 			foreach($matchs as $match){
-				$match=Match::where('mid',$match->mid)->first();
-				$mid=$mp->mid=$match->mid;
+			    $match=Match::where('mid',$match->mid)->first();
+				$mid=$match->mid;
 			    $league=$match->league;
 			    $round=$match->round;
 			    $team1=$match->team1;
 			    $team2=$match->team2;
 			    $time=$match->time;
 			    $season=$match->season;
-				dump($this->getresult($league,$season,$team,$time,$bool));
-				
-			
-			
-		});
+				dump($this->mr->getresult2($league,$season,$team1,$time,true,5));
+		}
+	 });
 	}
 
     public function getresult($league,$season,$team,$time,$bool)
@@ -222,5 +221,5 @@ class AddResults extends Command
 				$percent2=$math['percent'];
 				return ['goal'=>$goal,'goal_lose'=>$gl,'goal_same'=>$gs,'goal_same_lose'=>$gls,'fi_goal'=>$goal,'fi_goal_lose'=>$goal_lose,'fi_expect'=>$expect,'fi_percent'=>$percent,'fi_same_goal'=>$goal2,'fi_same_goal_lose'=>$goal_lose2,'fi_same_expect'=>$expect2,'fi_same_percent'=>$percent2];
 		}
-	}	
+	
 }

@@ -231,9 +231,19 @@ class MatchRepository  implements MatchRepositoryInterface{
 	 $gailv=$this->getgailv($w,$d,$l);
 	 return $qiwang=[number_format($gailv[0]*$ep,2)+number_format($gailv[1],2),number_format($gailv[2]*$ep,2)+number_format($gailv[1],2)];
 	}
-	public function getSeasonMatch($team1,$season,$league)
+	public function getSeasonMatch($team1,$season,$league,$time,$n)
 	{
-		$matches=DB::select('select A.mid,A.league,A.season,A.round,A.score,A.time,A.team1,A.team2,A.result ,B.sheng,B.ping,B.fu from matches as A left join odds as B on A.mid=B.mid WHERE A.league=:league and A.season=:season and (A.team1=:team1 or A.team2=:team2) and B.init=1  ORDER BY A.round',['league'=>$league,'season'=>$season,'team1'=>$team1,'team2'=>$team1]);
+		if($n==0)
+		{
+		$matches=DB::select('select A.mid,A.league,A.season,A.round,A.score,A.time,A.team1,A.team2,A.result ,B.sheng,B.ping,B.fu from matches as A left join odds as B on A.mid=B.mid WHERE A.league=:league and A.season=:season and (A.team1=:team1 or A.team2=:team2) and B.init=1 and A.time<:time ORDER BY A.time desc',['league'=>$league,'season'=>$season,'team1'=>$team1,'team2'=>$team1,'time'=>$time]);
+		}
+		else if($n==1)
+		{
+		$matches=DB::select('select A.mid,A.league,A.season,A.round,A.score,A.time,A.team1,A.team2,A.result ,B.sheng,B.ping,B.fu from matches as A left join odds as B on A.mid=B.mid WHERE A.league=:league and A.season=:season and (A.team1=:team1) and B.init=1 and A.time<:time ORDER BY A.time desc',['league'=>$league,'season'=>$season,'team1'=>$team1,'time'=>$time]);
+		}
+		else{
+		$matches=DB::select('select A.mid,A.league,A.season,A.round,A.score,A.time,A.team1,A.team2,A.result ,B.sheng,B.ping,B.fu from matches as A left join odds as B on A.mid=B.mid WHERE A.league=:league and A.season=:season and ( A.team2=:team2) and B.init=1 and A.time<:time  ORDER BY A.time desc',['league'=>$league,'season'=>$season,'team2'=>$team1,'time'=>$time]);
+		}
 		$qw=0;
 		$point=0;
 		$count=count($matches);
@@ -249,6 +259,7 @@ class MatchRepository  implements MatchRepositoryInterface{
 		$percent=$qw==0?0:number_format($point/$qw,2);
 		return ['赛事'=>$league,'season'=>$season,'球队'=>$team1,'期望'=>$qw,'实际分数'=>$point,'qwz'=>$percent,'round'=>$count];
 	}
+
 
 	public function getCurrentMatch($team1,$season,$league,$round,$time)
 	 {
@@ -316,8 +327,8 @@ class MatchRepository  implements MatchRepositoryInterface{
 		$l=$match->league;
 		$seasons=DB::select('SELECT season FROM matches where season<=:season and league=:league GROUP BY season ORDER BY season DESC LIMIT 7 ',['season'=>$s,'league'=>$l]);
 		foreach($seasons as $season){
-			$data=$this->getSeasonMatch($match->team1,$season->season,$match->league);
-			$data2=$this->getSeasonMatch($match->team2,$season->season,$match->league);
+			$data=$this->getSeasonMatch($match->team1,$season->season,$match->league,$match->time,0);
+			$data2=$this->getSeasonMatch($match->team2,$season->season,$match->league,$match->time,0);
 			array_push($datas,$data);
 			array_push($datas2,$data2);
 		}
@@ -380,24 +391,31 @@ class MatchRepository  implements MatchRepositoryInterface{
 				$ws1=DB::select('select count(*) as c from matches where league=:league and season=:season and team2=:team and time<:time and result="负" group by team2',['league'=>$league,'season'=>$season,'team'=>$team,'time'=>$time]);//kede
 				$ds0=DB::select('select count(*) as c from matches where league=:league and season=:season and (team1=:team ) and time<:time and result="平"',['league'=>$league,'season'=>$season,'team'=>$team,'time'=>$time]);//zhuping
 				$ds1=DB::select('select count(*) as c from matches where league=:league and season=:season and (team2=:team ) and time<:time and result="平"',['league'=>$league,'season'=>$season,'team'=>$team,'time'=>$time]);//keping
-				$point=(count($ws0)==0?0:($ws0[0]->c)*3)+(count($ws1)==0?0:($ws1[0]->c)*3)+(count($ds0)==0?0:$ds0[0]->c)+(count($ds1)==0?0:$ds1[0]->c);//defen
+				$pointall=(count($ws0)==0?0:($ws0[0]->c)*3)+(count($ws1)==0?0:($ws1[0]->c)*3)+(count($ds0)==0?0:$ds0[0]->c)+(count($ds1)==0?0:$ds1[0]->c);//defen
 				if($bool){$point_same=(count($ws0)==0?0:($ws0[0]->c)*3)+(count($ds0)==0?0:$ds0[0]->c);}
 				else{$point_same=(count($ws1)==0?0:($ws1[0]->c)*3)+(count($ds1)==0?0:$ds1[0]->c);}
-				dump('得分:'.' '.$point.' '.$point_same);
+				$r=$this->getSeasonMatch($team,$season,$league,$time,0);
+				$expectall=$r['期望'];
+				$percentall=$r['qwz'];
+				//dump('得分:'.' '.$pointall.' '.$point_same);
 				$g0=DB::select('select SUM(score_home) as c from matches where league=:league and season=:season and team1=:team and time<:time  group by team1',['league'=>$league,'season'=>$season,'team'=>$team,'time'=>$time]);//zhujin
 				$g1=DB::select('select SUM(score_away) as c from matches where league=:league and season=:season and team2=:team and time<:time group by team2',['league'=>$league,'season'=>$season,'team'=>$team,'time'=>$time]);//kejin
 				$gh=(count($g0)==0?0:($g0[0]->c));//jinqiu--zhu
 				$ga=(count($g1)==0?0:($g1[0]->c));//jinqiu--ke
 				$g=$gh+$ga;
 	            $gs=$bool==true?$gh:$ga;
-				dump('进球'.' '.$g.' '.$gs);
+				//dump('进球'.' '.$g.' '.$gs);
 				$gl0=DB::select('select SUM(score_away) as c from matches where league=:league and season=:season and team1=:team and time<:time  group by team1',['league'=>$league,'season'=>$season,'team'=>$team,'time'=>$time]);//zhushiqiu
 				$gl1=DB::select('select SUM(score_home) as c from matches where league=:league and season=:season and team2=:team and time<:time group by team2',['league'=>$league,'season'=>$season,'team'=>$team,'time'=>$time]);//keshiqiu
 				$glh=(count($gl0)==0?0:($gl0[0]->c));//shiqiu--zhu
 				$gla=(count($gl1)==0?0:($gl1[0]->c));//shiqiu--ke
 				$gl=$glh+$gla;//shiqiu
 				$gsl=$bool==true?$glh:$gla;
-				dump('失球'.' '.$gl.' '.$gsl);
+				$r=$bool==true?$this->getSeasonMatch($team,$season,$league,$time,1):$this->getSeasonMatch($team,$season,$league,$time,2);
+				$pointsame=$r['实际分数'];
+				$expectsame=$r['期望'];
+				$percentsame=$r['qwz'];
+				//dump('失球'.' '.$gl.' '.$gsl);
 				$sms=DB::select('SELECT * FROM matches as A left join odds as B on A.mid=B.mid where A.league=:league and A.season=:season and A.time<:time AND (team1=:team1 OR team2=:team2) AND B.init=1 ORDER BY A.time desc  LIMIT :limit',['league'=>$league,'season'=>$season,'time'=>$time,'team1'=>$team,'team2'=>$team,'limit'=>$limit]);
 				$math=$this->getMathPoint($sms,$team);
 				$expect=$math['expect'];
@@ -405,13 +423,13 @@ class MatchRepository  implements MatchRepositoryInterface{
 				$goal=$math['goal'];
 				$goal_lose=$math['goal_lose'];
 				$percent=$math['percent'];//jin 5 chang point
-				dump($goal.' '.$goal_lose.' '.$point.' '.$expect.' '.$percent);
+				//rdump($goal.' '.$goal_lose.' '.$point.' '.$expect.' '.$percent);
 				if($bool){
-				$sms=DB::select('SELECT * FROM matches as A left join odds as B on A.mid=B.mid where A.league=:league and A.season=:season and A.time<:time AND (team1=:team1) AND B.init=1 ORDER BY A.time desc  LIMIT :limit',['league'=>$league,'season'=>$season,'time'=>$mtime,'team1'=>$team,'limit'=>$limit]);;
+				$sms=DB::select('SELECT * FROM matches as A left join odds as B on A.mid=B.mid where A.league=:league and A.season=:season and A.time<:time AND (team1=:team1) AND B.init=1 ORDER BY A.time desc  LIMIT :limit',['league'=>$league,'season'=>$season,'time'=>$time,'team1'=>$team,'limit'=>$limit]);;
 				$math=$this->getMathPoint($sms,$team);
 				}
 				else{
-				$sms=DB::select('SELECT * FROM matches as A left join odds as B on A.mid=B.mid where A.league=:league and A.season=:season and A.time<:time AND (team2=:team2) AND B.init=1 ORDER BY A.time desc  LIMIT :limit',['league'=>$league,'season'=>$season,'time'=>$mtime,'team2'=>$team,'limit'=>$limit]);;
+				$sms=DB::select('SELECT * FROM matches as A left join odds as B on A.mid=B.mid where A.league=:league and A.season=:season and A.time<:time AND (team2=:team2) AND B.init=1 ORDER BY A.time desc  LIMIT :limit',['league'=>$league,'season'=>$season,'time'=>$time,'team2'=>$team,'limit'=>$limit]);;
 				$math=$this->getMathPoint($sms,$team);
 				}
 				$expect2=$math['expect'];
@@ -419,8 +437,109 @@ class MatchRepository  implements MatchRepositoryInterface{
 				$goal2=$math['goal'];
 				$goal_lose2=$math['goal_lose'];
 				$percent2=$math['percent'];
-				return ['point'=>$point,'goal'=>$goal,'goal_lose'=>$gl,'goal_same'=>$gs,'goal_same_lose'=>$gls,'fi_goal'=>$goal,'fi_goal_lose'=>$goal_lose,'fi_expect'=>$expect,'fi_percent'=>$percent,'fi_same_goal'=>$goal2,'fi_same_goal_lose'=>$goal_lose2,'fi_same_expect'=>$expect2,'fi_same_percent'=>$percent2];
+				return ['point'=>$pointall,'expect'=>$expectall,'percent'=>$percentall,'goal'=>$g,'goal_lose'=>$gl,'point_same'=>$pointsame,'expect_same'=>$expectsame,'percent_same'=>$percentsame,'goal_same'=>$gs,'goal_same_lose'=>$gsl,'fi_point'=>$point,'fi_goal'=>$goal,'fi_goal_lose'=>$goal_lose,'fi_expect'=>$expect,'fi_percent'=>$percent,'fi_same_point'=>$point2,'fi_same_goal'=>$goal2,'fi_same_goal_lose'=>$goal_lose2,'fi_same_expect'=>$expect2,'fi_same_percent'=>$percent2];
 		}
+   
+    public function getresult2($league,$season,$team,$time,$bool,$limit)
+	{
+		$i=0;
+        $j=0;
+		$point=0;
+		$goal=0;
+		$goal_lose=0;
+		$expect=0;
+		$percent=0;
+		/****/
+		$point_same=0;
+		$goal_same=0;
+		$goal_lose_same=0;
+		$expect_same=0;
+		$percent_same=0;
+		/***/
+		$fi_point=0;
+		$fi_goal=0;
+		$fi_goal_lose=0;
+		$fi_expect=0;
+		$fi_percent=0;
+		/***/
+		$fi_point_same=0;
+		$fi_goal_same=0;
+		$fi_goal_lose_same=0;
+		$fi_expect_same=0;
+		$fi_percent_same=0;
+		$matches=DB::select('select A.mid,A.league,A.season,A.round,A.score,A.time,A.team1,A.team2,A.result,A.score_home,A.score_away,B.sheng,B.ping,B.fu from matches as A left join odds as B on A.mid=B.mid WHERE A.league=:league and A.season=:season and (A.team1=:team1 or A.team2=:team2) and A.time<:time and B.init=1  ORDER BY A.time desc',['league'=>$league,'season'=>$season,'team1'=>$team,'team2'=>$team,'time'=>$time]);
+		$count=count($matches);
+		$limit=$count>$limit?$limit:$count;
+		foreach($matches as $match)
+		{
+		    $q=$this->getqiwang($match->sheng,$match->ping,$match->fu);
+			if($match->team1==$team){$expect+=$q[0];}
+			else{$expect+=$q[1];}
+			if($match->result=="胜"&$match->team1==$team){$point+=3;}
+			elseif($match->result=="负"&$match->team2==$team){$point+=3;}
+			elseif($match->result=="平"){$point+=1;}
+			if($match->team1==$team){$goal+=$match->score_home;$goal_lose+=$match->score_away;}
+			else{$goal+=$match->score_away;$goal_lose+=$match->score_home;}
+            $i++;
+			if($i==$limit)
+			{
+				$fi_point=$point; 
+				$fi_goal=$goal;
+				$fi_goal_lose=$goal_lose;
+				$fi_expect=$expect;				
+			}
+
+			if($bool)
+			{    
+				if($match->team1==$team)
+				{
+					$j++;
+					$qs=$this->getqiwang($match->sheng,$match->ping,$match->fu);
+					$expect_same+=$qs[0];
+					if($match->result=="胜"){$point_same+=3;}
+					elseif($match->result=="平"){$point_same+=1;}
+					$goal_same+=$match->score_home;
+					$goal_lose_same+=$match->score_away;	
+					if($j<=5)
+					{
+						$fi_point_same=$point_same; 
+						$fi_goal_same=$goal_same;
+						$fi_goal_lose_same=$goal_lose_same;
+						$fi_expect_same=$expect_same;	
+					}
+				}
+			}
+           else
+			   {
+			   
+				if($match->team2==$team)
+				{
+					$j++;
+					$qs=$this->getqiwang($match->sheng,$match->ping,$match->fu);
+					$expect_same+=$qs[1];
+					if($match->result=="负"){$point_same+=3;}
+					elseif($match->result=="平"){$point_same+=1;}
+					$goal_same+=$match->score_away;
+					$goal_lose_same+=$match->score_home;
+					if($j<=5)
+					{
+						$fi_point_same=$point_same; 
+						$fi_goal_same=$goal_same;
+						$fi_goal_lose_same=$goal_lose_same;
+						$fi_expect_same=$expect_same;	
+					}
+				}
+		   }
+			
+		
+		}
+		$percent=$expect==0?0:number_format($point/$expect,2);
+		$percent_same=$expect_same==0?0:number_format($point_same/$expect_same,2);
+		$fi_percent=$fi_expect==0?0:number_format($fi_point/$fi_expect,2);
+		$fi_percent_same=$fi_expect_same==0?0:number_format($fi_point_same/$fi_expect_same,2);
+		return ['point'=>$point,'goal'=>$goal,'goal_lose'=>$goal_lose,'expect'=>$expect,'percent'=>$percent,'point_same'=>$point_same,'goal_same'=>$goal_same,'goal_lose_same'=>$goal_lose_same,'expect_same'=>$expect_same,'percent_same'=>$percent_same,'fi_point'=>$fi_point,'fi_goal'=>$fi_goal,'fi_goal_lose'=>$fi_goal_lose,'fi_expect'=>$fi_expect,'fi_percent'=>$fi_percent,'fi_point_same'=>$fi_point_same,'fi_goal_same'=>$fi_goal_same,'fi_goal_lose_same'=>$fi_goal_lose_same,'fi_expect_same'=>$fi_expect_same,'fi_percent_same'=>$fi_percent_same];
+		 
+   }
 		
 	
     /*待删除*/
