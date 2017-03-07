@@ -157,23 +157,33 @@ class MasterController extends Controller
 	public function showMaster($mid)
 	{   
 	  $this->match=$match=$this->mr->matchMid($mid);
+	  $team1=$this->match->team1;
+	  $team2=$this->match->team2;
 	  $matches=Cache::remember('a'.$mid,1440,function(){
-		  $m=$this->mr->matchAnalysis($this->match);
+		  $m=$this->mr->matchAnalysis2($this->match);
 		  return $m;
 	  });
 	  $history1=Cache::remember('h1'.$mid,1440,function(){
-		  $h=$this->mr->matchHistory($this->match->league,$this->match->team1,$this->match->team2);
+		  $h=$this->mr->matchHistory($this->match->league,$this->match->team1,$this->match->team2,$this->match->season,$this->match->time,0,10);
 		  return $h;
 	  });
 	  $history2=Cache::remember('h2'.$mid,1440,function(){
-		  $h2=$this->mr->matchHistory($this->match->league,$this->match->team2,$this->match->team1);
+		  $h2=$this->mr->matchHistory($this->match->league,$this->match->team2,$this->match->team1,$this->match->season,$this->match->time,0,10);
 		  return $h2;
 	  });
+	  	  $history3=Cache::remember('h3'.$mid,1440,function(){
+		  $h3=$this->mr->matchHistory($this->match->league,$this->match->team1,$this->match->team2,$this->match->season,$this->match->time,1,10);
+		  return $h3;
+	  });
+	  	  $history4=Cache::remember('h4'.$mid,1440,function(){
+		  $h4=$this->mr->matchHistory($this->match->league,$this->match->team1,$this->match->team2,$this->match->season,$this->match->time,2,10);
+		  return $h4;
+	 });
 	 // dump($history1);
 	  //dump($history2);
 	  $odds=$this->mr->getodds($mid);
 	  //dump($matches);
-	  return view('analysis',['mid'=>$mid,'matches'=>$matches,'match'=>$match,'history1'=>$history1,'history2'=>$history2,'odds'=>$odds]);
+	  return view('analysis',['mid'=>$mid,'team1'=>$team1,'team2'=>$team2,'matches'=>$matches,'match'=>$match,'history1'=>$history1,'history2'=>$history2,'history3'=>$history3,'history4'=>$history4,'odds'=>$odds]);
 	  
 	}
 	
@@ -262,17 +272,20 @@ class MasterController extends Controller
 		//return view('test');
 		//dump($this->mr->getfenshu0(2.8,3,3));
 		//$seasons=array();
-		//$match=Match::where('mid',2113132)->first();
+		 $match=Match::where('mid',2113322)->first();
+		dump($match);
+		dump( $this->mr->getresult($match->league,$match->season,$match->team2,$match->time,false,6));
 		//dump($match);
 		//dump($this->mr->getCurrentMatch($match->team1,$match->season,$match->league,$match->round));
 		//dump($this->mr->getCurrentMatch($match->team2,$match->season,$match->league,$match->round));
-		
+		/*
 		$matches=Match::where('status','未')->get();
 		foreach( $matches as $match)
 		{
 		$this->crawler->select($match->mid);
 		sleep(rand(100,120)/100);
 		}
+		*/
 		//dump($this->mr->getSeasonMatch('曼联','09-10','英格兰超级联赛'));
 		
 		//dump($this->mr->getMatchPoint('英格兰超级联赛'));

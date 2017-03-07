@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Console\Commands;
-
+use App\Repositories\MatchRepositoryInterface;
 use Illuminate\Console\Command;
 use App\Match;
 use App\NoOdd;
@@ -10,6 +10,11 @@ use DB;
 use App\MatchPoint;
 class AddResults extends Command
 {
+	public function __construct(MatchRepositoryInterface $mr)
+    {
+		 parent::__construct();
+	     $this->mr=$mr;
+    }
     /**
      * The name and signature of the console command.
      *
@@ -29,10 +34,7 @@ class AddResults extends Command
      *
      * @return void
      */
-    public function __construct()
-    {
-        parent::__construct();
-    }
+
 
     /**
      * Execute the console command.
@@ -80,7 +82,7 @@ class AddResults extends Command
 			   }
 		  });
 		  */
-		  $this->getMatchPoint('西班牙甲组联赛');
+		  $this->getMatchPoint2('1178860');
 		  /*
 		  $matches=DB::select('select count(*) as count,mid from matchpoint group by mid having count>1');
 		  dump($matches);
@@ -91,20 +93,9 @@ class AddResults extends Command
 		  }
 		  */
     }
+	
 	public function getMatchPoint($league)
 	{
-		/*
-		$seasons=DB::select('select season from matches where league=:league group by season',['league'=>$league]);
-		foreach($seasons as $season)
-		{
-			$season=$season->season;
-			$teams=DB::select('select team1 from matches where league=:league and season=:season group by team1',['league'=>$league,'season'=>$season]);
-			foreach($teams as $team)
-			{
-				
-			}
-		}
-		*/
 		$matchs=Match::where('league',$league)->chunk(2000,function($matchs){
 		foreach($matchs as $match)
 		{
@@ -163,4 +154,73 @@ class AddResults extends Command
 		}
 		});
 	}
+
+    public function getMatchPoint2($mid)
+	{
+		$limit=5;
+		DB::table('matchpoint')->where('mid',$mid)->chunk(2000,function($matchs){
+			foreach($matchs as $match){
+				$match=Match::where('mid',$match->mid)->first();
+				$mid=$mp->mid=$match->mid;
+			    $league=$match->league;
+			    $round=$match->round;
+			    $team1=$match->team1;
+			    $team2=$match->team2;
+			    $time=$match->time;
+			    $season=$match->season;
+				dump($this->getresult($league,$season,$team,$time,$bool));
+				
+			
+			
+		});
+	}
+
+    public function getresult($league,$season,$team,$time,$bool)
+	{
+		       $ws0=DB::select('select count(*) as c from matches where league=:league and season=:season and team1=:team and time<:time and result="胜" group by team1',['league'=>$league,'season'=>$season,'team'=>$team,'time'=>$time]);//zhude
+				$ws1=DB::select('select count(*) as c from matches where league=:league and season=:season and team2=:team and time<:time and result="负" group by team2',['league'=>$league,'season'=>$season,'team'=>$team,'time'=>$time]);//kede
+				$ds0=DB::select('select count(*) as c from matches where league=:league and season=:season and (team1=:team1 ) and time<:time and result="平"',['league'=>$league,'season'=>$season,'team1'=>$team,'team2'=>$team,'time'=>$time]);//zhuping
+				$ds1=DB::select('select count(*) as c from matches where league=:league and season=:season and (team2=:team1 ) and time<:time and result="平"',['league'=>$league,'season'=>$season,'team1'=>$team,'team2'=>$team,'time'=>$time]);//keping
+				$goal=(count($ws0)==0?0:($ws0[0]->c)*3)+(count($ws1)==0?0:($ws1[0]->c)*3)+(count($ds0)==0?0:$ds0[0]->c)+(count($ds1)==0?0:$ds1[0]->c);//defen
+				if($bool){$goal_same=(count($ws0)==0?0:($ws0[0]->c)*3)+(count($ds0)==0?0:$ds0[0]->c);}
+				if($false){$goal_same=(count($ws1)==0?0:($ws1[0]->c)*3)+(count($ds1)==0?0:$ds1[0]->c);}
+				
+				$g0=DB::select('select SUM(score_home) as c from matches where league=:league and season=:season and team1=:team and time<:time  group by team1',['league'=>$league,'season'=>$season,'team'=>$team,'time'=>$time]);//zhujin
+				$g1=DB::select('select SUM(score_away) as c from matches where league=:league and season=:season and team2=:team and time<:time group by team1',['league'=>$league,'season'=>$season,'team'=>$team,'time'=>$time]);//kejin
+				$gh=($count($g0)==0?0:($g0[0]->c));//jinqiu--zhu
+				$ga=($count($g1)==0?0:($g1[0]->c));//jinqiu--ke
+				$g=$gh+$ga;
+	            $gs=$bool==true?$gh:$ga;
+				
+				$gl0=DB::select('select SUM(score_away) as c from matches where league=:league and season=:season and team1=:team and time<:time  group by team1',['league'=>$league,'season'=>$season,'team'=>$team,'time'=>$time]);//zhushiqiu
+				$gl1=DB::select('select SUM(score_home) as c from matches where league=:league and season=:season and team2=:team and time<:time group by team1',['league'=>$league,'season'=>$season,'team'=>$team,'time'=>$time]);//keshiqiu
+				$glh=($count($gl0)==0?0:($gl0[0]->c));//shiqiu--zhu
+				$gla=($count($gl1)==0?0:($gl1[0]->c));//shiqiu--ke
+				$gl=$glh+$gla;//shiqiu
+				$gsl=$bool==true?$glh:$gla;
+				
+				$sms=DB::select('SELECT * FROM matches as A left join odds as B on A.mid=B.mid where A.league=:league and A.season=:season and A.time<:time AND (team1=:team1 OR team2=:team2) AND B.init=1 ORDER BY A.time desc  LIMIT :limit',['league'=>$league,'season'=>$season,'time'=>$time,'team1'=>$team,'team2'=>$team,'limit'=>$limit]);
+				$math=$this->getMathPoint($sms,$team);
+				$expect=$math['expect'];
+				$point=$math['point'];
+				$goal=$math['goal'];
+				$goal_lose=$math['goal_lose'];
+				$percent=$math['percent'];//jin 5 chang point
+				
+				if($bool){
+				$sms=DB::select('SELECT * FROM matches as A left join odds as B on A.mid=B.mid where A.league=:league and A.season=:season and A.time<:time AND (team1=:team1) AND B.init=1 ORDER BY A.time desc  LIMIT :limit',['league'=>$league,'season'=>$season,'time'=>$mtime,'team1'=>$team,'limit'=>$limit]);;
+				$math=$this->getMathPoint($sms,$team);
+				}
+				else{
+				$sms=DB::select('SELECT * FROM matches as A left join odds as B on A.mid=B.mid where A.league=:league and A.season=:season and A.time<:time AND (team2=:team2) AND B.init=1 ORDER BY A.time desc  LIMIT :limit',['league'=>$league,'season'=>$season,'time'=>$mtime,'team2'=>$team,'limit'=>$limit]);;
+				$math=$this->getMathPoint($sms,$team);
+				}
+				$expect2=$math['expect'];
+				$point2=$math['point'];
+				$goal2=$math['goal'];
+				$goal_lose2=$math['goal_lose'];
+				$percent2=$math['percent'];
+				return ['goal'=>$goal,'goal_lose'=>$gl,'goal_same'=>$gs,'goal_same_lose'=>$gls,'fi_goal'=>$goal,'fi_goal_lose'=>$goal_lose,'fi_expect'=>$expect,'fi_percent'=>$percent,'fi_same_goal'=>$goal2,'fi_same_goal_lose'=>$goal_lose2,'fi_same_expect'=>$expect2,'fi_same_percent'=>$percent2];
+		}
+	}	
 }

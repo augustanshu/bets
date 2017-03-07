@@ -5,7 +5,7 @@ interface MatchRepositoryInterface {
 
 	public function matchMid($mid);
 	public function matchAnalysis(Match $m);
-	public function matchHistory($league,$team1,$team2);
+	public function matchHistory($league,$team1,$team2,$season,$mtime,$n,$limit);
 	public function getodds($mid);
 	public function getpeifu($w,$d,$l);
 	public function getgailv($w,$d,$l);
@@ -19,4 +19,7 @@ interface MatchRepositoryInterface {
 	public function getMatchPoint($season);
 	public function getMatchDif($mid);
 	public function getMatchPointCurrent($mid,$league,$season,$team1,$team2,$time);
+	public function teamHistory($league,$season,$mtime,$team,$limit,$bool);
+	public function getMathPoint($sms,$team);
+	  public function getresult($league,$season,$team,$time,$bool,$limit);
 }
