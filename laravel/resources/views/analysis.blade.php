@@ -202,8 +202,8 @@
 		<td>{{$match->team2}}</td>
 		<td>{{$match->result}}</td>
 		<td>{{$match->score}}</td>
-		<td>{{$match->goal}}</td>
-		<td>{{$match->goal2}}</td>
+		<td>{{$match->goal}}|-{{$match->goal_lose}}</td>
+		<td>{{$match->goal2}}|-{{$match->goal2_lose}}</td>
 		<td>{{$match->points}}</td>
 		<td>{{$match->points2}}</td>
 		<td>{{$match->pointcz}}</td>
@@ -220,7 +220,11 @@
 		@endforeach
     </tbody>
     </table>
- </div>
+    </div>
+	<div class="cache">
+	 <button type="btn btn-danger btn-xs">cache-history</button>
+	  <button type="btn btn-danger btn-xs">cache-history</button>
+	</div>
  </div>
 <script>
 (function($){

@@ -19,7 +19,11 @@ Route::get('/match/{mid}','MasterController@showMaster');
 Route::post('/match/{mid}','MasterController@postMid');
 Route::group(['prefix'=>'test'],function(){
 	Route::get('/','MasterController@test');
-	Route::get('/{id}','MasterController@showChart');
+	Route::get('/match/chart/{id}','MasterController@showChart');
+	Route::get('/test',function(){
+		return view('testview');
+	});
+	Route::get('/ajax','TestController@ajax');
 });
 
 Route::get('/matchList/{term}','MasterController@showMatchList');

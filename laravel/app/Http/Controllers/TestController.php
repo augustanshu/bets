@@ -16,4 +16,12 @@ class TestController extends Controller
 	   //return $f;
 	   dump(Cache::get('123'));
    }
+   
+   public function ajax()
+   {
+	   $value=Match::where('league','英格兰超级联赛')->where('season','15-16')->get();
+	   //$value->round="21";
+	   //$value=json_encode($value,JSON_UNESCAPED_UNICODE);
+	   return response()->json(array('data'=>$value),200);
+   }
 }

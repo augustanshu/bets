@@ -36,16 +36,16 @@ class MatchRepository  implements MatchRepositoryInterface{
 		$round=$match->round;
 		$team1=$match->team1;
 		$team2=$match->team2;
-	    $t_home=$this->teamHistory($league,$season,$mtime,$team1,5,true);
-	    $t_away=$this->teamHistory($league,$season,$mtime,$team2,5,false);
-		   $match->points=$t_home['point'];
-			$match->points2=$t_away['point'];
-			$match->goal=$t_home['goal'];
-			$match->goal2=$t_away['goal'];
-			$match->goal_lose=$t_home['goal'];
-			$match->goal2_lose=$t_away['goal_lose'];
-			$match->qiwang=$t_home['expect'];
-			$match->qiwang2=$t_away['expect'];
+	    $t_home=$this->getresult2($league,$season,$team1,$mtime,true,5);
+	    $t_away=$this->getresult2($league,$season,$team2,$mtime,false,5);
+		   $match->points=$t_home['fi_point'];
+			$match->points2=$t_away['fi_point'];
+			$match->goal=$t_home['fi_goal'];
+			$match->goal2=$t_away['fi_goal'];
+			$match->goal_lose=$t_home['fi_goal_lose'];
+			$match->goal2_lose=$t_away['fi_goal_lose'];
+			$match->qiwang=$t_home['fi_expect'];
+			$match->qiwang2=$t_away['fi_expect'];
 			$match->percent=$percent=$match->qiwang==0?'none':number_format($match->points/$match->qiwang,2);
 			$match->percent2=$percent2=$match->qiwang2==0?'none':number_format($match->points2/$match->qiwang2,2);
 			$match->pointcz=number_format($match->points-$match->points2,2);
@@ -58,14 +58,15 @@ class MatchRepository  implements MatchRepositoryInterface{
 	
 	 /*
 	 /zhanshi jinqi duizhan he wangji shuju
-	 /0-wangji 1-zhu 2-ke
+	 /0-wangji 1-zhu 2-ke moren5chang zonghe point
 	 */
 	 public function matchHistory($league,$team1,$team2,$season,$mtime,$n,$limit)
 	{
 		$mas=array();
 		if($n==0)
 		{
-	     $historys=Match::where('league',$league)->where('team1',$team1)->where('team2',$team2)->orderBy('season')->get();
+			$historys=DB::select('SELECT * FROM matches as A left join odds as B on A.mid=B.mid where A.league=:league   and  (team1=:team1 and team2=:team2) AND B.init=1 ORDER BY A.season',['league'=>$league,'team1'=>$team1,'team2'=>$team2]);
+	     //$historys=Match::where('league',$league)->where('team1',$team1)->where('team2',$team2)->orderBy('season')->get();
 		}
 		else if($n==1)
 		{
@@ -137,7 +138,7 @@ class MatchRepository  implements MatchRepositoryInterface{
 	  /*
 	  tongji jiqi zhanji shuju
 	  */
-	 public function teamHistory($league,$season,$mtime,$team,$limit,$bool)
+	 public function teamHistory($league,$season,$team,$mtime,$bool,$limit)
 	 {
 		 $expect=0;
 		 $point=0;
@@ -500,7 +501,7 @@ class MatchRepository  implements MatchRepositoryInterface{
 					elseif($match->result=="平"){$point_same+=1;}
 					$goal_same+=$match->score_home;
 					$goal_lose_same+=$match->score_away;	
-					if($j<=5)
+					if($j<=$limit)
 					{
 						$fi_point_same=$point_same; 
 						$fi_goal_same=$goal_same;

@@ -15,7 +15,6 @@ class AddMathMathpointTable extends Migration
     {
         Schema::table('matchpoint', function (Blueprint $table) {
 		$table->string('goal')->default('-');
-		$table->string('point')->default('-');
 		$table->string('goal_lose')->default('-');
 		$table->string('expect')->default('-');
 		$table->string('percent')->default('-');
