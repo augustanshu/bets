@@ -90,7 +90,7 @@
 			<h5>{{$match->time}}</h5>
 			<h5 {{$match->team1==$team1?'class=match-team':''}}>主:{{$match->team1}}</h5>
 			<h5 {{$match->team2==$team1?'class=match-team':''}}>客:{{$match->team2}}</h5>
-			<h5  {{$match->result=='胜'?'class=match-header-goal':($match->result=='负'?'class=match-result-lose':'')}}>{{$match->result}}</h5>
+			<h5  {{$match->result=='胜'&&$match->team1==$team1||$match->result=='负'&&$match->team2==$team1?'class=match-header-goal':($match->result=='胜'&&$match->team2==$team1||$match->result=='负'&&$match->team1==$team1?'class=match-result-lose':'')}}>{{$match->result}}</h5>
 			<h5>{{$match->score}}</h5>
 			<h5>主进:{{$match->goal}}|-{{$match->goal_lose}}</h5>
 			<h5>客进:{{$match->goal2}}|-{{$match->goal2_lose}}</h5>
@@ -113,7 +113,7 @@
 			<h5>{{$match->time}}</h5>
 			<h5 {{$match->team1==$team2?'class=match-team':''}}>主:{{$match->team1}}</h5>
 			<h5 {{$match->team2==$team2?'class=match-team':''}}>客:{{$match->team2}}</h5>
-			<h5  {{$match->result=='胜'?'class=match-header-goal':($match->result=='负'?'class=match-result-lose':'')}}>{{$match->result}}</h5>
+			<h5  {{$match->result=='胜'&&$match->team1==$team1 ||$match->result=='负'&&$match->team2==$team2?'class=match-header-goal':($match->result=='胜'&&$match->team2==$team2||$match->result=='负'&&$match->team1==$team2?'class=match-result-lose':'')}}>{{$match->result}}</h5>
 			<h5>{{$match->score}}</h5>
 			<h5>主进:{{$match->goal}}|-{{$match->goal_lose}}</h5>
 			<h5>客进:{{$match->goal2}}|-{{$match->goal2_lose}}</h5>
