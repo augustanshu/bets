@@ -38,7 +38,9 @@ class MatchRepository  implements MatchRepositoryInterface{
 		$team2=$match->team2;
 	    $t_home=$this->getresult2($league,$season,$team1,$mtime,true,5);
 	    $t_away=$this->getresult2($league,$season,$team2,$mtime,false,5);
-		   $match->points=$t_home['fi_point'];
+		   $match->point=$t_home['point'];
+			$match->point2=$t_away['point'];
+		    $match->points=$t_home['fi_point'];
 			$match->points2=$t_away['fi_point'];
 			$match->goal=$t_home['fi_goal'];
 			$match->goal2=$t_away['fi_goal'];

@@ -15,8 +15,8 @@
 			<h5>{{$match->league}}</h5>
 			<h5>{{$match->round}}</h5>
 			<h5>{{$match->time}}</h5>
-			<h5>主:{{$match->team1}}</h5>
-			<h5>客:{{$match->team2}}</h5>
+			<h5>主:{{$match->team1}}|{{$match->points}}</h5>
+			<h5>客:{{$match->team2}}|{{$match->points2}}</h5>
 			<h5>{{$match->result}}</h5>
 			<h5>{{$match->score}}</h5>
 			<h5 class="match-header-goal">主进:{{$match->goal}}|-{{$match->goal_lose}}</h5>
@@ -48,8 +48,8 @@
 			<h5>{{$match->score}}</h5>
 			<h5>主进:{{$match->goal}}|-{{$match->goal_lose}}</h5>
 			<h5>客进:{{$match->goal2}}|-{{$match->goal2_lose}}</h5>
-			<h5 class="match-header-point">主积:{{$match->points}}</h5>
-			<h5 class="match-header-point">客积:{{$match->points2}}</h5>
+			<h5 class="match-header-point">主积:{{$match->point}}</h5>
+			<h5 class="match-header-point">客积:{{$match->point2}}</h5>
 			<h5 class="match-header-percent">主期:{{$match->qiwang}}|{{$match->percent}}</h5>
 			<h5 class="match-header-percent">客期:{{$match->qiwang2}}|{{$match->percent2}}</h5>
 			<h5>{{$match->sheng}}/{{$match->ping}}/{{$match->fu}}</h5>
