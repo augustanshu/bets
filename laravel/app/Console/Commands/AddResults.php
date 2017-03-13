@@ -82,7 +82,7 @@ class AddResults extends Command
 			   }
 		  });
 		  */
-		  $this->getMatchPoint2('西班牙甲组联赛');
+		  $this->getMatchPoint2('英格兰超级联赛');
 		  //DB::table('matchpoint')->chun
 		  /*
 		  $matches=DB::select('select count(*) as count,mid from matchpoint group by mid having count>1');
@@ -170,7 +170,7 @@ class AddResults extends Command
 			    $time=$match->time;
 			    $season=$match->season;
 				$m=$this->mr->getresult2($league,$season,$team1,$time,true,$limit);
-				$ob=$mp=MatchPoint::firstOrCreate(['mid'=>$mid,'team1'=>$team1]);
+				$mp=MatchPoint::firstOrCreate(['mid'=>$mid,'team1'=>$team1]);
 				$mp->mid=$mid;
 				$mp->point=$m['point'];
 				$mp->goal=$m['goal'];
@@ -195,7 +195,7 @@ class AddResults extends Command
                 $mp->fi_goal_lose_same=$m['fi_goal_lose_same'];
 				$mp->fi_expect_same=$m['fi_expect_same'];
 				$mp->fi_percent_same=$m['fi_percent_same'];
-				if($ob==null)
+				if($mp->id==null)
 				{
 					$mp->team1=$team1;
 					$mp->save();
@@ -207,6 +207,7 @@ class AddResults extends Command
 				$mp=MatchPoint::firstOrCreate(['mid'=>$mid,'team1'=>$team2]);
 				$mp->mid=$mid;
 				$mp->point=$m['point'];
+				dump($m['point']);
 				$mp->goal=$m['goal'];
                 $mp->goal_lose=$m['goal_lose'];
 				$mp->expect=$m['expect'];
@@ -229,14 +230,16 @@ class AddResults extends Command
                 $mp->fi_goal_lose_same=$m['fi_goal_lose_same'];
 				$mp->fi_expect_same=$m['fi_expect_same'];
 				$mp->fi_percent_same=$m['fi_percent_same'];
-				if($mp->where('mid',$mid)->where('team1',$team2)->count()==0)
+				if($mp->id==null)
 				{
+					//dump($mp);
 					$mp->team1=$team2;
 					$mp->point=$m['point'];
 					$mp->save();
 				}
 				else{
 					//$mp->id=$mp->where('mid',$mid)->where('team1',$team2)->first()->id;
+					dump('exist');
 					$mp->update();
 				}
 				dump($mid.' '.$team1.'vs'.$team2);

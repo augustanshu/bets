@@ -469,6 +469,7 @@ class MatchRepository  implements MatchRepositoryInterface{
 		$fi_expect_same=0;
 		$fi_percent_same=0;
 		$matches=DB::select('select A.mid,A.league,A.season,A.round,A.score,A.time,A.team1,A.team2,A.result,A.score_home,A.score_away,B.sheng,B.ping,B.fu from matches as A left join odds as B on A.mid=B.mid WHERE A.league=:league and A.season=:season and (A.team1=:team1 or A.team2=:team2) and A.time<:time and B.init=1  ORDER BY A.time desc',['league'=>$league,'season'=>$season,'team1'=>$team,'team2'=>$team,'time'=>$time]);
+		//dump($matches);
 		$count=count($matches);
 		$limit=$count>$limit?$limit:$count;
 		foreach($matches as $match)

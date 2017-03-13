@@ -111,7 +111,7 @@ class CrawlerRepository extends MatchRepository implements CrawlerRepositoryInte
 		 $odd->mid=$mid;
          $count= $match->where('mid',$mid)->count();
 		 if($count==0){$match=new Match;}
-		 else{$match=Match::firstOrCreate(['mid'=>$mid]);}
+		 else{$match=Match::firstOrNew(['mid'=>$mid]);}
          $goutteClient = new Client();
          $guzzleClient = new GuzzleClient(array(
            'timeout' => 100,
@@ -236,7 +236,7 @@ class CrawlerRepository extends MatchRepository implements CrawlerRepositoryInte
 		  if($count==0)
 		  {
 		     $match->save();
-			 $this->getMatchPointCurrent($match->mid,$match->league,$match->season,$match->team1,$match->team2,$match->time);
+			 //$this->getMatchPointCurrent($match->mid,$match->league,$match->season,$match->team1,$match->team2,$match->time);
 		  }
 		  else
 		  {
@@ -264,9 +264,8 @@ class CrawlerRepository extends MatchRepository implements CrawlerRepositoryInte
          $match=new Match;
 		 $odd=new Odd;
 		 $odd->mid=$mid;
-         $count= $match->where('mid',$mid)->count();
-		  if($count==0){$match=new Match;}
-		 else{$match=Match::firstOrCreate(['mid'=>$mid]);}
+         //$count= $match->where('mid',$mid)->count();
+         $match=Match::firstOrNew(['mid'=>$mid]);
          $goutteClient = new Client();
          $guzzleClient = new GuzzleClient(array(
            'timeout' => 100,
@@ -373,10 +372,10 @@ class CrawlerRepository extends MatchRepository implements CrawlerRepositoryInte
 				 });
 				 }
 		  });
-		  if($count==0)
+		  if($match->id==null)
 		  {
 		     $match->save();
-			  $this->getMatchPointCurrent($match->mid,$match->league,$match->season,$match->team1,$match->team2,$match->time);
+			  //$this->getMatchPointCurrent($match->mid,$match->league,$match->season,$match->team1,$match->team2,$match->time);
 		  }
 		  else
 		  {

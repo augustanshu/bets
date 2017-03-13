@@ -192,7 +192,8 @@ class MasterController extends Controller
 	
 	public function test()
 	{
-		  $this->getMatchPoint2('英格兰超级联赛');
+		//$this->crawler->selectNoDump(2126348);
+		 // $this->getMatchPoint2('英格兰超级联赛');
 		//return view('ajax');
 		//return view('test');
 		//dump($this->mr->getfenshu0(2.8,3,3));
@@ -212,7 +213,8 @@ class MasterController extends Controller
 		sleep(rand(100,120)/100);
 		}
 		*/
-		//dump($this->mr->getSeasonMatch('曼联','09-10','英格兰超级联赛'));
+		$match=Match::where('mid','1896352')->first();
+		dump($this->mr->getresult2($match->league,$match->season,$match->team2,$match->time,false,5));
 		
 		//dump($this->mr->getMatchPoint('英格兰超级联赛'));
 		
