@@ -17,7 +17,7 @@
                 type: "warning",
                 showCancelButton: true,
                 confirmButtonColor: "#DD6B55",
-                confirmButtonText: "Yes, delete it!",
+                confirmButtonText: "<"+key+">:Yes, delete it!",
                 closeOnConfirm: false
             }, function(){
 				$.ajax({

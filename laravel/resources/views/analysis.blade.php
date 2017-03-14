@@ -15,8 +15,8 @@
 			<h5>{{$match->league}}</h5>
 			<h5>{{$match->round}}</h5>
 			<h5>{{$match->time}}</h5>
-			<h5>主:{{$match->team1}}|{{$match->points}}</h5>
-			<h5>客:{{$match->team2}}|{{$match->points2}}</h5>
+			<h5>主:{{$match->team1}}|{{$match->current_point}}</h5>
+			<h5>客:{{$match->team2}}|{{$match->current_point2}}</h5>
 			<h5>{{$match->result}}</h5>
 			<h5>{{$match->score}}</h5>
 			<h5 class="match-header-goal">主进:{{$match->goal}}|-{{$match->goal_lose}}</h5>
@@ -42,17 +42,18 @@
 			<!--<h5>{{$match->league}}</h5>-->
 			<h5>{{$match->round}}</h5>
 			<h5>{{$match->time}}</h5>
-			<h5>主:{{$match->team1}}</h5>
-			<h5>客:{{$match->team2}}</h5>
+			<h5>主:{{$match->team1}}|{{$match->current_point}}</h5>
+			<h5>客:{{$match->team2}}|{{$match->current_point2}}</h5>
 			<h5  {{$match->result=='胜'?'class=match-header-goal':($match->result=='负'?'class=match-result-lose':'')}}>{{$match->result}}</h5>
 			<h5>{{$match->score}}</h5>
 			<h5>主进:{{$match->goal}}|-{{$match->goal_lose}}</h5>
 			<h5>客进:{{$match->goal2}}|-{{$match->goal2_lose}}</h5>
-			<h5 class="match-header-point">主积:{{$match->point}}</h5>
-			<h5 class="match-header-point">客积:{{$match->point2}}</h5>
+			<h5 class="match-header-point">主积:{{$match->points}}</h5>
+			<h5 class="match-header-point">客积:{{$match->points2}}</h5>
 			<h5 class="match-header-percent">主期:{{$match->qiwang}}|{{$match->percent}}</h5>
 			<h5 class="match-header-percent">客期:{{$match->qiwang2}}|{{$match->percent2}}</h5>
 			<h5>{{$match->sheng}}/{{$match->ping}}/{{$match->fu}}</h5>
+			<h5>{{$match->return}}</h5>
 			</a>
 			@endforeach
 		  </div>
@@ -65,8 +66,8 @@
 			<!--<h5>{{$match->league}}</h5>-->
 			<h5>{{$match->round}}</h5>
 			<h5>{{$match->time}}</h5>
-			<h5>主:{{$match->team1}}</h5>
-			<h5>客:{{$match->team2}}</h5>
+			<h5>主:{{$match->team1}}|{{$match->current_point}}</h5>
+			<h5>客:{{$match->team2}}|{{$match->current_point2}}</h5>
 			<h5  {{$match->result=='胜'?'class=match-header-goal':($match->result=='负'?'class=match-result-lose':'')}}>{{$match->result}}</h5>
 			<h5>{{$match->score}}</h5>
 			<h5>主进:{{$match->goal}}|-{{$match->goal_lose}}</h5>
@@ -88,8 +89,8 @@
 			<!--<h5>{{$match->league}}</h5>-->
 			<h5>{{$match->round}}</h5>
 			<h5>{{$match->time}}</h5>
-			<h5 {{$match->team1==$team1?'class=match-team':''}}>主:{{$match->team1}}</h5>
-			<h5 {{$match->team2==$team1?'class=match-team':''}}>客:{{$match->team2}}</h5>
+			<h5 {{$match->team1==$team1?'class=match-team':''}}>主:{{$match->team1}}|{{$match->current_point}}</h5>
+			<h5 {{$match->team2==$team1?'class=match-team':''}}>客:{{$match->team2}}|{{$match->current_point2}}</h5>
 			<h5  {{$match->result=='胜'&&$match->team1==$team1||$match->result=='负'&&$match->team2==$team1?'class=match-header-goal':($match->result=='胜'&&$match->team2==$team1||$match->result=='负'&&$match->team1==$team1?'class=match-result-lose':'')}}>{{$match->result}}</h5>
 			<h5>{{$match->score}}</h5>
 			<h5>主进:{{$match->goal}}|-{{$match->goal_lose}}</h5>
@@ -111,9 +112,9 @@
 			<!--<h5>{{$match->league}}</h5>-->
 			<h5>{{$match->round}}</h5>
 			<h5>{{$match->time}}</h5>
-			<h5 {{$match->team1==$team2?'class=match-team':''}}>主:{{$match->team1}}</h5>
-			<h5 {{$match->team2==$team2?'class=match-team':''}}>客:{{$match->team2}}</h5>
-			<h5  {{$match->result=='胜'&&$match->team1==$team1 ||$match->result=='负'&&$match->team2==$team2?'class=match-header-goal':($match->result=='胜'&&$match->team2==$team2||$match->result=='负'&&$match->team1==$team2?'class=match-result-lose':'')}}>{{$match->result}}</h5>
+			<h5 {{$match->team1==$team2?'class=match-team':''}}>主:{{$match->team1}}|{{$match->current_point}}</h5>
+			<h5 {{$match->team2==$team2?'class=match-team':''}}>客:{{$match->team2}}|{{$match->current_point2}}</h5>
+			<h5  {{$match->result=='胜'&&$match->team1==$team2 ||$match->result=='负'&&$match->team2==$team2?'class=match-header-goal':($match->result=='胜'&&$match->team2==$team2||$match->result=='负'&&$match->team1==$team2?'class=match-result-lose':'')}}>{{$match->result}}</h5>
 			<h5>{{$match->score}}</h5>
 			<h5>主进:{{$match->goal}}|-{{$match->goal_lose}}</h5>
 			<h5>客进:{{$match->goal2}}|-{{$match->goal2_lose}}</h5>

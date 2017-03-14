@@ -1,11 +1,11 @@
 	 <meta name="csrf-token" content="{{ csrf_token() }}">
 
 	 @foreach($cs as $c)
-	 <li style="display:flex;flex:row;padding:5 0 0 0;justify-content:space-around"><h5>{{$c->key}} </h5><button  class="del btn btn-danger btn-xs" data-key="{{$c->key}}">删除</button></li>
+	 <li style="display:flex;flex:row;padding:5 0 0 0;justify-content:space-around" data-key="{{$c->key}}"><h5>{{$c->key}} </h5><button  class="del btn btn-danger btn-xs">删除</button></li>
 	 @endforeach
 	 <script>
  $('.del').on('click',function(){
-	 var key=$('.del').attr("data-key");
+	 var key=$(this).parent().attr("data-key");
 	 var keys=key.split('laravel');
 	 var key=keys[1];
 	 swal({
@@ -14,7 +14,7 @@
                 type: "warning",
                 showCancelButton: true,
                 confirmButtonColor: "#DD6B55",
-                confirmButtonText: "Yes, delete it!",
+                confirmButtonText: "<"+key+">:Yes, delete it!",
                 closeOnConfirm: false
             }, function(){
 				$.ajax({
