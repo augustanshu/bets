@@ -442,11 +442,17 @@ class CrawlerRepository extends MatchRepository implements CrawlerRepositoryInte
 		dump('轮次'.$i);
 	});
   }
+  protected $term="";
+  protected $mids="";
     /*
   *文档读取，一个完整赛季mid获取，并通过mid爬虫获取数据
   */
-  public function getDoumentList($content)
+  public function getDoumentList($content,$term)
   {
+	$t=Term::firstOrNew(['term'=>$term]);
+	if($t->id==null)
+	{
+	$this->term=$term;
 	$goutteClient=new Client;
 	$crawler=new Crawler($content);//matchSel
 	$crawler->filter('.live-sta .live-tab')->each(function ($node,$i) {
@@ -454,10 +460,10 @@ class CrawlerRepository extends MatchRepository implements CrawlerRepositoryInte
 		$uri=$node2->attr('matchid');
 		$mid=$uri;
 		dump('matchid:'.$mid);
-		$count= Match::where('mid',$mid)->count();   
+		$count= Match::where('mid',$mid)->count();		
 		 if($count==0)
 		   {	
-		   $this->select($mid);
+		  // $this->select($mid);
 		   sleep(rand(100,150)/100);
 		   $j++;
 		   dump('finished:'.$mid);
@@ -466,11 +472,17 @@ class CrawlerRepository extends MatchRepository implements CrawlerRepositoryInte
 		   {
 			 dump($mid.'exist!');
 		   }
+		   		$this->mids=$this->mids==""?$mid:$this->mids.'/'.$mid;
 		});
 		$i++;
-		//dump('轮次'.$i);
+		dump($this->term);
+		dump($this->mids);
+		$t=new Term;
+		$t->term=$this->term;
+		$t->mids=$this->mids;
+		$t->save();
 	});
-	
+	}
   }
 
   }

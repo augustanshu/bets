@@ -105,7 +105,7 @@ class AdminController extends Controller
 			foreach($files as $content)
 			{
 			  $content=Storage::get($content);
-			  $this->crawler->getDoumentList($content);
+			  $this->crawler->getDoumentList($content,'20170317');
 			}
 	}
 	 /**

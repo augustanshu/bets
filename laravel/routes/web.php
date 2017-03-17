@@ -34,3 +34,7 @@ Route::group(['prefix'=>'admin','namespace'=>'admin'],function(){;
 	Route::get('/document','AdminController@getFile');
 	Route::get('/complete','AdminController@getUnComplete');
 });
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index');

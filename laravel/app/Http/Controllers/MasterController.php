@@ -30,14 +30,15 @@ class MasterController extends Controller
      */
     public function index()
     {
+		$term0=date("Ymd",strtotime("+1 day"));
 	    $term1=date("Ymd");
 		$term2=$this->term=date("Ymd",strtotime("- 1 day"));
 		$term3=$this->term=date("Ymd",strtotime("- 2 day"));
 		$term4=$this->term=date("Ymd",strtotime("- 3 day"));
 		$term5=$this->term=date("Ymd",strtotime("- 4 day"));
 		$term6=$this->term=date("Ymd",strtotime("- 5 day"));
-	  $time=date("Ymd");
-	  $array_term=[];
+	    $time=date("Ymd");
+	    $array_term=[];
 		$checkDayStr = date('Y-m-d ',time());
 		$startTime = strtotime($checkDayStr."12:00".":00");
 		if(time()>$startTime )
@@ -46,6 +47,7 @@ class MasterController extends Controller
 		}
 		else
 		{
+		$term0=date("Ymd");
 		$term1=$this->term=date("Ymd",strtotime("- 1 day"));
 		$term2=$this->term=date("Ymd",strtotime("- 2 day"));
 		$term3=$this->term=date("Ymd",strtotime("- 3 day"));
@@ -78,7 +80,7 @@ class MasterController extends Controller
 		return $matches;
 	  });
 	  
-	  array_push($array_term,$term6,$term5,$term4,$term3,$term2,$term1);
+	  array_push($array_term,$term6,$term5,$term4,$term3,$term2,$term1,$term0);
 	  return view('index',['matches'=>$matches,'terms'=>$array_term,'tterm'=>$term1]);
     }
 	public function indexall()
