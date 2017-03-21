@@ -24,17 +24,21 @@ Route::group(['prefix'=>'test'],function(){
 		return view('testview');
 	});
 	Route::get('/ajax','TestController@ajax');
+	Route::post('/ajax','TestController@ajax2');
 });
 
 Route::get('/matchList/{term}','MasterController@showMatchList');
 Route::get('/match/chart/{mid}','MasterController@showChart');
 Route::get('/ft/{list}','MasterController@freshMatchList');
+Route::get('/odd','MasterController@showOdd');
+Route::post('/odd','MasterController@getOdd');
 Route::group(['prefix'=>'admin','namespace'=>'admin'],function(){;
 	Route::resource('/cache','AdminCacheController');
-	Route::get('/document','AdminController@getFile');
+	Route::get('/document/{term}','AdminController@getFile');
 	Route::get('/complete','AdminController@getUnComplete');
 });
 
 Auth::routes();
 
 Route::get('/home', 'HomeController@index');
+

@@ -19,7 +19,16 @@ class TestController extends Controller
    
    public function ajax()
    {
-	   $value=Match::where('league','英格兰超级联赛')->where('season','15-16')->get();
+	   $round=1;
+	   $value=Match::where('league','英格兰超级联赛')->where('season','15-16')->where('round',$round)->get();
+	   //$value->round="21";
+	   //$value=json_encode($value,JSON_UNESCAPED_UNICODE);
+	   return response()->json(array('data'=>$value),200);
+   }
+     public function ajax2(Request $request)
+   {
+	   $round=$request['round'];
+	   $value=Match::where('league','英格兰超级联赛')->where('season','15-16')->where('round',3)->get();
 	   //$value->round="21";
 	   //$value=json_encode($value,JSON_UNESCAPED_UNICODE);
 	   return response()->json(array('data'=>$value),200);

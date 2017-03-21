@@ -22,6 +22,7 @@ class MasterController extends Controller
     {
       $this->crawler=$crawler;
 	  $this->mr=$mr;
+	  $this->middleware('auth');
     }
     /**
      * Display a listing of the resource.
@@ -316,5 +317,13 @@ class MasterController extends Controller
 
 	}
 
+	public function showOdd()
+	{
+		return view('odd');
+	}
+	public function getOdd(Request $request)
+	{
+		
+	}
 	
 	}

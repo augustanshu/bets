@@ -99,13 +99,13 @@ class AdminController extends Controller
      * 
      * 
      */
-	public function getFile()
+	public function getFile($term)
 	{
 			$files = Storage::allfiles('/document');
 			foreach($files as $content)
 			{
 			  $content=Storage::get($content);
-			  $this->crawler->getDoumentList($content,'20170317');
+			  $this->crawler->getDoumentList($content,$term);
 			}
 	}
 	 /**
@@ -116,7 +116,7 @@ class AdminController extends Controller
      */
 	public function getUnComplete()
 	{
-	 $matches=Match::where('status','未')->get();
+	 $matches=Match::where('status','未')->where('time','>','2017-01-31 10:55:35')->get();
 	 foreach($matches as $match)
 	 {
 		 $this->crawler->select($match->mid);

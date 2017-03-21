@@ -10,7 +10,7 @@ return [
     /*
      * Laravel-admin url prefix.
      */
-    'prefix'    => 'ao',
+    'prefix'    => 'bkadmin',
 
     /*
      * Laravel-admin install directory.
