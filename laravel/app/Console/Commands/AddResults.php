@@ -95,68 +95,8 @@ class AddResults extends Command
 		  */
     }
 	
-	public function getMatchPoint($league)
-	{
-		$matchs=Match::where('league',$league)->chunk(2000,function($matchs){
-		foreach($matchs as $match)
-		{
-			//$match=$matchs;
-			$mp=new MatchPoint();
-			$mid=$mp->mid=$match->mid;
-			$league=$match->league;
-			$round=$match->round;
-			$team1=$match->team1;
-			$team2=$match->team2;
-			$time=$match->time;
-			$season=$match->season;
-			$ws0=DB::select('select count(*) as c from matches where league=:league and season=:season and team1=:team and time<:time and result="胜" group by team1',['league'=>$league,'season'=>$season,'team'=>$team1,'time'=>$time]);
-			$ws1=DB::select('select count(*) as c from matches where league=:league and season=:season and team2=:team and time<:time and result="负" group by team2',['league'=>$league,'season'=>$season,'team'=>$team1,'time'=>$time]);
-			$ds=DB::select('select count(*) as c from matches where league=:league and season=:season and (team1=:team1 or team2=:team2) and time<:time and result="平"',['league'=>$league,'season'=>$season,'team1'=>$team1,'team2'=>$team1,'time'=>$time]);
-			$w=(count($ws0)==0?0:($ws0[0]->c)*3)+(count($ws1)==0?0:($ws1[0]->c)*3)+(count($ds)==0?0:$ds[0]->c);
-			if(MatchPoint::where('mid',$mid)->where('team1',$team1)->count()==0)
-			{
-		      $mp=new MatchPoint();
-			  $mp->mid=$mid;
-			  $mp->team1=$team1;
-			  $mp->point=$w;
-			  $mp->save();
-			}
-			else
-			{
-				$mp=MatchPoint::where('mid',$mid)->where('team1',$team1)->first();
-			    $mp->point=$w;
-				$mp->update();
-				dump($mid.$team1.'exist!');
-			}
-			//dump($ds);
-			//$r=($ws0[0]+$ws1[1])*3+$ds[0];
-			//dump($w);
-			dump( $league.' '.$season.' '.$round.' '.$team1.' '.$w);
-			$ws0=DB::select('select count(*) as c from matches where league=:league and season=:season and team1=:team and time<:time and result="胜" group by team1',['league'=>$league,'season'=>$season,'team'=>$team2,'time'=>$time]);
-			$ws1=DB::select('select count(*) as c from matches where league=:league and season=:season and team2=:team and time<:time and result="负" group by team2',['league'=>$league,'season'=>$season,'team'=>$team2,'time'=>$time]);
-			$ds=DB::select('select count(*) as c from matches where league=:league and season=:season and (team1=:team1 or team2=:team2) and time<:time and result="平"',['league'=>$league,'season'=>$season,'team1'=>$team2,'team2'=>$team2,'time'=>$time]);
-			$w=(count($ws0)==0?0:($ws0[0]->c)*3)+(count($ws1)==0?0:($ws1[0]->c)*3)+(count($ds)==0?0:$ds[0]->c);
-			if(MatchPoint::where('mid',$mid)->where('team1',$team2)->count()==0)
-			{
-			  $mp=new MatchPoint();
-			  $mp->mid=$mid;
-			  $mp->team1=$team2;
-			  $mp->point=$w;
-			  $mp->save();
-			}
-			else
-			{
-				$mp=MatchPoint::where('mid',$mid)->where('team1',$team2)->first();
-			    $mp->point=$w;
-				$mp->update();
-				dump($mid.$team2.'exist!');
-			}
-			dump( $league.' '.$season.' '.$round.' '.$team2.' '.$w);
-		}
-		});
-	}
-
-    public function getMatchPoint2($league)
+	
+	  public function getMatchPoint($league)
 	{
 		DB::table('matches')->where('league','=',$league)->chunk(20000,function($matchs){
 			foreach($matchs as $match){
@@ -195,6 +135,7 @@ class AddResults extends Command
                 $mp->fi_goal_lose_same=$m['fi_goal_lose_same'];
 				$mp->fi_expect_same=$m['fi_expect_same'];
 				$mp->fi_percent_same=$m['fi_percent_same'];
+				
 				if($mp->id==null)
 				{
 					$mp->team1=$team1;
@@ -243,6 +184,106 @@ class AddResults extends Command
 					$mp->update();
 				}
 				dump($mid.' '.$team1.'vs'.$team2);
+		}
+		
+	 });
+	}
+	
+    public function getMatchPoint2($league)
+	{
+		DB::table('matches')->where('league','=',$league)->where('time','>','2006-07-07 00:00:00')->orderBy('time','asc')->chunk(20000,function($matchs){
+			foreach($matchs as $match){
+				$limit=5;
+				$mid=$match->mid;
+			    //$match=Match::where('mid',$mid)->first();
+				$odd=Odd::where('mid',$mid)->where('init',1)->first();
+				if($odd!=null)
+				{
+			    $league=$match->league;
+			    $round=$match->round;
+			    $team1=$match->team1;
+			    $team2=$match->team2;
+			    $time=$match->time;
+			    $season=$match->season;
+				$m=$this->mr->getresult2($league,$season,$team1,$time,true,$limit);
+				$mp=MatchPoint::firstOrNew(['mid'=>$mid]);
+				
+				$mp->mid=$mid;
+				$mp->team1=$team1;
+				$mp->team2=$team2;
+				
+				$mp->sheng=$odd->sheng;
+				$mp->ping=$odd->ping;
+				$mp->fu=$odd->fu;
+				
+				$mp->season=$match->season;
+				$mp->league=$match->league;
+				$mp->round=$match->round;
+				$mp->score=$match->score;
+				$mp->result=$match->result;
+				$mp->time=$match->time;
+				
+
+				$mp->point=$m['point'];
+				$mp->goal=$m['goal'];
+                $mp->goal_lose=$m['goal_lose'];
+				$mp->expect=$m['expect'];
+				$mp->percent=$m['percent'];
+				
+				$mp->point_same=$m['point_same'];
+				$mp->goal_same=$m['goal_same'];
+                $mp->goal_lose_same=$m['goal_lose_same'];
+				$mp->expect_same=$m['expect_same'];
+				$mp->percent_same=$m['percent_same'];
+				
+				$mp->fi_point=$m['fi_point'];
+				$mp->fi_goal=$m['fi_goal'];
+                $mp->fi_goal_lose=$m['fi_goal_lose'];
+				$mp->fi_expect=$m['fi_expect'];
+				$mp->fi_percent=$m['fi_percent'];
+				
+				$mp->fi_point_same=$m['fi_point_same'];
+				$mp->fi_goal_same=$m['fi_goal_same'];
+                $mp->fi_goal_lose_same=$m['fi_goal_lose_same'];
+				$mp->fi_expect_same=$m['fi_expect_same'];
+				$mp->fi_percent_same=$m['fi_percent_same'];
+				
+				$m=$this->mr->getresult2($league,$season,$team2,$time,false,$limit);
+				$mp->point2=$m['point'];
+				//dump($m['point']);
+				$mp->goal2=$m['goal'];
+                $mp->goal_lose2=$m['goal_lose'];
+				$mp->expect2=$m['expect'];
+				$mp->percent2=$m['percent'];
+				
+				$mp->point_same2=$m['point_same'];
+				$mp->goal_same2=$m['goal_same'];
+                $mp->goal_lose_same2=$m['goal_lose_same'];
+				$mp->expect_same2=$m['expect_same'];
+				$mp->percent_same2=$m['percent_same'];
+				
+				$mp->fi_point2=$m['fi_point'];
+				$mp->fi_goal2=$m['fi_goal'];
+                $mp->fi_goal_lose2=$m['fi_goal_lose'];
+				$mp->fi_expect2=$m['fi_expect'];
+				$mp->fi_percent2=$m['fi_percent'];
+				
+				$mp->fi_point_same2=$m['fi_point_same'];
+				$mp->fi_goal_same2=$m['fi_goal_same'];
+                $mp->fi_goal_lose_same2=$m['fi_goal_lose_same'];
+				$mp->fi_expect_same2=$m['fi_expect_same'];
+				$mp->fi_percent_same2=$m['fi_percent_same'];
+				dump($mp->id);
+				if($mp->id==null)
+				{
+					$mp->save();
+				}
+				else{
+					dump('exist');
+					$mp->update();
+				}
+				dump($mid.' '.$team1.'vs'.$team2);
+				}
 		}
 		
 	 });

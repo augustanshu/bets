@@ -24,7 +24,7 @@ Route::group(['prefix'=>'test'],function(){
 		return view('testview');
 	});
 	Route::get('/ajax','TestController@ajax');
-	Route::post('/ajax','TestController@ajax2');
+	Route::post('/ajax','TestController@ajax');
 });
 
 Route::get('/matchList/{term}','MasterController@showMatchList');
@@ -36,6 +36,7 @@ Route::group(['prefix'=>'admin','namespace'=>'admin'],function(){;
 	Route::resource('/cache','AdminCacheController');
 	Route::get('/document/{term}','AdminController@getFile');
 	Route::get('/complete','AdminController@getUnComplete');
+	Route::post('/ajax','AdminController@ajax');
 });
 
 Auth::routes();

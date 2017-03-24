@@ -109,7 +109,7 @@ class MatchRepository  implements MatchRepositoryInterface{
             //$math=$this->getMathPoint($sms,$team);
 	 		//$sms=DB::select('SELECT * FROM matches as A left join odds as B on A.mid=B.mid where A.league=:league and A.season=:season and A.time<:time AND (team1=:team1 OR team2=:team2) AND B.init=1 ORDER BY A.time desc  LIMIT 5',['league'=>$league,'season'=>$season,'time'=>$mtime,'team1'=>$team2,'team2'=>$team2]); 
 	 		//$math2=$this->getMathPoint($sms,$team2);
-			$math=$this->getresult2($league,$season,$team,$mtime,true,5);
+			$math=$this->getresult2($league,$season,$team,$mtime,true,5);//近期成绩选择5场或者6场
 			$math2=$this->getresult2($league,$season,$team2,$mtime,false,5);
 			$history->current_point=$math['point'];
 			$history->current_point2=$math2['point'];
@@ -146,7 +146,7 @@ class MatchRepository  implements MatchRepositoryInterface{
 	   return $mas;
 	}
 	  /*
-	  tongji jiqi zhanji shuju
+	  tongji jinqi zhanji shuju
 	  */
 	 public function teamHistory($league,$season,$team,$mtime,$bool,$limit)
 	 {
@@ -553,186 +553,59 @@ class MatchRepository  implements MatchRepositoryInterface{
 		 
    }
 		
+	public function oddAnalysics($w1,$w2,$l)
+	{
+		 $mas= array();
+		 /*
+		 $matches=array();
+		 $match_t=Match::where('league','like',$l.'%')->OrderBy('time','desc')->get();
+		 foreach($match_t as $match)
+		 {
+			 $mid=$match->mid;
+			 $odds=Odd::whereBetween('sheng',[$w1,$w2])->where('mid',$mid)->where('init',1)->first();
+			 if($match!=null)
+			 {
+			 array_push($matches,$match);
+			 }
+		 }
+	     dump($matches);	
+		 */
+		 $matches=DB::table('matches')->join('odds','matches.mid','=','odds.mid')->whereBetween('odds.sheng',[$w1,$w2])->where('matches.league','like',$l.'%')->orderBy('matches.time','desc')->take(1)->get();
+		foreach($matches as $match)
+		{
+		$league=$match->league;
+		$mtime=$match->time;
+		$score=$match->score;
+		$season=$match->season;
+		$result=$match->result;
+		$round=$match->round;
+		$team1=$match->team1;
+		$team2=$match->team2;
+		
+	    $t_home=$this->getresult2($league,$season,$team1,$mtime,true,5);
+	    $t_away=$this->getresult2($league,$season,$team2,$mtime,false,5);
+			$match->current_point=$t_home['point'];
+			$match->current_point2=$t_away['point'];
+		    $match->points=$t_home['fi_point'];
+			$match->points2=$t_away['fi_point'];
+			$match->goal=$t_home['fi_goal'];
+			$match->goal2=$t_away['fi_goal'];
+			$match->goal_lose=$t_home['fi_goal_lose'];
+			$match->goal2_lose=$t_away['fi_goal_lose'];
+			$match->qiwang=$t_home['fi_expect'];
+			$match->qiwang2=$t_away['fi_expect'];
+			$match->percent=$percent=$match->qiwang==0?'none':number_format($match->points/$match->qiwang,2);
+			$match->percent2=$percent2=$match->qiwang2==0?'none':number_format($match->points2/$match->qiwang2,2);
+			$match->pointcz=number_format($match->points-$match->points2,2);
+			$match->qiwangcz=number_format($match->qiwang-$match->qiwang2,2);
+			$match->percentcz=number_format($match->percent-$match->percent2,2);
+			
+			array_push($mas,$match);
+	 }
+	 return $mas;
+	}
 	
     /*待删除*/
-	public function matchAnalysis(Match $m)
-	 {
-	 $ep=3;
-	 $odd=Match::find($m->id)->odd;
-	 $mid=$m->mid;
-	 $ma=new Match();
-	 $mas= array();
-	 $win=$odd->sheng;
-	 $draw=$odd->ping;
-	 $lose=$odd->fu;		 
-	 $matchs=DB::select('select A.mid,A.league,A.season,A.round,A.score,A.time,A.team1,A.team2,A.result from matches as A left join odds as B on A.mid=B.mid WHERE B.sheng =:sheng and B.ping=:ping and B.fu =:fu and B.init=1  ORDER BY A.result',['sheng'=>$win,'ping'=>$draw,'fu'=>$lose]);	
-	 $COUNT_V=0;
-	 $COUNT_D=0;
-	 $COUNT_F=0;
-	 foreach($matchs as $match)
-	 {      //dump($match->team1.$match->team2);
-		    if($match->result=="胜"){$COUNT_V++;}
-			if($match->result=="平"){$COUNT_D++;}
-			if($match->result=="负"){$COUNT_F++;}
-	 		$league=$match->league;
-			$mtime=$match->time;
-			$score=$match->score;
-	 		$season=$match->season;
-			$result=$match->result;
-	 		$round=$match->round;
-	 		$team=$match->team1;
-	 		$team2=$match->team2;
-	 		$points=0;
-			$fenshu=0;
-			$fenshu2=0;
-			$fenshuu=0;
-			$fenshuu2=0;
-			$qiwang=0;
-			$qiwang2=0;			
-	 		$points2=0;
-	 		$point_home=0;
-	 		$point_away=0;
-	 		$goal=0;
-			$goal2=0;
-	 		$goal_home=0;
-	 		$goal_away=0;
-	 		$sms=DB::select('SELECT * FROM matches as A left join odds as B on A.mid=B.mid where A.league=:league and A.season=:season and A.time<:time AND (team1=:team1 OR team2=:team2) AND B.init=1 ORDER BY A.time desc  LIMIT 5',['league'=>$league,'season'=>$season,'time'=>$mtime,'team1'=>$team,'team2'=>$team]);
-	 		foreach($sms as $sm){
-			$f=$this->getfenshu0($sm->sheng,$sm->ping,$sm->fu);
-			$f2=$this->getfenshu1($sm->sheng,$sm->ping,$sm->fu);
-			$q=$this->getqiwang($sm->sheng,$sm->ping,$sm->fu);
-			//dump($q);
-			if($sm->team1==$team){$qiwang+=$q[0];}
-			else{$qiwang+=$q[1];}
-	 		 if($sm->result=='胜'){
-	 			 if($sm->team1==$team){$points+=$ep;$goal+=$sm->score_home;$fenshu+=$f[0][0];$fenshuu+=$f2[0][0];}	
-                 else{$goal+=$sm->score_away;}				 
-	 		   }
-	 		 else if($sm->result=='平'){
-	 			 $points+=1;$goal+=$sm->score_home;
-				 if($sm->team1==$team){$fenshu+=$f[0][1];$fenshuu+=$f2[0][1];}
-				 else{$fenshu+=$f[1][1];$fenshuu+=$f2[1][1];}	 
-	 		   }
-	 		 else if($sm->result=='负'){
-	 			 if($sm->team2==$team){$points+=$ep;$goal+=$sm->score_away;$fenshu+=$f[1][0];$fenshuu+=$f2[1][0];}
-                 else{$goal+=$sm->score_home;}				 
-	 		   }
-	 		}
-	 		$sms=DB::select('SELECT * FROM matches as A left join odds as B on A.mid=B.mid where A.league=:league and A.season=:season and A.time<:time AND (team1=:team1 OR team2=:team2) AND B.init=1 ORDER BY A.time desc  LIMIT 5',['league'=>$league,'season'=>$season,'time'=>$mtime,'team1'=>$team2,'team2'=>$team2]); 
-	 		foreach($sms as $sm){
-			//dump($sm);
-			$f=$this->getfenshu0($sm->sheng,$sm->ping,$sm->fu);
-			$q=$this->getqiwang($sm->sheng,$sm->ping,$sm->fu);
-			if($sm->team1==$team2){$qiwang2+=$q[0];}
-			else{$qiwang2+=$q[1];}
-	 		 if($sm->result=='胜'){
-	 			 if($sm->team1==$team2){$points2+=$ep;$goal2+=$sm->score_home;$fenshu2+=$f[0][0];$fenshuu2+=$f2[0][0];}	
-                 else{$goal2+=$sm->score_away;}					 
-	 		   }
-	 		 else if($sm->result=='平'){
-	 			 $points2+=1;$goal2+=$sm->score_home;
-                if($sm->team1==$team2){$fenshu2+=$f[0][1];$fenshuu2+=$f2[0][1];}
-				 else{$fenshu2+=$f[1][1];$fenshuu2+=$f2[1][1];}				 
-	 		   }
-	 		 else if($sm->result=='负'){
-	 			 if($sm->team2==$team2){$points2+=$ep;$goal2+=$sm->score_away;$fenshu2+=$f[1][0];$fenshuu2+=$f2[1][0];}		
-                else{$goal2+=$sm->score_away;}					 
-	 		   }
-	 		}
-			$match->points=$points;
-			$match->points2=$points2;
-			$match->goal=$goal;
-			$match->goal2=$goal2;
-			$match->fenshu=$fenshu;
-			$match->fenshu2=$fenshu2;
-			$match->fenshuu=$fenshuu;
-			$match->fenshuu2=$fenshuu2;
-			$match->qiwang=$qiwang;
-			$match->qiwang2=$qiwang2;
-			$match->percent=$percent=$qiwang==0?'none':number_format($points/$qiwang,2);
-			$match->percent2=$percent2=$qiwang2==0?'none':number_format($points2/$qiwang2,2);
-			$match->pointcz=number_format($points-$points2,2);
-			$match->qiwangcz=number_format($qiwang-$qiwang2,2);
-			$match->percentcz=number_format($percent-$percent2,2);
-			array_push($mas,$match);
-	  }
-          return $mas;
-		  }
-	public function getfenshu0($w,$d,$l)
-	{
-		$ep=3;
-	 $gailv=$this->getgailv($w,$d,$l);
-	 /*
-	 $w_home=3+3*(1-$gailv[0]);
-	 $w_away=3+3*(1-$gailv[2]);
-	 $d_home=$gailv[0]>=$gailv[2]?1-$gailv[1]:1+$gailv[1];
-	 $d_away=$gailv[0]>=$gailv[2]?1+$gailv[1]:1-$gailv[1];
-	 */
-	 $w_home=(number_format($ep+$ep*(1-$gailv[0]),2));
-	 $w_away=(number_format($ep+$ep*(1-$gailv[2]),2));
-	 $d_home=(number_format($gailv[0]>=$gailv[2]?$gailv[1]:1+$gailv[1],2));
-	 $d_away=(number_format($gailv[0]>=$gailv[2]?1+$gailv[1]:$gailv[1],2));
-	 return [[$w_home,$d_home,0],[$w_away,$d_away,0]];
-	}
-	
-	public function getfenshu1($w,$d,$l)
-	{
-	 $gailv=$this->getgailv($w,$d,$l);
-	 
-	 $w_home=(number_format(3+2*(1-$gailv[0]),2));
-	 $w_away=(number_format(3+2*(1-$gailv[2]),2));
-	 $d_home=(number_format($gailv[0]>=$gailv[2]?1+$gailv[1]:1+$gailv[1],2));
-	 $d_away=(number_format($gailv[0]>=$gailv[2]?1+$gailv[1]:1+$gailv[1],2));
-	 
-	 return [[$w_home,$d_home,0],[$w_away,$d_away,0]];
-	}
-	 public function getMatchPoint($league)
-	{
-		/*
-		$seasons=DB::select('select season from matches where league=:league group by season',['league'=>$league]);
-		foreach($seasons as $season)
-		{
-			$season=$season->season;
-			$teams=DB::select('select team1 from matches where league=:league and season=:season group by team1',['league'=>$league,'season'=>$season]);
-			foreach($teams as $team)
-			{
-				
-			}
-		}
-		*/
-		$matchs=Match::where('league',$league)->where('round','38')->get();
-		foreach($matchs as $match)
-		{
-			//$match=$matchs;
-			$mp=new MatchPoint();
-			$mp->mid=$match->mid;
-			$round=$match->round;
-			$team1=$match->team1;
-			$team2=$match->team2;
-			$time=$match->time;
-			$season=$match->season;
-			$ws0=DB::select('select count(*) as c from matches where league=:league and season=:season and team1=:team and time<:time and result="胜" group by team1',['league'=>$league,'season'=>$season,'team'=>$team1,'time'=>$time]);
-			$ws1=DB::select('select count(*) as c from matches where league=:league and season=:season and team2=:team and time<:time and result="负" group by team2',['league'=>$league,'season'=>$season,'team'=>$team1,'time'=>$time]);
-			$ds=DB::select('select count(*) as c from matches where league=:league and season=:season and (team1=:team1 or team2=:team2) and time<:time and result="平"',['league'=>$league,'season'=>$season,'team1'=>$team1,'team2'=>$team1,'time'=>$time]);
-			$w=(count($ws0)==0?0:($ws0[0]->c)*3)+(count($ws1)==0?0:($ws1[0]->c)*3)+(count($ds)==0?0:$ds[0]->c);
-			$mp->team1=$team1;
-			$mp->point=$w;
-			$mp->save();
-			//dump($ds);
-			//$r=($ws0[0]+$ws1[1])*3+$ds[0];
-			//dump($w);
-			dump( $league.' '.$season.' '.$round.' '.$team1.' '.$w);
-			$ws0=DB::select('select count(*) as c from matches where league=:league and season=:season and team1=:team and time<:time and result="胜" group by team1',['league'=>$league,'season'=>$season,'team'=>$team2,'time'=>$time]);
-			$ws1=DB::select('select count(*) as c from matches where league=:league and season=:season and team2=:team and time<:time and result="负" group by team2',['league'=>$league,'season'=>$season,'team'=>$team2,'time'=>$time]);
-			$ds=DB::select('select count(*) as c from matches where league=:league and season=:season and (team1=:team1 or team2=:team2) and time<:time and result="平"',['league'=>$league,'season'=>$season,'team1'=>$team2,'team2'=>$team2,'time'=>$time]);
-			$w=(count($ws0)==0?0:($ws0[0]->c)*3)+(count($ws1)==0?0:($ws1[0]->c)*3)+(count($ds)==0?0:$ds[0]->c);
-			//return $seasons;
-			$mp->team1=$team2;
-			$mp->point=$w;
-			$mp->save();
-			dump( $league.' '.$season.' '.$round.' '.$team2.' '.$w);
-		}
-	}
 	public function getMatchDif($mid)
 	{
 	

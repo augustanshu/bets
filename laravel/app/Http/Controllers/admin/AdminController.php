@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\Admin;
-
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
@@ -116,11 +116,44 @@ class AdminController extends Controller
      */
 	public function getUnComplete()
 	{
-	 $matches=Match::where('status','未')->where('time','>','2017-01-31 10:55:35')->get();
+	 $matches=Match::where('score','-')->where('time','>','2008-01-31 10:55:35')->orderBy('time','desc')->get();
 	 foreach($matches as $match)
 	 {
 		 $this->crawler->select($match->mid);
 		 sleep(rand(100,150)/100);
 	 }
 	}
+    /*
+	 分析赛事
+	*/
+   public function ajax(Request $request)
+   {
+	   $this->validate($request,[
+	   'league' =>'required',
+	   'w1'     =>'required',
+	   'w2'     =>'required',
+	   ]);
+	    $l=$request['league'];
+		$w1=$request['w1'];
+		$w2=$request['w2'];
+		$value=$this->mr->oddAnalysics($w1,$w2,$l);
+		//dump($matches);
+	   //$round=1;
+	   //$value=Match::where('league','英格兰超级联赛')->where('season','15-16')->where('round',$round)->get();
+	   //$value->round="21";
+	   //$value=json_encode($value,JSON_UNESCAPED_UNICODE);
+	   return view('part.odd',['matches'=>$value]);
+   }
+      public function ajax2()
+   {
+	   
+		//dump($l);
+		$value=$this->mr->oddAnalysics('2108225');
+		//dump($matches);
+	   //$round=1;
+	   //$value=Match::where('league','英格兰超级联赛')->where('season','15-16')->where('round',$round)->get();
+	   //$value->round="21";
+	   //$value=json_encode($value,JSON_UNESCAPED_UNICODE);
+	   return response()->json(array('data'=>$value),200);
+   }
 }
