@@ -1,0 +1,62 @@
+@extends('layouts.master')
+@section('title','MyBets')
+
+@section('main')
+<table id="example" class="display" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th>W</th>
+                <th>D</th>
+                <th>L</th>
+                <th>league</th>
+                <th>season</th>
+                <th>team1</th>
+				<th>team2</th>
+				<th>fi_point1</th>
+				<th>fi_point2</th>
+				<th>fi_expect1</th>
+				<th>fi_expect2</th>
+            </tr>
+        </thead>
+ 
+        <tfoot>
+            <tr>
+                <th>W</th>
+                <th>D</th>
+                <th>L</th>
+                <th>league</th>
+                <th>season</th>
+                <th>team1</th>
+				<th>team2</th>
+				<th>fi_point1</th>
+				<th>fi_point2</th>
+				<th>fi_expect1</th>
+				<th>fi_expect2</th>
+            </tr>
+        </tfoot>
+		<tbody>
+	@foreach($matches as $match)
+        <tr>
+		<td>{{$match->sheng}}</td>
+		<td>{{$match->ping}}</td>
+		<td>{{$match->fu}}</td>
+		<td>{{$match->league}}</td>
+		<td>{{$match->season}}</td>
+		<td>{{$match->team1}}</td>
+		<td>{{$match->team2}}</td>
+		<td>{{$match->points}}</td>
+		<td>{{$match->points2}}</td>
+		<td>{{$match->qiwang}}</td>
+		<td>{{$match->qiwang2}}</td>
+        </tr>
+		@endforeach
+    </tbody>
+    </table>
+	@endsection
+<script>
+(function($){
+	$('#example').DataTable({
+		"userLength": 50
+	});
+}(jQuery));
+</script>
