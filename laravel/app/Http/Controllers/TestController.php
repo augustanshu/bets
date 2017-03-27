@@ -21,10 +21,9 @@ class TestController extends Controller
   
      public function ajax(Request $request)
    {
-	   //$round=$request['round'];
-	   $value=Match::where('league','英格兰超级联赛')->where('season','15-16')->where('round',2)->get();
-	   //$value->round="21";
-	   //$value=json_encode($value,JSON_UNESCAPED_UNICODE);
+	   $league=$request['league']==null?'':$request['league'];
+	   $round=$request['w']==null?1:$request['w'];
+	   $value=Match::where('league','英格兰超级联赛')->where('season','15-16')->where('round',$round)->get();
 	   return response()->json(array('data'=>$value),200);
    }
 }

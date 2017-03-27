@@ -32,12 +32,12 @@ class MasterController extends Controller
     public function index()
     {
 		$term0=date("Ymd",strtotime("+1 day"));
-	    $term1=date("Ymd");
-		$term2=$this->term=date("Ymd",strtotime("- 1 day"));
-		$term3=$this->term=date("Ymd",strtotime("- 2 day"));
-		$term4=$this->term=date("Ymd",strtotime("- 3 day"));
-		$term5=$this->term=date("Ymd",strtotime("- 4 day"));
-		$term6=$this->term=date("Ymd",strtotime("- 5 day"));
+	    $this->term=$term1=date("Ymd");
+		$term2=date("Ymd",strtotime("- 1 day"));
+		$term3=date("Ymd",strtotime("- 2 day"));
+		$term4=date("Ymd",strtotime("- 3 day"));
+		$term5=date("Ymd",strtotime("- 4 day"));
+		$term6=date("Ymd",strtotime("- 5 day"));
 	    $time=date("Ymd");
 	    $array_term=[];
 		$checkDayStr = date('Y-m-d ',time());
@@ -49,19 +49,18 @@ class MasterController extends Controller
 		else
 		{
 		$term0=date("Ymd");
-		$term1=$this->term=date("Ymd",strtotime("- 1 day"));
-		$term2=$this->term=date("Ymd",strtotime("- 2 day"));
-		$term3=$this->term=date("Ymd",strtotime("- 3 day"));
-		$term4=$this->term=date("Ymd",strtotime("- 4 day"));
-		$term5=$this->term=date("Ymd",strtotime("- 5 day"));
-		$term6=$this->term=date("Ymd",strtotime("- 6 day"));
+		$this->term=$term1=date("Ymd",strtotime("- 1 day"));
+		$term2=date("Ymd",strtotime("- 2 day"));
+		$term3=date("Ymd",strtotime("- 3 day"));
+		$term4=date("Ymd",strtotime("- 4 day"));
+		$term5=date("Ymd",strtotime("- 5 day"));
+		$term6=date("Ymd",strtotime("- 6 day"));
 		}
 	    $matches=Cache::remember($term1,2880,function(){
 		$array_match=[];
 		$match=new Match();
 		$odd=new Odd();
-		$mids=$this->crawler->Midlist();
-		//dump($mids);
+		$mids=$this->crawler->Midlist2($this->term);
 		foreach($mids as $mid){
 		if($match->where('mid',$mid)->count()==0)
 		{

@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Repositories\CrawlerRepositoryInterface;
 use App\Repositories\MatchRepositoryInterface;
 use App\Match;
+use App\MatchPoint;
 use App\Odd;
 class AdminController extends Controller
 {
@@ -126,34 +127,28 @@ class AdminController extends Controller
     /*
 	 分析赛事
 	*/
-   public function ajax(Request $request)
+   public function analysisodd(Request $request)
    {
+	   /*
 	   $this->validate($request,[
 	   'league' =>'required',
 	   'w1'     =>'required',
 	   'w2'     =>'required',
 	   ]);
-	    $l=$request['league'];
-		$w1=$request['w1'];
-		$w2=$request['w2'];
-		$value=$this->mr->oddAnalysics($w1,$w2,$l);
-		//dump($matches);
-	   //$round=1;
-	   //$value=Match::where('league','英格兰超级联赛')->where('season','15-16')->where('round',$round)->get();
-	   //$value->round="21";
-	   //$value=json_encode($value,JSON_UNESCAPED_UNICODE);
-	   return view('part.odd',['matches'=>$value]);
-   }
-      public function ajax2()
-   {
-	   
-		//dump($l);
-		$value=$this->mr->oddAnalysics('2108225');
-		//dump($matches);
-	   //$round=1;
-	   //$value=Match::where('league','英格兰超级联赛')->where('season','15-16')->where('round',$round)->get();
-	   //$value->round="21";
-	   //$value=json_encode($value,JSON_UNESCAPED_UNICODE);
+	   */
+	    $league=$request['league']==null?'':$request['league'];
+	   $w=$request['w']==null?1:$request['w'];
+	   $value=MatchPoint::where('league','like',$league.'%')->where('sheng',$w)->where('round','>',5)->get();
 	   return response()->json(array('data'=>$value),200);
+   }
+      public function analysis()
+   {
+	   return view('admin.analysis');
+   }
+   
+   public function odd($mid)
+   {
+	   $odds=Odd::where('mid',$mid)->orderBy('updatetime','desc')->get();
+	   return view('admin.part.odd',['odds'=>$odds]);
    }
 }

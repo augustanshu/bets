@@ -498,7 +498,7 @@ class MatchRepository  implements MatchRepositoryInterface{
 				$fi_point=$point; 
 				$fi_goal=$goal;
 				$fi_goal_lose=$goal_lose;
-				$fi_expect=$expect;				
+				$fi_expect=number_format($expect,2);				
 			}
 
 			if($bool)
@@ -517,7 +517,7 @@ class MatchRepository  implements MatchRepositoryInterface{
 						$fi_point_same=$point_same; 
 						$fi_goal_same=$goal_same;
 						$fi_goal_lose_same=$goal_lose_same;
-						$fi_expect_same=$expect_same;	
+						$fi_expect_same=number_format($expect_same,2);	
 					}
 				}
 			}
@@ -538,7 +538,7 @@ class MatchRepository  implements MatchRepositoryInterface{
 						$fi_point_same=$point_same; 
 						$fi_goal_same=$goal_same;
 						$fi_goal_lose_same=$goal_lose_same;
-						$fi_expect_same=$expect_same;	
+						$fi_expect_same=number_format($expect_same,2);	
 					}
 				}
 		   }

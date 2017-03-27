@@ -36,7 +36,9 @@ Route::group(['prefix'=>'admin','namespace'=>'admin'],function(){;
 	Route::resource('/cache','AdminCacheController');
 	Route::get('/document/{term}','AdminController@getFile');
 	Route::get('/complete','AdminController@getUnComplete');
-	Route::post('/ajax','AdminController@ajax');
+	Route::get('/analysis','AdminController@analysis');
+	Route::post('/analysis','AdminController@analysisodd');
+	Route::get('/odd/{mid}','AdminController@odd');
 });
 
 Auth::routes();
