@@ -191,7 +191,7 @@ class AddResults extends Command
 	
     public function getMatchPoint2($league)
 	{
-		DB::table('matches')->where('league','=',$league)->where('time','>','2007-07-01 03:45:00')->orderBy('time','asc')->chunk(20000,function($matchs){
+		DB::table('matches')->where('league','=',$league)->where('time','>','2013-04-13 22:00:00')->orderBy('time','asc')->chunk(20000,function($matchs){
 			foreach($matchs as $match){
 				$limit=5;
 				$mid=$match->mid;

@@ -45,3 +45,6 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index');
 
+Route::get('auth/weixin', 'Auth\WeixinController@redirectToProvider');
+Route::get('auth/weixin/callback', 'Auth\WeixinController@handleProviderCallback');
+

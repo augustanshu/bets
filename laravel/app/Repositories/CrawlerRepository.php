@@ -23,7 +23,8 @@ class CrawlerRepository extends MatchRepository implements CrawlerRepositoryInte
    public function MidList2($t)
    {
 	 $term=Term::where('term',$t)->first();
-	 if($term==null&&$t==date("Ymd")){$this->getTerm();
+	 if($term==null&&$t==date("Ymd")){
+	 $this->getTerm();
 	 $term=Term::where('term',$t)->first();}
 	 $string_mids=$term->mids;
 	 $array_mids=explode('/',$string_mids);
