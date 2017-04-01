@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 class MatchRepository  implements MatchRepositoryInterface{
 
 
+    protected $l=6;
 	public function matchMid($mid)
 	{
 		$match=new Match();
@@ -24,8 +25,9 @@ class MatchRepository  implements MatchRepositoryInterface{
 	 $mas= array();
 	 $win=$odd->sheng;
 	 $draw=$odd->ping;
-	 $lose=$odd->fu;		 
-	 $matchs=DB::select('select A.mid,A.league,A.season,A.round,A.score,A.time,A.team1,A.team2,A.result from matches as A left join odds as B on A.mid=B.mid WHERE B.sheng =:sheng and B.ping=:ping and B.fu =:fu and B.init=1  ORDER BY A.result',['sheng'=>$win,'ping'=>$draw,'fu'=>$lose]);
+	 $lose=$odd->fu;
+    $league=$m->league;	 
+	 $matchs=DB::select('select A.mid,A.league,A.season,A.round,A.score,A.time,A.team1,A.team2,A.result from matches as A left join odds as B on A.mid=B.mid WHERE B.sheng =:sheng and B.ping=:ping and B.fu =:fu and B.init=1 and A.league=:league ORDER BY A.result',['sheng'=>$win,'ping'=>$draw,'fu'=>$lose,'league'=>$league]);
 	 foreach($matchs as $match)
 	 { 
 		$league=$match->league;
@@ -36,8 +38,8 @@ class MatchRepository  implements MatchRepositoryInterface{
 		$round=$match->round;
 		$team1=$match->team1;
 		$team2=$match->team2;
-	    $t_home=$this->getresult2($league,$season,$team1,$mtime,true,5);
-	    $t_away=$this->getresult2($league,$season,$team2,$mtime,false,5);
+	    $t_home=$this->getresult2($league,$season,$team1,$mtime,true,$this->l);
+	    $t_away=$this->getresult2($league,$season,$team2,$mtime,false,$this->l);
 			$match->current_point=$t_home['point'];
 			$match->current_point2=$t_away['point'];
 		    $match->points=$t_home['fi_point'];
@@ -109,8 +111,8 @@ class MatchRepository  implements MatchRepositoryInterface{
             //$math=$this->getMathPoint($sms,$team);
 	 		//$sms=DB::select('SELECT * FROM matches as A left join odds as B on A.mid=B.mid where A.league=:league and A.season=:season and A.time<:time AND (team1=:team1 OR team2=:team2) AND B.init=1 ORDER BY A.time desc  LIMIT 5',['league'=>$league,'season'=>$season,'time'=>$mtime,'team1'=>$team2,'team2'=>$team2]); 
 	 		//$math2=$this->getMathPoint($sms,$team2);
-			$math=$this->getresult2($league,$season,$team,$mtime,true,5);//近期成绩选择5场或者6场
-			$math2=$this->getresult2($league,$season,$team2,$mtime,false,5);
+			$math=$this->getresult2($league,$season,$team,$mtime,true,$this->l);//近期成绩选择5场或者6场
+			$math2=$this->getresult2($league,$season,$team2,$mtime,false,$this->l);
 			$history->current_point=$math['point'];
 			$history->current_point2=$math2['point'];
 			$history->points=$math['fi_point'];

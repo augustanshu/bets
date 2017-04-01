@@ -181,7 +181,8 @@ return [
 		Barryvdh\Debugbar\ServiceProvider::class,
 		Weidner\Goutte\GoutteServiceProvider::class,
         Encore\Admin\Providers\AdminServiceProvider::class,
-		 SocialiteProviders\Manager\ServiceProvider::class,
+		SocialiteProviders\Manager\ServiceProvider::class,
+		Intervention\Image\ImageServiceProvider::class,
     ],
 
     /*
@@ -231,6 +232,7 @@ return [
 		'Goutte' => Weidner\Goutte\GoutteFacade::class, 
 		'Crawler' =>Symfony\Component\DomCrawler\Crawler::class,
 		 'Socialite' => Laravel\Socialite\Facades\Socialite::class, 
+		 'Image' => Intervention\Image\Facades\Image::class,
 
     ],
 
