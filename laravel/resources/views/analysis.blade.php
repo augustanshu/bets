@@ -25,11 +25,21 @@
 			<h5 class="match-header-point">客积:{{$match->points2}}</h5>
 			<h5 class="match-header-percent">主期:{{$match->qiwang}}|{{$match->percent}}</h5>
 			<h5 class="match-header-percent">客期:{{$match->qiwang2}}|{{$match->percent2}}</h5>
-			@endif
-			@endforeach
 			</a>
 		</h4>
 	</div>
+	<div class="panel-heading">
+	<h4 class="panel-title match-header" >
+	<a style="display:flex;flex-direction:row;justify-content:flex-end">
+	<h5 class="match-header-point">主积:{{$match->points_init}}</h5>
+	<h5 class="match-header-point">客积:{{$match->points2_init}}</h5>
+	<h5 class="match-header-percent">主期:{{$match->qiwang_init}}|{{$match->percent_init}}</h5>
+	<h5 class="match-header-percent">客期:{{$match->qiwang2_init}}|{{$match->percent2_init}}</h5>
+	</a>
+	</h4>
+	</div>
+	@endif
+			@endforeach
 		<div id="collapseOne" class="panel-collapse collapse in">
           <li class="list-group-item"> 
 		  <a id="chartbtn"  type="button" data-toggle="collapse" href="#collapseTwo">析</a>	

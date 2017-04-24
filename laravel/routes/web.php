@@ -48,3 +48,7 @@ Route::get('/home', 'HomeController@index');
 Route::get('auth/weixin', 'Auth\WeixinController@redirectToProvider');
 Route::get('auth/weixin/callback', 'Auth\WeixinController@handleProviderCallback');
 
+Route::group(['prefix'=>'app','namespace'=>'app'],function(){
+	 Route::resource('image','AppController');
+});
+

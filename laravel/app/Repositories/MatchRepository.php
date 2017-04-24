@@ -27,11 +27,12 @@ class MatchRepository  implements MatchRepositoryInterface{
 	 $draw=$odd->ping;
 	 $lose=$odd->fu;
     $league=$m->league;	 
-	 $matchs=DB::select('select A.mid,A.league,A.season,A.round,A.score,A.time,A.team1,A.team2,A.result from matches as A left join odds as B on A.mid=B.mid WHERE B.sheng =:sheng and B.ping=:ping and B.fu =:fu and B.init=1 and A.league=:league ORDER BY A.result',['sheng'=>$win,'ping'=>$draw,'fu'=>$lose,'league'=>$league]);
+	 $matchs=DB::select('select A.mid,A.league,A.season,A.round,A.score,A.time,A.team1,A.team2,A.result,B.updatetime from matches as A left join odds as B on A.mid=B.mid WHERE B.sheng =:sheng and B.ping=:ping and B.fu =:fu and B.init=1 and A.league=:league ORDER BY A.result',['sheng'=>$win,'ping'=>$draw,'fu'=>$lose,'league'=>$league]);
 	 foreach($matchs as $match)
 	 { 
 		$league=$match->league;
 		$mtime=$match->time;
+		$mtime_init=$match->updatetime;
 		$score=$match->score;
 		$season=$match->season;
 		$result=$match->result;
@@ -40,6 +41,8 @@ class MatchRepository  implements MatchRepositoryInterface{
 		$team2=$match->team2;
 	    $t_home=$this->getresult2($league,$season,$team1,$mtime,true,$this->l);
 	    $t_away=$this->getresult2($league,$season,$team2,$mtime,false,$this->l);
+		$t_home_init=$this->getresult2($league,$season,$team1,$mtime_init,true,$this->l);
+	    $t_away_init=$this->getresult2($league,$season,$team2,$mtime_init,false,$this->l);
 			$match->current_point=$t_home['point'];
 			$match->current_point2=$t_away['point'];
 		    $match->points=$t_home['fi_point'];
@@ -55,6 +58,15 @@ class MatchRepository  implements MatchRepositoryInterface{
 			$match->pointcz=number_format($match->points-$match->points2,2);
 			$match->qiwangcz=number_format($match->qiwang-$match->qiwang2,2);
 			$match->percentcz=number_format($match->percent-$match->percent2,2);
+
+			$match->points_init=$t_home_init['fi_point'];
+			$match->points2_init=$t_away_init['fi_point'];
+		    $match->points_init=$t_home_init['fi_point'];
+			$match->points2_init=$t_away_init['fi_point'];
+			$match->qiwang_init=$t_home_init['fi_expect'];
+			$match->qiwang2_init=$t_away_init['fi_expect'];
+			$match->percent_init=$match->qiwang_init==0?'none':number_format($match->points_init/$match->qiwang_init,2);
+			$match->percent2_init=$match->qiwang2_init==0?'none':number_format($match->points2_init/$match->qiwang2_init,2);
 			array_push($mas,$match);
 	 }
 	 return $mas;
@@ -535,7 +547,7 @@ class MatchRepository  implements MatchRepositoryInterface{
 					elseif($match->result=="平"){$point_same+=1;}
 					$goal_same+=$match->score_away;
 					$goal_lose_same+=$match->score_home;
-					if($j<=5)
+					if($j<=$limit)
 					{
 						$fi_point_same=$point_same; 
 						$fi_goal_same=$goal_same;
