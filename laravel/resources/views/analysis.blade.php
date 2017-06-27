@@ -44,7 +44,7 @@
           <li class="list-group-item"> 
 		  <a id="chartbtn"  type="button" data-toggle="collapse" href="#collapseTwo">析</a>	
 		  <div  class="ar" ></div>
-		  <a data-toggle="collapse" data-parent="#accordion1"  href="#collapseH1">H1</a>
+		  <a data-toggle="collapse" data-parent="#accordion1"  href="#collapseH1" class="htitle">历史主场</a>
 		  <div id="collapseH1" class="panel-collapse collapse in">
 		  @foreach($history1 as $match)
 		    <a style="display:flex;flex-direction:row;justify-content:space-between;text-decoration:none">
@@ -68,7 +68,7 @@
 			@endforeach
 		  </div>
 		  
-		   <a data-toggle="collapse" data-parent="#accordion2"  class="panel-collapse collapse in"  href="#collapseH2">H2</a>
+		   <a data-toggle="collapse" data-parent="#accordion2"  class="htitle panel-collapse collapse in"  href="#collapseH2">历史客场</a>
 		   <div id="collapseH2" class="panel-collapse collapse in">
 		  	 @foreach($history2 as $match)
 		    <a style="display:flex;flex-direction:row;justify-content:space-between;text-decoration:none">
@@ -91,7 +91,7 @@
 			@endforeach
 			</div>
 			 
-			 <a data-toggle="collapse" data-parent="#accordion3"  class="panel-collapse collapse in"  href="#collapseW1">W1</a>
+			 <a data-toggle="collapse" data-parent="#accordion3"  class="htitle panel-collapse collapse in"  href="#collapseW1">近期主队</a>
 		   <div id="collapseW1" class="panel-collapse collapse in">
 		  	 @foreach($history3 as $match)
 		    <a style="display:flex;flex-direction:row;justify-content:space-between;text-decoration:none">
@@ -114,7 +114,7 @@
 			@endforeach
 			</div>
 			
-		   <a data-toggle="collapse" data-parent="#accordion4"  class="panel-collapse collapse in"  href="#collapseW2">W2</a>
+		   <a data-toggle="collapse" data-parent="#accordion4"  class="htitle panel-collapse collapse in"  href="#collapseW2">近期客队</a>
 		   <div id="collapseW2" class="panel-collapse collapse in">
 		  	 @foreach($history4 as $match)
 		    <a style="display:flex;flex-direction:row;justify-content:space-between;text-decoration:none">
@@ -351,6 +351,18 @@
 .match-team{
 	font-weight:800;
 	color:black;
+}
+@media (max-width:768px){
+	h5{
+		font-size:5px;
+	}
+	.panel-heading{
+		padding: 0 !important;
+	}
+	.htitle{
+		font-size:5px;
+	}
+}
 }
 </style>
 @endsection

@@ -3,14 +3,14 @@
 		<table class="table">
 			<thead>
 				<tr>
-					<th>matchType</th>
-					<th>round</th>
-					<th>time</th>
-					<th>status</th>
-					<th>team1</th>
-					<th>score</th>
-					<th>team2</th>
-					<th>william</th>
+					<th>赛事</th>
+					<th>轮次</th>
+					<th>时间</th>
+					<th>状态</th>
+					<th>主队</th>
+					<th>比分</th>
+					<th>客队</th>
+					<th>威廉初盘</th>
 					<th></th>
 				</tr>
 			</thead>

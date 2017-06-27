@@ -117,7 +117,7 @@ class AdminController extends Controller
      */
 	public function getUnComplete()
 	{
-	 $matches=Match::where('score','-')->where('time','>','2008-01-31 10:55:35')->orderBy('time','desc')->get();
+	 $matches=Match::where('score','-')->where('time','>','2017-06-26 10:55:35')->orderBy('time','asc')->get();
 	 foreach($matches as $match)
 	 {
 		 $this->crawler->select($match->mid);

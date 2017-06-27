@@ -33,11 +33,11 @@ class MasterController extends Controller
     {
 			$term0=date("Ymd",strtotime("+1 day"));
 			$this->term=$term1=date("Ymd");
-			$term2=date("Ymd",strtotime("- 6 day"));
-			$term3=date("Ymd",strtotime("- 7 day"));
-			$term4=date("Ymd",strtotime("- 8 day"));
-			$term5=date("Ymd",strtotime("- 9 day"));
-			$term6=date("Ymd",strtotime("- 10 day"));
+			$term2=date("Ymd",strtotime("- 1 day"));
+			$term3=date("Ymd",strtotime("- 2 day"));
+			$term4=date("Ymd",strtotime("- 3 day"));
+			$term5=date("Ymd",strtotime("- 4 day"));
+			$term6=date("Ymd",strtotime("- 5 day"));
 			$time=date("Ymd");
 			$array_term=[];
 			$checkDayStr = date('Y-m-d ',time());
