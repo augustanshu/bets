@@ -82,7 +82,7 @@ class AddResults extends Command
 			   }
 		  });
 		  */
-		  $this->getMatchPoint('英格兰冠军联赛');
+		  $this->getMatchPoint('西班牙甲组联赛');
 		  //DB::table('matchpoint')->chun
 		  /*
 		  $matches=DB::select('select count(*) as count,mid from matchpoint group by mid having count>1');
@@ -97,7 +97,8 @@ class AddResults extends Command
 	
     public function getMatchPoint($league)
 	{
-		DB::table('matches')->where('league','=',$league)->where('time','<','2011-10-29 22:00:00')->where('time','>','2010-07-01 22:00:00')->orderBy('time','desc')->chunk(20000,function($matchs){
+		//where('time','<','2011-10-29 22:00:00')->
+		DB::table('matches')->where('league','=',$league)->where('time','<','2015-05-23 22:30:00')->where('time','>','2010-07-01 22:00:00')->orderBy('time','desc')->chunk(20000,function($matchs){
 			foreach($matchs as $match){
 				$limit=6;
 				$mid=$match->mid;

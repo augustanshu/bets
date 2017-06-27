@@ -937,4 +937,21 @@ body.stop-scrolling {
     -o-transform: translateY(145%);
     transform: translateY(145%); } }
 
+.main-list{
+	margin-top:10px;
+}
+.main-list-header{
+	display:flex;
+	justify-content:space-between;
+	align-items: center;
+}
+.handle-select{
+	display:inline!important;
+	max-width:150px;
+}
+@media (max-width:768px){
+	th{
+		font-size:5px;
+	}
+}
 /*# sourceMappingURL=dep.css.map */

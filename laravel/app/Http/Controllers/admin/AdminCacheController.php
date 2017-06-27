@@ -14,7 +14,7 @@ class AdminCacheController extends Controller
     public function index()
 	{
 		$cache=new LocalCache();
-		$cs=$cache->get();
+		$cs=$cache->take(30)->orderBy('expiration','desc')->get();
 		return view('admin.cache',['cs'=>$cs]);
 	}
 	public function destroy($key)
@@ -28,7 +28,7 @@ class AdminCacheController extends Controller
 	 public function Show()
 	{
 		$cache=new LocalCache();
-		$cs=$cache->get();
+		$cs=$cache->take(30)->orderBy('expiration','desc')->get();
 		return view('admin.part.cache',['cs'=>$cs]);
 	}
 

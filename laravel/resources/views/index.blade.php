@@ -13,21 +13,21 @@
 			@endforeach
 		</select>
 		</form>
-		<button class="btn btn-success btn-xs" type="button" id="btn-fresh">更新本页</button>
+		<button class="btn btn-success btn-xs" type="button" style="margin-bottom:1em" id="btn-fresh">更新本页</button>
 	</div>
 	<div class="main-list-content">
 	<div class="table-responsive">
 		<table class="table">
 			<thead>
 				<tr>
-					<th>matchType</th>
-					<th>round</th>
-					<th>time</th>
-					<th>status</th>
-					<th>score</th>
-					<th>team1</th>
-					<th>team2</th>
-					<th>william</th>
+					<th>赛事</th>
+					<th>轮次</th>
+					<th>时间</th>
+					<th>状态</th>
+					<th>主队</th>
+					<th>比分</th>
+					<th>客队</th>
+					<th>威廉初盘</th>
 					<th></th>
 				</tr>
 			</thead>
@@ -38,11 +38,11 @@
 					<th>{{$m->round}}</th>
 					<th>{{$m->time}}</th>
 					<th>{{$m->status}}</th>
-					<th>{{$m->score}}</th>
 					<th>{{$m->team1}}</th>
+					<th>{{$m->score}}</th>
 					<th>{{$m->team2}}</th>
 					<th>{{$m->sheng}}/{{$m->ping}}/{{$m->fu}}</th>
-					<th><a class="btn btn-default" target="_blank" href="/match/{{$m->mid}}" role="button">See</a></th>
+					<th><a target="_blank" href="/match/{{$m->mid}}" role="button">See</a></th>
 				</tr>
 			@endforeach
 			</tbody>
@@ -69,18 +69,7 @@
 
 @section('css')
 <style>
-.main-list{
-	margin-top:10px;
-}
-.main-list-header{
-	display:flex;
-	justify-content:space-between;
-	align-items: center;
-}
-.handle-select{
-	display:inline!important;
-	max-width:150px;
-}
+
 </style>
 
 @endsection

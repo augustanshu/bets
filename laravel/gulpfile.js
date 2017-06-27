@@ -22,7 +22,8 @@ var jsPlugins = [
 
 var cssPlugins = [
     '../dep/bootstrap/dist/css/bootstrap.min.css',
-	'../dep/sweetalert/dist/sweetalert.css'
+	'../dep/sweetalert/dist/sweetalert.css',
+	'../css/index.css'
 ];
 
 elixir(function(mix){

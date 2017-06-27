@@ -278,11 +278,11 @@ class CrawlerRepository extends MatchRepository implements CrawlerRepositoryInte
 	      $crawler = $goutteClient->request('GET', 'http://fenxi.zgzcw.com/'.$mid.'/bjop/',['cookies' => $jar]);
 		  if($crawler->filter('.zcw-header-wap')->filter('div')->count()==4){return false;}
           if($crawler->filter('title')->text()=='error...' ||$crawler->filter('title')->text()=='403 Forbidden'){
-			        $no=new NoOdd();
-					$no->mid=$mid;
-					$no->league='error';
-					$no->season='error';
-					$no->save();
+			        //$no=new NoOdd();
+					//$no->mid=$mid;
+					//$no->league='error';
+					//$no->season='error';
+					//$no->save();
 			   $crawler = $goutteClient->request('GET', 'http://fenxi.zgzcw.com/'.$mid.'/ypdb/',['cookies' => $jar]);
 			   if($crawler->filter('title')->text()=='error...' ||$crawler->filter('title')->text()=='403 Forbidden'){
 				   return false;

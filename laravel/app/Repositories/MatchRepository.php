@@ -27,7 +27,11 @@ class MatchRepository  implements MatchRepositoryInterface{
 	 $draw=$odd->ping;
 	 $lose=$odd->fu;
     $league=$m->league;	 
+	
 	 $matchs=DB::select('select A.mid,A.league,A.season,A.round,A.score,A.time,A.team1,A.team2,A.result,B.updatetime from matches as A left join odds as B on A.mid=B.mid WHERE B.sheng =:sheng and B.ping=:ping and B.fu =:fu and B.init=1 and A.league=:league ORDER BY A.result',['sheng'=>$win,'ping'=>$draw,'fu'=>$lose,'league'=>$league]);
+	 /*
+	  $matchs=DB::select('select A.mid,A.league,A.season,A.round,A.score,A.time,A.team1,A.team2,A.result,B.updatetime from matches as A left join odds as B on A.mid=B.mid WHERE A.mid=:mid  and B.init=1',['mid'=>$mid]);
+	  */
 	 foreach($matchs as $match)
 	 { 
 		$league=$match->league;
@@ -233,7 +237,7 @@ class MatchRepository  implements MatchRepositoryInterface{
  
     public function getodds($mid)
 	{
-	 return  Odd::where('mid',$mid)->get();
+	 return  Odd::where('mid',$mid)->orderBy('updatetime','asc')->get();
 	}
     
 	public function getpeifu($w,$d,$l)

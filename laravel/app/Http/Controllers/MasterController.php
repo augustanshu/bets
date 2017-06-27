@@ -22,7 +22,7 @@ class MasterController extends Controller
     {
       $this->crawler=$crawler;
 	  $this->mr=$mr;
-	  $this->middleware('auth');
+	  //$this->middleware('auth');
     }
     /**
      * Display a listing of the resource.
@@ -31,30 +31,30 @@ class MasterController extends Controller
      */
     public function index()
     {
-		$term0=date("Ymd",strtotime("+1 day"));
-	    $this->term=$term1=date("Ymd");
-		$term2=date("Ymd",strtotime("- 1 day"));
-		$term3=date("Ymd",strtotime("- 2 day"));
-		$term4=date("Ymd",strtotime("- 3 day"));
-		$term5=date("Ymd",strtotime("- 4 day"));
-		$term6=date("Ymd",strtotime("- 5 day"));
-	    $time=date("Ymd");
-	    $array_term=[];
-		$checkDayStr = date('Y-m-d ',time());
-		$startTime = strtotime($checkDayStr."12:00".":00");
+			$term0=date("Ymd",strtotime("+1 day"));
+			$this->term=$term1=date("Ymd");
+			$term2=date("Ymd",strtotime("- 6 day"));
+			$term3=date("Ymd",strtotime("- 7 day"));
+			$term4=date("Ymd",strtotime("- 8 day"));
+			$term5=date("Ymd",strtotime("- 9 day"));
+			$term6=date("Ymd",strtotime("- 10 day"));
+			$time=date("Ymd");
+			$array_term=[];
+			$checkDayStr = date('Y-m-d ',time());
+			$startTime = strtotime($checkDayStr."12:00".":00");
 		if(time()>$startTime )
 		{
 			//dump('yes');
 		}
 		else
 		{
-		$term0=date("Ymd");
-		$this->term=$term1=date("Ymd",strtotime("- 1 day"));
-		$term2=date("Ymd",strtotime("- 2 day"));
-		$term3=date("Ymd",strtotime("- 3 day"));
-		$term4=date("Ymd",strtotime("- 4 day"));
-		$term5=date("Ymd",strtotime("- 5 day"));
-		$term6=date("Ymd",strtotime("- 6 day"));
+			$term0=date("Ymd");
+			$this->term=$term1=date("Ymd",strtotime("- 1 day"));
+			$term2=date("Ymd",strtotime("- 2 day"));
+			$term3=date("Ymd",strtotime("- 3 day"));
+			$term4=date("Ymd",strtotime("- 4 day"));
+			$term5=date("Ymd",strtotime("- 5 day"));
+			$term6=date("Ymd",strtotime("- 6 day"));
 		}
 	    $matches=Cache::remember($term1,2880,function(){
 		$array_match=[];
