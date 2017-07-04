@@ -141,6 +141,7 @@
 			@endforeach
 		</div>
 	</div>
+	<!--
   <div class="an-content">
 	<table id="table_match" class="display" style="table-layout:fixed; width:120%" >
     <thead>
@@ -164,10 +165,6 @@
 			<th>主期率</th>
 			<th>客期率</th>
 			<th>差值</th>
-		   <!--<th>主分</th>
-		   <th>客分</th>
-			<th>主2</th>
-			<th>客2</th>-->
 			<th>MID</th>
 			
         </tr>
@@ -193,10 +190,6 @@
 			<th>主期率</th>
 			<th>客期率</th>
 			<th>差值</th>
-			<!--<th>主分</th>
-			<th>客分</th>
-			<th>主2</th>
-			<th>客2</th>-->
 			<th>MID</th>
             </tr>
 		
@@ -232,6 +225,7 @@
     </tbody>
     </table>
     </div>
+	-->
 	<div class="cache">
 	 <button type="btn btn-danger btn-xs">cache-history</button>
 	  <button type="btn btn-danger btn-xs">cache-history</button>

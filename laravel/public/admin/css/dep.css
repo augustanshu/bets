@@ -950,8 +950,21 @@ body.stop-scrolling {
 	max-width:150px;
 }
 @media (max-width:768px){
-	th{
+	body{
 		font-size:5px;
 	}
+}
+.table-round{
+	font-size:0.5em;
+	margin-left:2px;
+	color:#444444;
+	font-weight:400
+}
+.odd-analysis{
+	color:#ff0015;
+}
+.odd-analysis:focus, .odd-analysis:hover {
+    color: black;
+    text-decoration: underline;
 }
 /*# sourceMappingURL=dep.css.map */

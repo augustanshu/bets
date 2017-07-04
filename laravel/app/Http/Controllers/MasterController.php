@@ -162,23 +162,23 @@ class MasterController extends Controller
 	  $this->match=$match=$this->mr->matchMid($mid);
 	  $team1=$this->match->team1;
 	  $team2=$this->match->team2;
-	  $matches=Cache::remember('a'.$mid,1440,function(){
+	  $matches=Cache::remember('a'.$mid,720,function(){
 		  $m=$this->mr->matchAnalysis2($this->match);
 		  return $m;
 	  });
-	  $history1=Cache::remember('h1'.$mid,1440,function(){
+	  $history1=Cache::remember('h1'.$mid,720,function(){
 		  $h=$this->mr->matchHistory($this->match->league,$this->match->team1,$this->match->team2,$this->match->season,$this->match->time,0,10);
 		  return $h;
 	  });
-	  $history2=Cache::remember('h2'.$mid,1440,function(){
+	  $history2=Cache::remember('h2'.$mid,720,function(){
 		  $h2=$this->mr->matchHistory($this->match->league,$this->match->team2,$this->match->team1,$this->match->season,$this->match->time,0,10);
 		  return $h2;
 	  });
-	  	  $history3=Cache::remember('h3'.$mid,1440,function(){
+	  	  $history3=Cache::remember('h3'.$mid,720,function(){
 		  $h3=$this->mr->matchHistory($this->match->league,$this->match->team1,$this->match->team2,$this->match->season,$this->match->time,1,10);
 		  return $h3;
 	  });
-	  	  $history4=Cache::remember('h4'.$mid,1440,function(){
+	  	  $history4=Cache::remember('h4'.$mid,720,function(){
 		  $h4=$this->mr->matchHistory($this->match->league,$this->match->team1,$this->match->team2,$this->match->season,$this->match->time,2,10);
 		  return $h4;
 	 });
