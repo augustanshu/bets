@@ -3,54 +3,103 @@
 @section('title','MyBets')
 
 @section('main') 
+<div>
+<div>
+	@foreach($matches as $match)
+	@if($match->mid==$mid)
+	<h5 hidden id="mid" name={{$mid}}></h5>
+	<h4>{{$match->team1}}[{{$match->current_point}}] VS {{$match->team2}}[{{$match->current_point2}}]   {{$match->score}}</h4>
+	<h5>{{$match->league}}[{{$match->round}}] {{$match->time}}</h5>
+	<div class="table-responsive">
+		<table class="table table-bordered">
+		<thead>
+		<tr>
+		  <th>6场</th>
+		  <th>{{$match->team1}}</th>
+		  <th>{{$match->team2}}</th>
+		</tr>
+		</thead>
+		<tbody>
+		<tr>
+		  <td>进球</td>
+		  <td>{{$match->goal}}</td>
+		  <td>{{$match->goal2}}</td>
+		</tr>
+		<tr>
+		  <td>失球</td>
+		  <td>{{$match->goal_lose}}</td>
+		  <td>{{$match->goal2_lose}}</td>
+		</tr>
+		<tr>
+		  <td>积分</td>
+		  <td>{{$match->points}}</td>
+		  <td>{{$match->points2}}</td>
+		</tr>
+		<tr>
+		  <td>期望</td>
+		  <td>{{$match->qiwang}}|{{$match->percent}}</td>
+		  <td>{{$match->qiwang2}}|{{$match->percent2}}</td>
+		</tr>
+		<tr>
+		  <td>初积</td>
+		  <td>{{$match->points_init}}</td>
+		  <td>{{$match->points2_init}}</td>
+		</tr>
+		<tr>
+		  <td>初期</td>
+		  <td>{{$match->qiwang_init}}|{{$match->percent_init}}</td>
+		  <td>{{$match->qiwang2_init}}|{{$match->percent2_init}}</td>
+		</tr>
+		</tbody>
+		</table>
+		</div>
+    @endif
+	@endforeach
+</div>
+<div style="text-align:center">
+		 <h4 id="chartbtn" style="text-align:center" type="button" data-toggle="collapse" href="#collapseTwo">析</h4>	
+		  <div  class="ar" ></div>
+</div>
+</div>
+
 <div class="an">
 	<div class="panel panel-default an-header">
+	<!--
 	<div class="panel-heading">
 		<h4 class="panel-title match-header" >
 			<a data-toggle="collapse" data-parent="#accordion" 
 			href="#collapseOne" style="display:flex;flex-direction:row;justify-content:space-between;text-decoration:none" >
 			@foreach($matches as $match)
 			@if($match->mid==$mid)
-			<h5 id="mid" name={{$mid}}></h5>
-			<h5>{{$match->league}}</h5>
-			<h5>{{$match->round}}</h5>
-			<h5>{{$match->time}}</h5>
-			<h5>主:{{$match->team1}}|{{$match->current_point}}</h5>
-			<h5>客:{{$match->team2}}|{{$match->current_point2}}</h5>
-			<h5>{{$match->result}}</h5>
-			<h5>{{$match->score}}</h5>
+			<h5 hidden id="mid" name={{$mid}}></h5>
 			<h5 class="match-header-goal">主进:{{$match->goal}}|-{{$match->goal_lose}}</h5>
 			<h5 class="match-header-goal">客进:{{$match->goal2}}|-{{$match->goal2_lose}}</h5>
 			<h5 class="match-header-point">主积:{{$match->points}}</h5>
 			<h5 class="match-header-point">客积:{{$match->points2}}</h5>
 			<h5 class="match-header-percent">主期:{{$match->qiwang}}|{{$match->percent}}</h5>
 			<h5 class="match-header-percent">客期:{{$match->qiwang2}}|{{$match->percent2}}</h5>
-			</a>
-		</h4>
-	</div>
-	<div class="panel-heading">
-	<h4 class="panel-title match-header" >
-	<a style="display:flex;flex-direction:row;justify-content:flex-end">
-	<h5 class="match-header-point">主积:{{$match->points_init}}</h5>
+				<h5 class="match-header-point">主积:{{$match->points_init}}</h5>
 	<h5 class="match-header-point">客积:{{$match->points2_init}}</h5>
 	<h5 class="match-header-percent">主期:{{$match->qiwang_init}}|{{$match->percent_init}}</h5>
 	<h5 class="match-header-percent">客期:{{$match->qiwang2_init}}|{{$match->percent2_init}}</h5>
-	</a>
-	</h4>
+			</a>
+		</h4>
+
 	</div>
 	@endif
-			@endforeach
+	@endforeach
+	-->
 		<div id="collapseOne" class="panel-collapse collapse in">
           <li class="list-group-item"> 
-		  <a id="chartbtn"  type="button" data-toggle="collapse" href="#collapseTwo">析</a>	
-		  <div  class="ar" ></div>
+		 <!-- <a id="chartbtn" style="text-align:center" type="button" data-toggle="collapse" href="#collapseTwo">析</a>	
+		  <div  class="ar" ></div>-->
 		  <a data-toggle="collapse" data-parent="#accordion1"  href="#collapseH1" class="htitle">历史主场</a>
 		  <div id="collapseH1" class="panel-collapse collapse in">
 		  @foreach($history1 as $match)
 		    <a style="display:flex;flex-direction:row;justify-content:space-between;text-decoration:none">
 			<h5 id="mid" name={{$mid}}></h5>
 			<!--<h5>{{$match->league}}</h5>-->
-			<h5>{{$match->round}}</h5>
+			<h5>[{{$match->round}}]</h5>
 			<h5>{{$match->time}}</h5>
 			<h5>主:{{$match->team1}}|{{$match->current_point}}</h5>
 			<h5>客:{{$match->team2}}|{{$match->current_point2}}</h5>
@@ -74,7 +123,7 @@
 		    <a style="display:flex;flex-direction:row;justify-content:space-between;text-decoration:none">
 			<h5 id="mid" name={{$mid}}></h5>
 			<!--<h5>{{$match->league}}</h5>-->
-			<h5>{{$match->round}}</h5>
+			<h5>[{{$match->round}}]</h5>
 			<h5>{{$match->time}}</h5>
 			<h5>主:{{$match->team1}}|{{$match->current_point}}</h5>
 			<h5>客:{{$match->team2}}|{{$match->current_point2}}</h5>
@@ -97,7 +146,7 @@
 		    <a style="display:flex;flex-direction:row;justify-content:space-between;text-decoration:none">
 			<h5 id="mid" name={{$mid}}></h5>
 			<!--<h5>{{$match->league}}</h5>-->
-			<h5>{{$match->round}}</h5>
+			<h5>[{{$match->round}}]</h5>
 			<h5>{{$match->time}}</h5>
 			<h5 {{$match->team1==$team1?'class=match-team':''}}>主:{{$match->team1}}|{{$match->current_point}}</h5>
 			<h5 {{$match->team2==$team1?'class=match-team':''}}>客:{{$match->team2}}|{{$match->current_point2}}</h5>
@@ -120,7 +169,7 @@
 		    <a style="display:flex;flex-direction:row;justify-content:space-between;text-decoration:none">
 			<h5 id="mid" name={{$mid}}></h5>
 			<!--<h5>{{$match->league}}</h5>-->
-			<h5>{{$match->round}}</h5>
+			<h5>[{{$match->round}}]</h5>
 			<h5>{{$match->time}}</h5>
 			<h5 {{$match->team1==$team2?'class=match-team':''}}>主:{{$match->team1}}|{{$match->current_point}}</h5>
 			<h5 {{$match->team2==$team2?'class=match-team':''}}>客:{{$match->team2}}|{{$match->current_point2}}</h5>
@@ -136,9 +185,27 @@
 			</a>
 			@endforeach
 			</div>
+			
+			<div class="table-responsive">
+			<table class="table table-bordered">
+			<thead>
+			<tr>
+			  <th>时间</th>
+			  <th>赔率</th>
+			  <th></th>
+			</tr>
+			</thead>
+			<tbody>
 			@foreach($odds as $odd)
-			<li class="list-group-item" >{{$odd->sheng}}/{{$odd->ping}}/{{$odd->fu}}----{{$odd->updatetime}}</li>
+			<tr>
+			  <td>{{$odd->updatetime}}</td>
+			  <td>{{$odd->sheng}}/{{$odd->ping}}/{{$odd->fu}}</td>
+			  <td></td>
+			</tr>
 			@endforeach
+			</tbody>
+			</table>
+		   </div>
 		</div>
 	</div>
 	<!--
@@ -233,7 +300,7 @@
  </div>
 <script>
 (function($){
-
+  /*
 	 // Setup - add a text input to each footer cell
     $('#table_match tfoot th').each( function () {
         var title = $('#table_match thead th').eq( $(this).index() ).text();
@@ -279,6 +346,7 @@
 	  $('#table_match tbody').on( 'click', 'tr', function () {
         $(this).toggleClass('selected');
     } );
+	*/
 	var i=0
 	$('#chartbtn').on('click',function(){
 		var mid=$("#mid").attr('name');
@@ -290,6 +358,7 @@
 		 $('.ar').load('{{URL::to('/match/chart')}}'+'/'+mid);
 		}
 	});
+	/*
 	function format ( d ) {
     // `d` is the original data object for the row
     return '<table class=ar'+d[19]+'>'+
@@ -315,6 +384,7 @@
 			 $('.ar'+data[19]+'').load('{{URL::to('/match/chart')}}'+'/'+data[19]);
         }
     } );
+	*/
 }(jQuery));
 </script>
 @endsection

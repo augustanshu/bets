@@ -951,7 +951,7 @@ body.stop-scrolling {
 }
 @media (max-width:768px){
 	body{
-		font-size:5px;
+		
 	}
 }
 .table-round{
@@ -966,5 +966,18 @@ body.stop-scrolling {
 .odd-analysis:focus, .odd-analysis:hover {
     color: black;
     text-decoration: underline;
+}
+@media(max-width:768px)
+{
+	.table.table.table-condensed {
+		font-size: xx-small;
+	}
+.table-xs{
+ vertical-align: middle !important; 
+}
+}
+.table-time{
+	display:block;
+	
 }
 /*# sourceMappingURL=dep.css.map */
