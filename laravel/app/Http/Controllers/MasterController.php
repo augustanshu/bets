@@ -182,10 +182,10 @@ class MasterController extends Controller
 		  $h4=$this->mr->matchHistory($this->match->league,$this->match->team1,$this->match->team2,$this->match->season,$this->match->time,2,10);
 		  return $h4;
 	 });
-	 // dump($history1);
-	  //dump($history2);
-	  $odds=$this->mr->getodds($mid);
-	  //dump($matches);
+	  $odds=Cache::remember('odd'.$mid,720,function(){
+		  $odd=$this->mr->getodds($this->match->mid);
+		  return $odd;
+	  });
 	  return view('analysis',['mid'=>$mid,'team1'=>$team1,'team2'=>$team2,'matches'=>$matches,'match'=>$match,'history1'=>$history1,'history2'=>$history2,'history3'=>$history3,'history4'=>$history4,'odds'=>$odds]);
 	  
 	}

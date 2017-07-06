@@ -82,7 +82,7 @@ class AddResults extends Command
 			   }
 		  });
 		  */
-		  $this->getMatchPoint('西班牙甲组联赛');
+		 // $this->getMatchPoint('西班牙甲组联赛');
 		  //DB::table('matchpoint')->chun
 		  /*
 		  $matches=DB::select('select count(*) as count,mid from matchpoint group by mid having count>1');
@@ -93,6 +93,18 @@ class AddResults extends Command
 			 DB::delete('delete  from matchpoint where');
 		  }
 		  */
+		  		  DB::table('odds')->where('id','<',46700)->orderBy('id','desc')->chunk(200, function ($odds) {
+			      foreach ($odds as $odd) {
+					$o=Odd::find($odd->id);
+					$o->peifu=number_format($this->mr->getpeifu($odd->sheng,$odd->ping,$odd->fu),3);
+					if($o->peifu < 0.99)
+					{
+						$this->info($o->peifu);
+						$this->info($o->id);
+						$o->save();
+					}
+			   }
+		  });
     }
 	
     public function getMatchPoint($league)

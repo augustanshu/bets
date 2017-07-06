@@ -340,6 +340,8 @@ class CrawlerRepository extends MatchRepository implements CrawlerRepositoryInte
 				    $odd->sheng=$node->filter('td')->eq(2)->text();
 				    $odd->ping=$node->filter('td')->eq(3)->text();
 				    $odd->fu=$node->filter('td')->eq(4)->text();
+					$peifu=number_format(1/(1/$odd->sheng+1/$odd->ping+1/$odd->fu),2);
+					$odd->peifu=$peifu<0.99?$peifu:0;
 					 $odd_count=$odd->where('mid',$midd)->where('updatetime',$updatetimee)->count();
 					 if($odd_count==0){$odd->save();}
 					 else{$odd->update();}
@@ -367,6 +369,8 @@ class CrawlerRepository extends MatchRepository implements CrawlerRepositoryInte
 					 $odd->sheng=str_replace(array("↓","↑"),"",$node->filter('td')->eq(3)->text());
 				     $odd->ping=str_replace(array("↓","↑"),"",$node->filter('td')->eq(4)->text());
 				     $odd->fu=str_replace(array("↓","↑"),"",$node->filter('td')->eq(5)->text());
+					 $peifu=number_format(1/(1/$odd->sheng+1/$odd->ping+1/$odd->fu),2);
+					 $odd->peifu=$peifu<0.99?$peifu:0;
 					 $odd->init="0";
 					 $odd_count=$odd->where('mid',$u[3])->where('updatetime',$updatetime)->count();
 					 if($odd_count==0){$odd->save();}

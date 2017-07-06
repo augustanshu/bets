@@ -4,6 +4,7 @@ use App\Match;
 use App\Odd;
 use App\Term;
 use App\MatchPoint;
+use App\OddExcel;
 use Illuminate\Support\Facades\DB;
 
 class MatchRepository  implements MatchRepositoryInterface{
@@ -237,7 +238,23 @@ class MatchRepository  implements MatchRepositoryInterface{
  
     public function getodds($mid)
 	{
-	 return  Odd::where('mid',$mid)->orderBy('updatetime','asc')->get();
+	 $allOdd=array();
+	 $odds=Odd::where('mid',$mid)->orderBy('updatetime','asc')->get();
+	 foreach($odds as $odd){
+		 if($odd->sheng <= $odd->fu){
+			 $ox=OddExcel::where('peifu',$odd->peifu)->where('sheng',$odd->sheng)->get();
+			 $odd->excel=$ox;
+			 array_push($allOdd,$odd);
+		 }
+		 else{
+			  $ox=OddExcel::where('peifu',$odd->peifu)->where('fu',$odd->fu)->get();
+			 $odd->excel=$ox;
+			 array_push($allOdd,$odd);
+		 }
+	 }
+	 return $allOdd;
+	 
+	 return Odd::where('mid',$mid)->join->orderBy('updatetime','asc')->get();
 	}
     
 	public function getpeifu($w,$d,$l)
