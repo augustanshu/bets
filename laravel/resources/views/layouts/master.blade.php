@@ -10,7 +10,7 @@
 <link rel="stylesheet" type="text/css" href="/admin/css/dep.css">
 <script src="/admin/js/dep.js"></script>
 <link rel="stylesheet" type="text/css" href="http://cdn.datatables.net/1.10.13/css/jquery.dataTables.css">
-
+<link rel="apple-touch-icon" sizes="100x100" href="/logo.png">
 <!-- DataTables -->
 <script type="text/javascript" charset="utf8" src="http://cdn.datatables.net/1.10.13/js/jquery.dataTables.js"></script>
 </head>
