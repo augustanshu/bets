@@ -189,7 +189,7 @@
 			<td><h5>{{$match->round}}</h5></td>
 			<td  style="max-width:100px"><h5>{{$match->time}}</h5></td>
 			<td  style="max-width:150px"><h5 {{$match->team1==$team1?'class=match-team':''}}>{{$match->team1}}[{{$match->current_point}}] {{$match->score}} {{$match->team2}}[{{$match->current_point2}}]</h5> </td>
-			<td><h5  {{$match->result=='胜'?'class=match-header-goal':($match->result=='负'?'class=match-result-lose':'')}}>{{$match->result}}</h5></td>
+			<td><h5 {{$match->result=='胜'&&$match->team1==$team1||$match->result=='负'&&$match->team2==$team1?'class=match-header-goal':($match->result=='胜'&&$match->team2==$team1||$match->result=='负'&&$match->team1==$team1?'class=match-result-lose':'')}}>{{$match->result}}</h5></td>
 			<td><h5>{{$match->goal}}|-{{$match->goal_lose}}</h5></td>
 			<td><h5>{{$match->goal2}}|-{{$match->goal2_lose}}</h5></td>
 			<td><h5>{{$match->points}}</h5></td>
@@ -227,7 +227,7 @@
 			<td><h5>{{$match->round}}</h5></td>
 			<td style="max-width:100px"><h5>{{$match->time}}</h5></td>
 			<td style="max-width:150px"><h5 {{$match->team2==$team2?'class=match-team':''}}>{{$match->team1}}[{{$match->current_point}}] {{$match->score}} {{$match->team2}}[{{$match->current_point2}}]</h5> </td>
-			<td><h5  {{$match->result=='胜'?'class=match-header-goal':($match->result=='负'?'class=match-result-lose':'')}}>{{$match->result}}</h5></td>
+			<td><h5 {{$match->result=='胜'&&$match->team1==$team2 ||$match->result=='负'&&$match->team2==$team2?'class=match-header-goal':($match->result=='胜'&&$match->team2==$team2||$match->result=='负'&&$match->team1==$team2?'class=match-result-lose':'')}}>{{$match->result}}</h5></td>
 			<td><h5>{{$match->goal}}|-{{$match->goal_lose}}</h5></td>
 			<td><h5>{{$match->goal2}}|-{{$match->goal2_lose}}</h5></td>
 			<td><h5>{{$match->points}}</h5></td>
@@ -587,6 +587,9 @@
 
 .match-result-lose{
 	color:green;
+}
+.match-header-goal{
+  color:red;
 }
 .match-team{
 	font-weight:800;
