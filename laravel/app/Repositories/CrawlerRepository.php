@@ -81,7 +81,7 @@ class CrawlerRepository extends MatchRepository implements CrawlerRepositoryInte
 			   ));
 			   $goutteClient->setClient($guzzleClient);
 			   $jar = new \GuzzleHttp\Cookie\CookieJar;
-			   $crawler = $goutteClient->request('GET', 'http://live.zgzcw.com/',['cookies' => $jar]);
+			   $crawler = $goutteClient->request('GET', 'http://live.zgzcw.com/zc',['cookies' => $jar]);
 			   $crawler->filter('.live-tab')->filter('tbody')->filter('.matchTr')->each(function($node){
 			   $mid=$node->attr('matchid');
 			    $t=date("Ymd");
@@ -93,6 +93,25 @@ class CrawlerRepository extends MatchRepository implements CrawlerRepositoryInte
 				else{
 				$array_mids=expLode('/',$term->mids);
 				array_push($array_mids,$mid);
+
+				$term->mids=implode('/',$array_mids);	
+				}
+				
+			   $term->save();
+		    });
+			 $crawler = $goutteClient->request('GET', 'http://live.zgzcw.com/',['cookies' => $jar]);
+			   $crawler->filter('.live-tab')->filter('tbody')->filter('.matchTr')->each(function($node){
+			   $mid=$node->attr('matchid');
+			    $t=date("Ymd");
+				$term=Term::firstOrNew(['term'=>$t]);
+				if($term->mids=="")
+				{
+					$term->mids=$mid;
+				}
+				else{
+				$array_mids=expLode('/',$term->mids);
+				array_push($array_mids,$mid);
+
 				$term->mids=implode('/',$array_mids);	
 				}
 				

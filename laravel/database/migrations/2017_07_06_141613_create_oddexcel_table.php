@@ -13,7 +13,7 @@ class CreateOddexcelTable extends Migration
      */
     public function up()
     {
-        Schema::create('oddExcel', function (Blueprint $table) {
+        Schema::create('oddexcel', function (Blueprint $table) {
             $table->increments('id');
 			$table->string('sheng')->default('0.00');
 			$table->string('ping')->default('0.00');

@@ -44,10 +44,11 @@ class MasterController extends Controller
 			$startTime = strtotime($checkDayStr."12:00".":00");
 		if(time()>$startTime )
 		{
-			//dump('yes');
+			//dump($this->term);
 		}
 		else
 		{
+			dump(time());
 			$term0=date("Ymd");
 			$this->term=$term1=date("Ymd",strtotime("- 1 day"));
 			$term2=date("Ymd",strtotime("- 2 day"));
