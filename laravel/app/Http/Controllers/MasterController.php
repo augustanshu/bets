@@ -31,7 +31,7 @@ class MasterController extends Controller
      */
     public function index()
     {
-			$term0=date("Ymd",strtotime("+1 day"));
+			//$term0=date("Ymd",strtotime("+1 day"));
 			$this->term=$term1=date("Ymd");
 			$term2=date("Ymd",strtotime("- 1 day"));
 			$term3=date("Ymd",strtotime("- 2 day"));
@@ -48,8 +48,8 @@ class MasterController extends Controller
 		}
 		else
 		{
-			dump(time());
-			$term0=date("Ymd");
+			//dump(time());
+			//$term0=date("Ymd");
 			$this->term=$term1=date("Ymd",strtotime("- 1 day"));
 			$term2=date("Ymd",strtotime("- 2 day"));
 			$term3=date("Ymd",strtotime("- 3 day"));
@@ -81,7 +81,7 @@ class MasterController extends Controller
 		return $matches;
 	  });
 	  
-	  array_push($array_term,$term6,$term5,$term4,$term3,$term2,$term1,$term0);
+	  array_push($array_term,$term6,$term5,$term4,$term3,$term2,$term1);
 	  return view('index',['matches'=>$matches,'terms'=>$array_term,'tterm'=>$term1]);
     }
 	public function indexall()

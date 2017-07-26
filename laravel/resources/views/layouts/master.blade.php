@@ -16,6 +16,7 @@
 </head>
 
 	<body>
+	 @include('layouts.nav')
 	<div class="container" id="mainContent">
 	 @section('main')
 	 @show
